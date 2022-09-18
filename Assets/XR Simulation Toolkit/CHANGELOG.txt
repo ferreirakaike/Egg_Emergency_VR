@@ -1,0 +1,33 @@
+XR SIMULATION TOOLKIT (XRST) CHANGELOG
+
+Version 0.1.1
+- Fixed a computational issue with the XRSTShortcutsEditor class.
+
+Version 0.1.0
+- Fixed issue with the XRSTRig not automatically finding the XRRig's main camera due to unexpected name (e.g., "MainCamera" instead of "Main Camera"). Using Camera.main intead now.
+- Updated XRSTShortcuts to support non-modal input for moving the user and to allow for dynamic setting of the keyboard shortcuts.
+
+Version 0.0.8
+- Initial release for the Fall 2020 CAP 5115 Virtual Reality Engineering Course.
+- The XRST package includes the following assets:
+	> XR Interaction Toolkit 0.9.4
+		- This is a modified version of the XR Interaction Toolkit 0.9.4 package that works with the XRST.
+	> XR LegacyInputHelpers 2.1.4
+		- This is an unmodified version of the XR LegacyInputHelpers 2.1.4 package.
+	> XR Simulation Toolkit
+		> Editor
+			> XRSTControllerEditor
+				- This class is responsible for drawing the Inspector interface for the XRSTController class.
+			> XRSTShortcutsEditor
+				- This class is responsible for handling keyboard input to simulate the user moving around and pressing buttons on the XR Controllers.
+		> Runtime
+			> XRSTController
+				- This class is responsible for simulating button input on the XR Controllers. It should be attached to the LeftHand Controller and RightHand Controller under the XR Rig.
+			> XRSTInputs
+				- This class provides simple classes for representing button input for the XR Controllers, including 1D axis, 2D axis, and button inputs.
+			> XRSTRig
+				- This class is responsible for simulating the user moving around. It should be attached to the XR Rig.
+			> XRSTShortcuts
+				- This class is responsible for defining and providing keyboard shortcuts for simulating the user moving around and pressing buttons on the XR Controllers.
+
+
