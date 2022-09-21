@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
+// reference https://www.youtube.com/watch?v=Ie0-oKN3Lq0
+// need to modify current prefab to use
+
 public class TwoHandGrabInteractable : XRGrabInteractable
 {
     public List<XRSimpleInteractable> secondHandGrabPoints = new List<XRSimpleInteractable>();
