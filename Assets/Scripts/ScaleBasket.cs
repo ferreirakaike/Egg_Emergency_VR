@@ -33,7 +33,7 @@ public class ScaleBasket : MonoBehaviour
     {
         if (controller1 && controller2 && grabbedWithBothHands)
         {
-            float distance = (oldScaleMultiplier + 10) * Vector3.Distance(controller1.transform.position, controller2.transform.position);
+            float distance = 44 * Vector3.Distance(controller1.transform.position, controller2.transform.position);
             Debug.Log("Old distance " + distance.ToString());
             if (distance < minScale)
             {
