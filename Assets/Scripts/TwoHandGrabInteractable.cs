@@ -14,10 +14,23 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     public enum TwoHandRotationType { None, First, Second};
     public TwoHandRotationType twoHandRotationType;
     public bool snapToSecondHand = true;
+
+    public GameObject firstGrabObject;
+    public GameObject secondGrabObject;
+    [SerializeField]
+    public int secondHandGrabLayer = -1;
+    [SerializeField]
+    private int defaultLayer;
     private Quaternion initialRotationOffset;
     // Start is called before the first frame update
     void Start()
     {
+        defaultLayer = 0;
+        if (secondHandGrabLayer == -1)
+        {
+            // Second Hand Grab layer index
+            secondHandGrabLayer = 11;
+        }
         // Add listener all second hand grab points
         foreach (var item in secondHandGrabPoints)
         {
@@ -72,12 +85,19 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         Debug.Log("Second hand grab");
         secondInteractor = interactor;
         initialRotationOffset = Quaternion.Inverse(GetTwoHandRotation()) * selectingInteractor.attachTransform.rotation;
+        GetComponent<ScaleBasket>().grabbedWithBothHands = true;
     }
 
     public void OnSecondHandRelease(XRBaseInteractor interactor)
     {
         Debug.Log("Second hand release");
         secondInteractor = null;
+        if (firstGrabObject && secondGrabObject)
+        {
+            secondGrabObject.GetComponent<XRTintInteractableVisual>().tintOnHover = false;
+        }
+        GetComponent<XRTintInteractableVisual>().tintOnHover = true;
+        GetComponent<ScaleBasket>().grabbedWithBothHands = false;
     }
 
     protected override void OnSelectEnter(XRBaseInteractor interactor)
@@ -85,6 +105,13 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         Debug.Log("First hand grab");
         base.OnSelectEnter(interactor);
         attachInitialRotation = interactor.attachTransform.localRotation;
+        if (firstGrabObject && secondGrabObject)
+        {
+            firstGrabObject.layer = secondHandGrabLayer;
+            secondGrabObject.layer = defaultLayer;
+            secondGrabObject.GetComponent<XRTintInteractableVisual>().tintOnHover = true;
+        }
+        GetComponent<XRTintInteractableVisual>().tintOnHover = false;
     }
 
     protected override void OnSelectExit(XRBaseInteractor interactor)
@@ -93,6 +120,14 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         base.OnSelectExit(interactor);
         secondInteractor = null;
         interactor.attachTransform.localRotation = attachInitialRotation;
+        if (firstGrabObject && secondGrabObject)
+        {
+            firstGrabObject.layer = defaultLayer;
+            secondGrabObject.layer = secondHandGrabLayer;
+            secondGrabObject.GetComponent<XRTintInteractableVisual>().tintOnHover = false;
+        }
+        GetComponent<XRTintInteractableVisual>().tintOnHover = true;
+        GetComponent<ScaleBasket>().grabbedWithBothHands = false;
     }
 
     public override bool IsSelectableBy(XRBaseInteractor interactor)
