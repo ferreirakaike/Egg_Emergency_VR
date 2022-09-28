@@ -745,6 +745,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6655223877471054161, guid: 5370a0806e7eb3f4dbcbbc3ecef7c1a2,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6655223877471054163, guid: 5370a0806e7eb3f4dbcbbc3ecef7c1a2,
         type: 3}
       propertyPath: controller1
@@ -755,6 +760,21 @@ PrefabInstance:
       propertyPath: controller2
       value: 
       objectReference: {fileID: 4761587997421357464}
+    - target: {fileID: 6655223877471054164, guid: 5370a0806e7eb3f4dbcbbc3ecef7c1a2,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6655223877471054166, guid: 5370a0806e7eb3f4dbcbbc3ecef7c1a2,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6655223877471054167, guid: 5370a0806e7eb3f4dbcbbc3ecef7c1a2,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6655223877471054184, guid: 5370a0806e7eb3f4dbcbbc3ecef7c1a2,
         type: 3}
       propertyPath: m_Name
