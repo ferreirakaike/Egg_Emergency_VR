@@ -5,4 +5,18 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes: []
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: a4663ede6ce2a89468e21aa1ccdb6a4e,
+      type: 2}
+    Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: a88231ec72a85a942adaf016f139b11c,
+      type: 2}
+    UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 74d2f1f2e0ee12345a6424d19053558f,
+      type: 2}
+    com.unity.xr.magicleap.magic_leap_settings: {fileID: 11400000, guid: cd35e5f04684afb498dcbaea8f940801,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 4c54d05a7955a854b86749daddbe249c,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 9707ec7c38c3c294db82b639378f5403,
+      type: 2}
+    xr.sdk.mock-hmd.settings: {fileID: 11400000, guid: 28247f57bc0f01a4bb1318313d5e2d8c,
+      type: 2}
