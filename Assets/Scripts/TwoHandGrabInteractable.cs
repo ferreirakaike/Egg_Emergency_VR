@@ -20,12 +20,15 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     [SerializeField]
     public int secondHandGrabLayer = -1;
     [SerializeField]
-    private int defaultLayer;
+    private int defaultLayer = -1;
     private Quaternion initialRotationOffset;
     // Start is called before the first frame update
     void Start()
     {
-        defaultLayer = 0;
+        if (defaultLayer == -1)
+        {
+            defaultLayer = 9;
+        }
         if (secondHandGrabLayer == -1)
         {
             // Second Hand Grab layer index
@@ -34,8 +37,8 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         // Add listener all second hand grab points
         foreach (var item in secondHandGrabPoints)
         {
-            item.onSelectEnter.AddListener(OnSecondHandGrab);
-            item.onSelectExit.AddListener(OnSecondHandRelease);
+            item.onSelectEntered.AddListener(OnSecondHandGrab);
+            item.onSelectExited.AddListener(OnSecondHandRelease);
         }
     }
 

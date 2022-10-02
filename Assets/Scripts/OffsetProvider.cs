@@ -122,9 +122,9 @@ namespace UnityEngine.XR.Interaction.Toolkit
             if (m_Interactor != null && listenersAdded)
             {
                 // Remove the SetOffset function as a listener.
-                m_Interactor.onSelectEnter.RemoveListener(SetOffset);
+                m_Interactor.onSelectEntered.RemoveListener(SetOffset);
                 // Remove the ResetOffset function as a listener.
-                m_Interactor.onSelectExit.RemoveListener(ResetOffset);
+                m_Interactor.onSelectExited.RemoveListener(ResetOffset);
                 // Keep track of removing the listeners.
                 listenersAdded = false;
             }
@@ -137,9 +137,9 @@ namespace UnityEngine.XR.Interaction.Toolkit
             if (m_Interactor != null && !listenersAdded)
             {
                 // Add the SetOffset function as a listener.
-                m_Interactor.onSelectEnter.AddListener(SetOffset);
+                m_Interactor.onSelectEntered.AddListener(SetOffset);
                 // Add the ResetOffset function as a listener.
-                m_Interactor.onSelectExit.AddListener(ResetOffset);
+                m_Interactor.onSelectExited.AddListener(ResetOffset);
                 // Keep track of adding the listeners.
                 listenersAdded = true;
             }
