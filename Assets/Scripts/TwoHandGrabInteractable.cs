@@ -73,12 +73,12 @@ public class TwoHandGrabInteractable : XRGrabInteractable
             targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position);
         }
         else if (twoHandRotationType == TwoHandRotationType.First)
-        {
-            targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position, selectingInteractor.attachTransform.up);
+        {  // interpret all axes rotations as X rotation. To get rid of this behavior, us .up instead of .right
+            targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position, selectingInteractor.attachTransform.right);
         }
         else
         {
-            targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position, secondInteractor.attachTransform.up);
+            targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position, secondInteractor.attachTransform.right);
         }
         return targetRotation;
     }
