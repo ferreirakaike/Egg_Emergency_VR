@@ -22,6 +22,16 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     [SerializeField]
     private int defaultLayer = -1;
     private Quaternion initialRotationOffset;
+    public bool scaleObject = true;
+    public float minScale = 15f;
+    public float maxScale = 50f;
+
+    private Vector3 initialHandPosition1;
+    private Vector3 initialHandPosition2;
+    private Quaternion initialObjectRotation;
+    private Vector3 initialObjectScale;
+    private Vector3 initialObjectDirection;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +55,31 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+    private void updateTargetBoth()
+    {
+        Vector3 currentHandPosition1 = selectingInteractor.transform.position;
+        Vector3 currentHandPosition2 = secondInteractor.transform.position;
+
+        Vector3 handDir1 = (initialHandPosition1 - initialHandPosition2).normalized;
+        Vector3 handDir2 = (currentHandPosition1 - currentHandPosition2).normalized;
+
+        Quaternion handRotation = Quaternion.FromToRotation(handDir1, handDir2);
+
+        float currentGrabDistance = Vector3.Distance(currentHandPosition1, currentHandPosition2);
+        float initialGrabDistance = Vector3.Distance(initialHandPosition1, initialHandPosition2);
+        float percentage = (currentGrabDistance / initialGrabDistance);
+
+        Vector3 newScale = new Vector3(percentage * initialObjectScale.x, percentage * initialObjectScale.y, initialObjectScale.z);
+
+        // this.transform.rotation = handRotation * initialObjectRotation;
+        if (newScale.x >= minScale && newScale.x <= maxScale)
+        {
+            this.transform.localScale = newScale;
+        }
+        this.transform.position = (0.5f * (currentHandPosition1 + currentHandPosition2)) + (handRotation * (initialObjectDirection * percentage));
     }
 
     public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
@@ -61,6 +95,10 @@ public class TwoHandGrabInteractable : XRGrabInteractable
             {
                 selectingInteractor.attachTransform.rotation = GetTwoHandRotation() * initialRotationOffset;
             }
+            if (scaleObject)
+            {
+                updateTargetBoth();
+            }
         }
         base.ProcessInteractable(updatePhase);
     }
@@ -73,12 +111,12 @@ public class TwoHandGrabInteractable : XRGrabInteractable
             targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position);
         }
         else if (twoHandRotationType == TwoHandRotationType.First)
-        {  // interpret all axes rotations as X rotation. To get rid of this behavior, us .up instead of .right
-            targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position, selectingInteractor.attachTransform.right);
+        {  // interpret all axes rotations as X rotation. To get rid of this behavior, use .up instead of .right
+            targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position, selectingInteractor.attachTransform.up);
         }
         else
         {
-            targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position, secondInteractor.attachTransform.right);
+            targetRotation = Quaternion.LookRotation(secondInteractor.attachTransform.position - selectingInteractor.attachTransform.position, secondInteractor.attachTransform.up);
         }
         return targetRotation;
     }
@@ -88,7 +126,12 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         Debug.Log("Second hand grab");
         secondInteractor = interactor;
         initialRotationOffset = Quaternion.Inverse(GetTwoHandRotation()) * selectingInteractor.attachTransform.rotation;
-        GetComponent<ScaleBasket>().grabbedWithBothHands = true;
+        secondGrabObject.GetComponent<XRTintInteractableVisual>().tintOnHover = false;
+        initialHandPosition1 = selectingInteractor.transform.position;
+        initialHandPosition2 = secondInteractor.transform.position;
+        initialObjectRotation = this.transform.rotation;
+        initialObjectScale = this.transform.localScale;
+        initialObjectDirection = this.transform.position - (initialHandPosition1 + initialHandPosition2) * 0.5f;
     }
 
     public void OnSecondHandRelease(XRBaseInteractor interactor)
@@ -97,10 +140,8 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         secondInteractor = null;
         if (firstGrabObject && secondGrabObject)
         {
-            secondGrabObject.GetComponent<XRTintInteractableVisual>().tintOnHover = false;
+            secondGrabObject.GetComponent<XRTintInteractableVisual>().tintOnHover = true;
         }
-        GetComponent<XRTintInteractableVisual>().tintOnHover = true;
-        GetComponent<ScaleBasket>().grabbedWithBothHands = false;
     }
 
     protected override void OnSelectEntered(XRBaseInteractor interactor)
@@ -130,7 +171,7 @@ public class TwoHandGrabInteractable : XRGrabInteractable
             secondGrabObject.GetComponent<XRTintInteractableVisual>().tintOnHover = false;
         }
         GetComponent<XRTintInteractableVisual>().tintOnHover = true;
-        GetComponent<ScaleBasket>().grabbedWithBothHands = false;
+        this.transform.localScale = initialObjectScale;
     }
 
     public override bool IsSelectableBy(XRBaseInteractor interactor)
