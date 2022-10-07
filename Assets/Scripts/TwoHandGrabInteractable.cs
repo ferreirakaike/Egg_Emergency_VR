@@ -6,6 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 // reference https://www.youtube.com/watch?v=Ie0-oKN3Lq0
 // need to modify current prefab to use
 
+
 public class TwoHandGrabInteractable : XRGrabInteractable
 {
     public bool scaleObject = true;
@@ -17,6 +18,11 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     private Quaternion initialObjectRotation;
     private Vector3 initialObjectScale;
     private Vector3 initialObjectDirection;
+    public bool snapToSecondHand = false;
+    public enum TwoHandRotationType { None, First, Second};
+    public TwoHandRotationType twoHandRotationType;
+    private Quaternion initialRotationOffset;
+    private Transform currentTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -51,17 +57,75 @@ public class TwoHandGrabInteractable : XRGrabInteractable
                 this.transform.localScale = newScale;
             }
         }
-        // this.transform.rotation = handRotation * initialObjectRotation;
+        this.transform.rotation = handRotation * initialObjectRotation;
         this.transform.position = (0.5f * (currentHandPosition1 + currentHandPosition2)) + (handRotation * (initialObjectDirection * percentage));
     }
 
     public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
     {
-        base.ProcessInteractable (updatePhase);
-        if (interactorsSelecting.Count == 2)
+        // if (interactorsSelecting.Count == 2)
+        // {
+        //     // updateTargetBoth();
+        //     base.ProcessInteractable (updatePhase);
+        // }
+        // else
+        // {
+        //     base.ProcessInteractable (updatePhase);
+        // }
+        // if(interactorsSelecting.Count == 2)
+        // {
+        //     // Compute rotation
+        //     if(snapToSecondHand)
+        //     {
+        //         interactorsSelecting[0].transform.rotation = GetTwoHandRotation();
+        //     }
+        //     else
+        //     {
+        //         interactorsSelecting[0].transform.rotation = GetTwoHandRotation() * initialRotationOffset;
+        //     }
+        //     updateTargetBoth();
+
+        // }
+        // base.ProcessInteractable(updatePhase);
+        // currentTransform = this.transform;
+        if (interactorsSelecting.Count == 1)
         {
-            updateTargetBoth();
+            base.ProcessInteractable(updatePhase);
         }
+        else if(interactorsSelecting.Count == 2 && updatePhase == XRInteractionUpdateOrder.UpdatePhase.Dynamic)
+        {
+            // Compute rotation
+            if(snapToSecondHand)
+            {
+                GetAttachTransform(interactorsSelecting[0]).rotation = GetTwoHandRotation();
+            }
+            else
+            {
+                GetAttachTransform(interactorsSelecting[0]).rotation = GetTwoHandRotation() * initialRotationOffset;
+            }
+            updateTargetBoth();
+
+        }
+        
+        currentTransform = this.transform;
+    }
+
+    private Quaternion GetTwoHandRotation()
+    {
+        Quaternion targetRotation;
+        if (twoHandRotationType == TwoHandRotationType.None)
+        {
+            targetRotation = Quaternion.LookRotation(GetAttachTransform(interactorsSelecting[1]).position - GetAttachTransform(interactorsSelecting[0]).position);
+        }
+        else if (twoHandRotationType == TwoHandRotationType.First)
+        {
+            targetRotation = Quaternion.LookRotation(GetAttachTransform(interactorsSelecting[1]).position - GetAttachTransform(interactorsSelecting[0]).position, GetAttachTransform(interactorsSelecting[0]).up);
+        }
+        else
+        {
+            targetRotation = Quaternion.LookRotation(GetAttachTransform(interactorsSelecting[1]).position - GetAttachTransform(interactorsSelecting[0]).position, GetAttachTransform(interactorsSelecting[1]).up);
+        }
+        return targetRotation;
     }
 
     protected override void Awake() 
@@ -85,10 +149,11 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         {
             Debug.Log("Second hand grab");
             // GetComponent<XRTintInteractableVisual>().enabled = false;
+            initialRotationOffset = Quaternion.Inverse(GetTwoHandRotation()) * GetAttachTransform(interactorsSelecting[0]).rotation;
             initialHandPosition1 = interactorsSelecting[0].transform.position;
             initialHandPosition2 = interactorsSelecting[1].transform.position;
             // set x axis to point toward first hand
-            this.transform.right = interactorsSelecting[0].transform.right;
+            // this.transform.right = interactorsSelecting[0].transform.right;
             initialObjectRotation = this.transform.rotation;
             initialObjectScale = this.transform.localScale;
             initialObjectDirection = this.transform.position - (initialHandPosition1 + initialHandPosition2) * 0.5f;
@@ -110,7 +175,10 @@ public class TwoHandGrabInteractable : XRGrabInteractable
             // GetComponent<XRTintInteractableVisual>().enabled = true;
             // GetComponent<XRTintInteractableVisual>().tintColor = Color.yellow;
             this.transform.localScale = new Vector3(25,25,25);
+            this.GetComponent<Rigidbody>().isKinematic = false;
         }
+        this.transform.position = currentTransform.position;
+        this.transform.rotation = currentTransform.rotation;
     }
 
 }
