@@ -5,12 +5,13 @@ using UnityEngine;
 public class CollectableSpawner : MonoBehaviour
 {
     public GameObject collectable;
+    public GameObject objectToLookAt;
     private float _timer = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        this.gameObject.transform.LookAt(objectToLookAt.transform);
     }
 
     // Update is called once per frame
