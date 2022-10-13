@@ -136,7 +136,7 @@ public class TwoHandGrabInteractable : XRGrabInteractable
 
     protected override void OnSelectEntered(SelectEnterEventArgs args)
     {
-        args.interactorObject.transform.GetChild(0).gameObject.SetActive(false);
+        // args.interactorObject.transform.GetChild(0).gameObject.SetActive(false);
         base.OnSelectEntered(args);
         if (interactorsSelecting.Count == 1)
         {
@@ -162,7 +162,7 @@ public class TwoHandGrabInteractable : XRGrabInteractable
 
     protected override void OnSelectExited(SelectExitEventArgs args)
     {
-        args.interactorObject.transform.GetChild(0).gameObject.SetActive(true);
+        // args.interactorObject.transform.GetChild(0).gameObject.SetActive(true);
         base.OnSelectExited(args);
         if (interactorsSelecting.Count == 1)
         {
