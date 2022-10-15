@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using Unity.XR.CoreUtils;
 
 namespace UnityEngine.XR.Interaction.Toolkit
 {
@@ -28,11 +29,11 @@ namespace UnityEngine.XR.Interaction.Toolkit
     [AddComponentMenu("XRST/Locomotion/WalkingProvider")]
     public class WalkingProvider : LocomotionProvider
     {
-        // The XRRig that represents the user's rig.
+        // The XROrigin that represents the user's rig.
         [SerializeField]
-        [Tooltip("The XRRig that represents the user's rig.")]
-        XRRig m_Rig;
-        public XRRig Rig { get { return m_Rig; } set { m_Rig = value; } }
+        [Tooltip("The XROrigin that represents the user's rig.")]
+        XROrigin m_Rig;
+        public XROrigin Rig { get { return m_Rig; } set { m_Rig = value; } }
 
         // The Camera that represents the main camera or user's head.
         [SerializeField]
@@ -70,11 +71,11 @@ namespace UnityEngine.XR.Interaction.Toolkit
             }
 
             // Attempt to fetch the rig.
-            Rig = FindObjectOfType<XRRig>();
+            Rig = FindObjectOfType<XROrigin>();
             // Did not find a rig.
             if (Rig == null)
             {
-                Debug.LogWarning("[" + gameObject.name + "][WalkingProvider]: Did not find an XRRig in the scene.");
+                Debug.LogWarning("[" + gameObject.name + "][WalkingProvider]: Did not find an XROrigin in the scene.");
             }
 
             // Attempt to fetch the Camera.
