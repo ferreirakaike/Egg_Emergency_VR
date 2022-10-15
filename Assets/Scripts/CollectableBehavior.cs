@@ -6,11 +6,13 @@ public class CollectableBehavior : MonoBehaviour
 {
     public GameObject AudioManagerGameObject;
     private AudioManager _audioManager;
+	private GameplayManager _gameplayManager;
 
     // Start is called before the first frame update
     void Start()
     {
         _audioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
+		_gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
     }
 
     // Update is called once per frame
@@ -18,19 +20,18 @@ public class CollectableBehavior : MonoBehaviour
     {
         //this.gameObject.transform.LookAt(player.transform);
         this.gameObject.transform.position += transform.forward * 3.0f * Time.deltaTime;
-    }
+	}
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Collided with: " + other.gameObject.name);
 
-        if (other.gameObject.tag.Equals("Basket"))
+        if (other.gameObject.tag.Equals("InnerBasket"))
         {
             _audioManager.PlayCollectSound();
-            
-            // TODO: ADD POINTS -kferreira
+			_gameplayManager.IncreaseScore();
         }
-        else if (other.gameObject.tag.Equals("InvisibleWall"))
+        else
         {
             _audioManager.PlayMissedSound();
         }
