@@ -14,8 +14,14 @@ public enum Difficulty {
 
 public class MainMenu : MonoBehaviour {
 	public static Difficulty difficulty = Difficulty.Easy;
+	private MainMenuAudioManager audioManager;
+	
+	void Start() {
+		audioManager = GameObject.Find("SoundManager").GetComponent<MainMenuAudioManager>();
+	}
 	
 	public void StartGame() {
+		audioManager.PlayButtonClickSound();
 		SceneManager.LoadScene("SampleScene");
 	}
 	
