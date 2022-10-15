@@ -22,14 +22,16 @@ public class MainMenu : MonoBehaviour {
 	
 	public void StartGame() {
 		audioManager.PlayButtonClickSound();
-		SceneManager.LoadScene("SampleScene");
+		SceneManager.LoadScene("KaiScene");
 	}
 	
 	public void SelectDifficulty(TMP_Dropdown dropdown) {
+		audioManager.PlayButtonClickSound();
 		MainMenu.difficulty = (Difficulty)dropdown.value;
 	}
 	
 	public void Exit() {
+		audioManager.PlayButtonClickSound();
 		Application.Quit();
 	}
 }
