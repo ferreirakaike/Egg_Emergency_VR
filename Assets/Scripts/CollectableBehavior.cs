@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class CollectableBehavior : MonoBehaviour
 {
-    public GameObject AudioManagerGameObject;
+    //public GameObject GreenParticleGameObject;
+    private GameObject _basket;
+    private GameObject _redLight;
+    private GameObject _greenLight;
+
     private AudioManager _audioManager;
 	private GameplayManager _gameplayManager;
 
@@ -13,6 +17,9 @@ public class CollectableBehavior : MonoBehaviour
     {
         _audioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
 		_gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
+        _basket = GameObject.Find("Basket");
+        _redLight = _basket.transform.GetChild(2).gameObject;
+        _greenLight = _basket.transform.GetChild(3).gameObject;
     }
 
     // Update is called once per frame
@@ -30,10 +37,16 @@ public class CollectableBehavior : MonoBehaviour
         {
             _audioManager.PlayCollectSound();
 			_gameplayManager.IncreaseScore();
+            _greenLight.SetActive(true);
+        }
+        else if (other.gameObject.tag.Equals("Basket"))
+        {
+
         }
         else
         {
             _audioManager.PlayMissedSound();
+            _redLight.SetActive(true);
         }
 
         Destroy(this.gameObject);
