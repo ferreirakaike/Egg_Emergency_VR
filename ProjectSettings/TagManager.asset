@@ -7,6 +7,8 @@ TagManager:
   - Basket
   - InvisibleWall
   - InnerBasket
+  - Collectable
+  - Deterrent
   layers:
   - Default
   - TransparentFX

@@ -26,4 +26,10 @@ public class GameplayManager : MonoBehaviour
 		score += 1;
 		scoreText.text = $"{score}";
 	}
+
+  public void DecreaseScore()
+	{
+		score -= 1;
+		scoreText.text = $"{score}";
+	}
 }

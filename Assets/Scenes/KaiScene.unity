@@ -10854,6 +10854,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2167094606767584498, guid: 5a7363ffdfffc9d4f912b9c7429d2863,
+        type: 3}
+      propertyPath: m_TagString
+      value: Deterrent
+      objectReference: {fileID: 0}
     - target: {fileID: 4251629507006354020, guid: 5a7363ffdfffc9d4f912b9c7429d2863,
         type: 3}
       propertyPath: m_RootOrder
@@ -10962,6 +10967,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5396352840428172883, guid: 2a620d24d09c25642a644c129b5cc70d,
+        type: 3}
+      propertyPath: m_TagString
+      value: Collectable
       objectReference: {fileID: 0}
     - target: {fileID: 5396352840428172886, guid: 2a620d24d09c25642a644c129b5cc70d,
         type: 3}

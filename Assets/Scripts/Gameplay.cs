@@ -30,9 +30,11 @@ public class Gameplay : MonoBehaviour
         int deterrentRoll = Random.Range(0, 100);
         if (deterrentRoll < (int)deterrentChance) {
             a = Instantiate(deterrentPrefab) as GameObject;
+            a.tag = "Deterrent";
         }
         else {
             a = Instantiate(collectablePrefab) as GameObject;
+            a.tag = "Collectable";
         }
 
 

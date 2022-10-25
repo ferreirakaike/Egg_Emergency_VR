@@ -25,11 +25,15 @@ public class CollectableBehavior : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Collided with: " + other.gameObject.name);
-
-        if (other.gameObject.tag.Equals("InnerBasket"))
+        if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
         {
             _audioManager.PlayCollectSound();
 			_gameplayManager.IncreaseScore();
+        }
+        else if(other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
+        {
+            _audioManager.PlayMissedSound();
+            _gameplayManager.DecreaseScore();
         }
         else
         {
