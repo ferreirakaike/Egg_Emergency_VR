@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: e80663e6036676642addc97f33f2664b
+=======
+guid: f9dab06d8c1cd294dbf2a8024de50ed9
+>>>>>>> jacobBranch
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

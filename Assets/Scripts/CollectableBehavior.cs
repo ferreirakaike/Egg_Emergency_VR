@@ -19,7 +19,7 @@ public class CollectableBehavior : MonoBehaviour
     void FixedUpdate()
     {
         //this.gameObject.transform.LookAt(player.transform);
-        this.gameObject.transform.position += transform.forward * 3.0f * Time.deltaTime;
+        //this.gameObject.transform.position += transform.forward * 3.0f * Time.deltaTime;
 	}
 
     private void OnTriggerEnter(Collider other)
