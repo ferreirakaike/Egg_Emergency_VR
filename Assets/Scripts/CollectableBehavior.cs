@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Change scorekeeping multiplier
+// Record video
+// Weekly report
+
 public class CollectableBehavior : MonoBehaviour
 {
     //public GameObject GreenParticleGameObject;
