@@ -9,9 +9,12 @@ public class GameplayManager : MonoBehaviour
 	public TextMeshProUGUI scoreText;
 	public int score = 0;
 	
+	private TwoHandGrabInteractable basket;
+	
     // Start is called before the first frame update
     void Start()
     {
+		basket = GameObject.Find("/Basket").GetComponent<TwoHandGrabInteractable>();
 		scoreText.text = $"{score}";
     }
 
@@ -23,7 +26,9 @@ public class GameplayManager : MonoBehaviour
 	
 	public void IncreaseScore()
 	{
-		score += 1;
+		float percentage = basket.transform.localScale.x / basket.maxScale;
+		int scoreIncrease = (int)(1f + (5f * (1f - percentage)));
+		score += scoreIncrease;
 		scoreText.text = $"{score}";
 	}
 
