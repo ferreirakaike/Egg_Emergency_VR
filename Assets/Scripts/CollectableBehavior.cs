@@ -26,14 +26,13 @@ public class CollectableBehavior : MonoBehaviour
     void FixedUpdate()
     {
         //this.gameObject.transform.LookAt(player.transform);
-        this.gameObject.transform.position += transform.forward * 3.0f * Time.deltaTime;
+        //this.gameObject.transform.position += transform.forward * 3.0f * Time.deltaTime;
 	}
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Collided with: " + other.gameObject.name);
-
-        if (other.gameObject.tag.Equals("InnerBasket"))
+        if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
         {
             _audioManager.PlayCollectSound();
 			_gameplayManager.IncreaseScore();
@@ -42,6 +41,11 @@ public class CollectableBehavior : MonoBehaviour
         else if (other.gameObject.tag.Equals("Basket"))
         {
 
+        }
+        else if(other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
+        {
+            _audioManager.PlayMissedSound();
+            _gameplayManager.DecreaseScore();
         }
         else
         {
