@@ -25,7 +25,10 @@ public class Gameplay : MonoBehaviour
     }
 
     private void spawnCollectable() {
-
+		if (GameplayManager.gameIsOver) {
+			return;
+		}
+		
         float deterrentChance = 15.0f;
         int deterrentRoll = Random.Range(0, 100);
         if (deterrentRoll < (int)deterrentChance) {

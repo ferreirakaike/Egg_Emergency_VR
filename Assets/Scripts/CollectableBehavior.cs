@@ -42,10 +42,10 @@ public class CollectableBehavior : MonoBehaviour
 			_gameplayManager.IncreaseScore();
             _greenLight.SetActive(true);
         }
-        else if (other.gameObject.tag.Equals("Basket"))
+        /*else if (other.gameObject.tag.Equals("Basket"))
         {
 
-        }
+        }*/
         else if(other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
         {
             _audioManager.PlayMissedSound();
@@ -55,6 +55,7 @@ public class CollectableBehavior : MonoBehaviour
         {
             _audioManager.PlayMissedSound();
             _redLight.SetActive(true);
+			_gameplayManager.DecreaseScore();
         }
 
         Destroy(this.gameObject);

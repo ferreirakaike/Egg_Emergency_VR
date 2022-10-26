@@ -6,33 +6,29 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.UI;
 using TMPro;
 
-public enum Difficulty {
-	Easy = 0,
-	Medium = 1,
-	Hard = 2
-}
 
-public class MainMenu : MonoBehaviour {
-	public static Difficulty difficulty = Difficulty.Easy;
+public class GameOver : MonoBehaviour {
 	private MainMenuAudioManager audioManager;
+	
 	public GameObject uiCanvas;
 	public GameObject gameLabel;
-	public GameObject startButton;
-	public GameObject exitButton;
-	public GameObject difficultySelection;
+	public GameObject finalScoreLabel;
+	public TextMeshProUGUI scoreText;
+	public GameObject mainMenuButton;
 	
-	private bool moveCanvasToStart = false;
+	public static bool moveCanvasToStart = false;
 	private bool animateButtonsToStart = false;
 	private bool fadeButtonIn = false;
 	
 	void Start() {
-		audioManager = GameObject.Find("SoundManager").GetComponent<MainMenuAudioManager>();
+		audioManager = GameObject.Find("UISoundManager").GetComponent<MainMenuAudioManager>();
 		uiCanvas.transform.position = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, 0.07f);
-		moveCanvasToStart = true;
+		uiCanvas.transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);
 	}
 	
 	void Update() {
-		if (moveCanvasToStart) {
+		if (GameOver.moveCanvasToStart) {
+			uiCanvas.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
 			float finalZPosition = -9.0f;
 			Vector3 newCanvasPosition = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, finalZPosition);
 			uiCanvas.transform.position = Vector3.MoveTowards(uiCanvas.transform.position, newCanvasPosition, 10.0f * Time.deltaTime);
@@ -45,38 +41,28 @@ public class MainMenu : MonoBehaviour {
 			Vector3 newGameLabelPosition = new Vector3(gameLabel.transform.localPosition.x, finalYPosition, gameLabel.transform.localPosition.z);
 			gameLabel.transform.localPosition = Vector3.MoveTowards(gameLabel.transform.localPosition, newGameLabelPosition, 10.0f * Time.deltaTime);
 			if (gameLabel.transform.localPosition.y >= finalYPosition) {
-				startButton.SetActive(true);
-				exitButton.SetActive(true);
-				difficultySelection.SetActive(true);
+				mainMenuButton.SetActive(true);
+				scoreText.text = $"Final Score: {GameplayManager.score}";
+				finalScoreLabel.SetActive(true);
 				
-				Color startColor = startButton.GetComponent<Image>().material.color;
+				Color startColor = mainMenuButton.GetComponent<Image>().material.color;
 				startColor.a = 0.0f;
-				startButton.GetComponent<Image>().material.color = startColor;
+				mainMenuButton.GetComponent<Image>().material.color = startColor;
 				animateButtonsToStart = false;
 				fadeButtonIn = true;
 			}
 		} else if (fadeButtonIn) {
-			Color finalColor = startButton.GetComponent<Image>().material.color;
+			Color finalColor = mainMenuButton.GetComponent<Image>().material.color;
 			finalColor.a += 5.0f * Time.deltaTime;
-			startButton.GetComponent<Image>().material.color = finalColor;
+			mainMenuButton.GetComponent<Image>().material.color = finalColor;
 			if (finalColor.a >= 1.0f) {
 				fadeButtonIn = false;
 			}
 		}
 	}
 	
-	public void StartGame() {
+	public void OpenMainMenu() {
 		audioManager.PlayButtonClickSound();
-		SceneManager.LoadScene("KaiScene");
-	}
-	
-	public void SelectDifficulty(TMP_Dropdown dropdown) {
-		audioManager.PlayButtonClickSound();
-		MainMenu.difficulty = (Difficulty)dropdown.value;
-	}
-	
-	public void Exit() {
-		audioManager.PlayButtonClickSound();
-		Application.Quit();
+		SceneManager.LoadScene("MainMenu");
 	}
 }
