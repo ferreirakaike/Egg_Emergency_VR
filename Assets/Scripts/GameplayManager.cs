@@ -7,8 +7,9 @@ using TMPro;
 public class GameplayManager : MonoBehaviour
 {
 	public TextMeshProUGUI scoreText;
-	public int score = 0;
+	public static int score = 0;
 	public int health = 0;
+	public static bool gameIsOver = false;
 	
 	public GameObject heart1;
 	public GameObject heart2;
@@ -16,6 +17,12 @@ public class GameplayManager : MonoBehaviour
 	public GameObject heart4;
 	public GameObject heart5;
 	public GameObject minusSign;
+	
+	public GameObject scoreCanvas;
+	public GameObject allHearts;
+	
+	public GameObject graveUpright;
+	public GameObject graveDown;
 	
 	private TwoHandGrabInteractable basket;
 	
@@ -52,14 +59,20 @@ public class GameplayManager : MonoBehaviour
 	
 	public void IncreaseScore()
 	{
+		 if (GameplayManager.gameIsOver) {
+			 return;
+		 }
 		float percentage = basket.transform.localScale.x / basket.maxScale;
 		int scoreIncrease = (int)(1f + (5f * (1f - percentage)));
-		score += scoreIncrease;
-		scoreText.text = $"{score}";
+		GameplayManager.score += scoreIncrease;
+		scoreText.text = $"{GameplayManager.score}";
 	}
 
  	 public void DecreaseScore()
 	 {
+		 if (GameplayManager.gameIsOver) {
+			 return;
+		 }
 		 Instantiate(minusSign, new Vector3(0.03999999f, 0.45f, -8.3f), Quaternion.identity);
 		 switch(MainMenu.difficulty) {
 			case Difficulty.Easy:
@@ -98,6 +111,11 @@ public class GameplayManager : MonoBehaviour
 	
 	public void gameOver()
 	{
-		
+		scoreCanvas.SetActive(false);
+		allHearts.SetActive(false);
+		GameOver.moveCanvasToStart = true;
+		GameplayManager.gameIsOver = true;
+		graveUpright.SetActive(false);
+		graveDown.SetActive(true);
 	}
 }
