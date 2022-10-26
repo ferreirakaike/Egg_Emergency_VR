@@ -79,32 +79,4 @@ public class MainMenu : MonoBehaviour {
 		audioManager.PlayButtonClickSound();
 		Application.Quit();
 	}
-	
-	private IEnumerator Lerp_MeshRenderer_Color(MeshRenderer target_MeshRender, float 
-	 lerpDuration, Color startLerp, Color targetLerp)
-	 {
-	     float lerpStart_Time = Time.time;
-	     float lerpProgress;
-	     bool lerping = true;
-	     while (lerping)
-	     {
-	         yield return new WaitForEndOfFrame();
-	         lerpProgress = Time.time - lerpStart_Time;
-	         if (target_MeshRender != null)
-	         {
-	             target_MeshRender.material.color = Color.Lerp(startLerp, targetLerp, lerpProgress / lerpDuration);
-	         }
-	         else
-	         {
-	             lerping = false;
-	         }
-         
-         
-	         if (lerpProgress >= lerpDuration)
-	         {
-	             lerping = false;
-	         }
-	     }
-	     yield break;
-	 }
 }
