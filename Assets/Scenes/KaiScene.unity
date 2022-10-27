@@ -211,6 +211,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreText: {fileID: 1405601108}
   health: 0
+  rayInteractors:
+  - {fileID: 1545136967}
+  - {fileID: 1472780582}
   heart1: {fileID: 1908307234}
   heart2: {fileID: 421248220}
   heart3: {fileID: 766381951}
@@ -8918,6 +8921,12 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1472780582 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1472780582, guid: ddf74cd71bed4d646b7fc08f090a13a4,
+    type: 3}
+  m_PrefabInstance: {fileID: 5446019799138156333}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1478259929 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 124342, guid: 9128fac7ecb9c4b4085275bbf85879ee,
@@ -9192,6 +9201,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1545136967 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1545136967, guid: ddf74cd71bed4d646b7fc08f090a13a4,
+    type: 3}
+  m_PrefabInstance: {fileID: 5446019799138156333}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1553331627 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 195984, guid: 9128fac7ecb9c4b4085275bbf85879ee,
@@ -12684,6 +12699,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1472780587, guid: ddf74cd71bed4d646b7fc08f090a13a4, type: 3}
+      propertyPath: m_InteractionManager
+      value: 
+      objectReference: {fileID: 1709570390}
+    - target: {fileID: 1545136972, guid: ddf74cd71bed4d646b7fc08f090a13a4, type: 3}
+      propertyPath: m_InteractionManager
+      value: 
+      objectReference: {fileID: 1709570390}
     - target: {fileID: 1955554191877771536, guid: ddf74cd71bed4d646b7fc08f090a13a4,
         type: 3}
       propertyPath: m_Name
