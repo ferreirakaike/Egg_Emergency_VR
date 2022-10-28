@@ -111,7 +111,7 @@ Transform:
   m_GameObject: {fileID: 2833432266966129592}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.9064685, y: 2.87, z: -1.97}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2833432266697989873}
@@ -130,10 +130,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef465964e8b4903468d588fcdddfe5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GreenParticleGameObject: {fileID: 4027841178793022811, guid: 6649fa195ba2c4941ba1d318def10212,
-    type: 3}
-  RedParticleGameObject: {fileID: 125279880826861686, guid: 4f463263e0ad30349ba543fe2771f781,
-    type: 3}
+  _basket: {fileID: 0}
+  _rim: {fileID: 0}
+  successBasketMaterial: {fileID: 2100000, guid: 3612949b605218340ac8bf3b97c95df8,
+    type: 2}
+  failureBasketMaterial: {fileID: 2100000, guid: 0e9f349b877765041b20c5c69e614c59,
+    type: 2}
+  successRimMaterial: {fileID: 2100000, guid: 07b84c2d304b2f043b0e198793ac1523, type: 2}
+  failureRimMaterial: {fileID: 2100000, guid: 1aa08753ebb0d94408a1eb671f312d46, type: 2}
+  timeBeforeResetMaterial: 0.5
 --- !u!135 &2833432266966129595
 SphereCollider:
   m_ObjectHideFlags: 0

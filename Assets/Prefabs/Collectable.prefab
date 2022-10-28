@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3866792905106115289}
   m_Layer: 0
   m_Name: Collectable
-  m_TagString: Untagged
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -113,8 +113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pathCreator: {fileID: 0}
-  endOfPathInstruction: 0
-  speed: 5
+  endOfPathInstruction: 2
+  speed: 20
 --- !u!114 &3866792905106115289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,7 +127,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef465964e8b4903468d588fcdddfe5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioManagerGameObject: {fileID: 0}
+  _basket: {fileID: 0}
+  _rim: {fileID: 0}
+  successBasketMaterial: {fileID: 2100000, guid: 3612949b605218340ac8bf3b97c95df8,
+    type: 2}
+  failureBasketMaterial: {fileID: 2100000, guid: 0e9f349b877765041b20c5c69e614c59,
+    type: 2}
+  successRimMaterial: {fileID: 2100000, guid: 07b84c2d304b2f043b0e198793ac1523, type: 2}
+  failureRimMaterial: {fileID: 2100000, guid: 1aa08753ebb0d94408a1eb671f312d46, type: 2}
+  timeBeforeResetMaterial: 0.5
 --- !u!1001 &4573110840706499100
 PrefabInstance:
   m_ObjectHideFlags: 0

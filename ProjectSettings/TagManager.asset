@@ -7,6 +7,8 @@ TagManager:
   - Basket
   - InvisibleWall
   - InnerBasket
+  - Deterrent
+  - Collectable
   layers:
   - Default
   - TransparentFX
@@ -20,7 +22,7 @@ TagManager:
   - Interactables
   - Plane
   - Second Hand Grab
-  - 
+  - No Interactions
   - 
   - 
   - 

@@ -9,28 +9,48 @@ using UnityEngine;
 public class CollectableBehavior : MonoBehaviour
 {
     //public GameObject GreenParticleGameObject;
-    private GameObject _basket;
+    private MeshRenderer _basket;
+    private MeshRenderer _rim;
     private GameObject _redLight;
     private GameObject _greenLight;
 
     private AudioManager _audioManager;
 	private GameplayManager _gameplayManager;
+    private Material defaultBasketMaterial;
+    private Material defaultRimMaterial;
+    public Material successBasketMaterial;
+    public Material failureBasketMaterial;
+    public Material successRimMaterial;
+    public Material failureRimMaterial;
+    public float timeBeforeResetMaterial = 0.5f;
+    private static float timePassed = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         _audioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
 		_gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
-        _basket = GameObject.Find("Basket");
-        _redLight = _basket.transform.GetChild(2).gameObject;
-        _greenLight = _basket.transform.GetChild(3).gameObject;
+        if (!_basket)
+        {
+            _basket = GameObject.Find("Basket").transform.GetChild(0).GetComponent<MeshRenderer>();
+            _rim = GameObject.Find("Cylinder.001").GetComponent<MeshRenderer>();
+        }
+        defaultBasketMaterial = _basket.material;
+        defaultRimMaterial = _rim.material;
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        //this.gameObject.transform.LookAt(player.transform);
-        //this.gameObject.transform.position += transform.forward * 3.0f * Time.deltaTime;
+        if (_basket.material != defaultBasketMaterial)
+        {
+            timePassed += Time.deltaTime;
+            if (timePassed > timeBeforeResetMaterial)
+            {
+                _basket.material = defaultBasketMaterial;
+                _rim.material = defaultRimMaterial;
+            }
+        }
 	}
 
     private void OnTriggerEnter(Collider other)
@@ -39,23 +59,34 @@ public class CollectableBehavior : MonoBehaviour
         if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
         {
             _audioManager.PlayCollectSound();
-			_gameplayManager.IncreaseScore();
-            _greenLight.SetActive(true);
+            _gameplayManager.IncreaseScore();
+            // _greenLight.SetActive(true);
+            _basket.material = successBasketMaterial;
+            _rim.material = successRimMaterial;
+            timePassed = 0;
         }
         /*else if (other.gameObject.tag.Equals("Basket"))
         {
 
         }*/
-        else if(other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
+        else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
         {
+            _basket.material = defaultBasketMaterial;
+            _rim.material = defaultRimMaterial;
             _audioManager.PlayMissedSound();
             _gameplayManager.DecreaseScore();
         }
         else
         {
-            _audioManager.PlayMissedSound();
-            _redLight.SetActive(true);
-			_gameplayManager.DecreaseScore();
+            if (gameObject.tag.Equals("Collectable"))
+            {
+                _audioManager.PlayMissedSound();
+                // _redLight.SetActive(true);
+                _gameplayManager.DecreaseScore();
+                _basket.material = failureBasketMaterial;
+                _rim.material = failureRimMaterial;
+                timePassed = 0;
+            }
         }
 
         Destroy(this.gameObject);

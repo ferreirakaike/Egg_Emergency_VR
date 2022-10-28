@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class GameplayManager : MonoBehaviour
 	public static int score = 0;
 	public int health = 0;
 	public static bool gameIsOver = false;
+	public List<GameObject> rayInteractors;
 	
 	public GameObject heart1;
 	public GameObject heart2;
@@ -29,26 +31,30 @@ public class GameplayManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		basket = GameObject.Find("/Basket").GetComponent<TwoHandGrabInteractable>();
-		scoreText.text = $"{score}";
-		
-		switch(MainMenu.difficulty) {
-			case Difficulty.Easy:
-				health = 5;
-				break;
-			case Difficulty.Medium:
-				heart1.SetActive(false);
-				heart5.SetActive(false);
-				health = 3;
-				break;
-			case Difficulty.Hard:
-				heart1.SetActive(false);
-				heart2.SetActive(false);
-				heart4.SetActive(false);
-				heart5.SetActive(false);
-				health = 1;
-				break;
-		}
+			basket = GameObject.Find("/Basket").GetComponent<TwoHandGrabInteractable>();
+			scoreText.text = $"{score}";
+			
+			switch(MainMenu.difficulty) {
+				case Difficulty.Easy:
+					health = 5;
+					break;
+				case Difficulty.Medium:
+					heart1.SetActive(false);
+					heart5.SetActive(false);
+					health = 3;
+					break;
+				case Difficulty.Hard:
+					heart1.SetActive(false);
+					heart2.SetActive(false);
+					heart4.SetActive(false);
+					heart5.SetActive(false);
+					health = 1;
+					break;
+			}
+			foreach(var rayInteractor in rayInteractors)
+			{
+				rayInteractor.SetActive(false);
+			}
     }
 
     // Update is called once per frame
@@ -117,5 +123,13 @@ public class GameplayManager : MonoBehaviour
 		GameplayManager.gameIsOver = true;
 		graveUpright.SetActive(false);
 		graveDown.SetActive(true);
+
+		foreach(var rayInteractor in rayInteractors)
+		{
+			rayInteractor.SetActive(true);
+			rayInteractor.GetComponentInParent<XRDirectInteractor>().enabled = false;
+			// disbale hand prefab
+			rayInteractor.transform.parent.GetChild(0).gameObject.SetActive(false);
+		}
 	}
 }
