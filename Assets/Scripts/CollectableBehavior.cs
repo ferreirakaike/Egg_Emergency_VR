@@ -59,7 +59,7 @@ public class CollectableBehavior : MonoBehaviour
         if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
         {
             _audioManager.PlayCollectSound();
-			_gameplayManager.IncreaseScore();
+            _gameplayManager.IncreaseScore();
             // _greenLight.SetActive(true);
             _basket.material = successBasketMaterial;
             _rim.material = successRimMaterial;
@@ -69,7 +69,7 @@ public class CollectableBehavior : MonoBehaviour
         {
 
         }*/
-        else if(other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
+        else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
         {
             _basket.material = defaultBasketMaterial;
             _rim.material = defaultRimMaterial;
@@ -78,12 +78,15 @@ public class CollectableBehavior : MonoBehaviour
         }
         else
         {
-            _audioManager.PlayMissedSound();
-            // _redLight.SetActive(true);
-			_gameplayManager.DecreaseScore();
-            _basket.material = failureBasketMaterial;
-            _rim.material = failureRimMaterial;
-            timePassed = 0;
+            if (gameObject.tag.Equals("Collectable"))
+            {
+                _audioManager.PlayMissedSound();
+                // _redLight.SetActive(true);
+                _gameplayManager.DecreaseScore();
+                _basket.material = failureBasketMaterial;
+                _rim.material = failureRimMaterial;
+                timePassed = 0;
+            }
         }
 
         Destroy(this.gameObject);
