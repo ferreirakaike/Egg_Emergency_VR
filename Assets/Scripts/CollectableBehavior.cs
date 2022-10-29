@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 // Change scorekeeping multiplier
 // Record video
@@ -9,10 +10,9 @@ using UnityEngine;
 public class CollectableBehavior : MonoBehaviour
 {
     //public GameObject GreenParticleGameObject;
-    private MeshRenderer _basket;
-    private MeshRenderer _rim;
-    private GameObject _redLight;
-    private GameObject _greenLight;
+    private MeshRenderer _basket = null;
+    private MeshRenderer _rim = null;
+    private NetworkVariablesAndReferences networkVar;
 
     private AudioManager _audioManager;
 	private GameplayManager _gameplayManager;
@@ -28,29 +28,47 @@ public class CollectableBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
         _audioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
 		_gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
-        if (!_basket)
+
+        // view id might now be available at this time
+        if (networkVar.basketIDs[0] != -1)
         {
-            _basket = GameObject.Find("Basket").transform.GetChild(0).GetComponent<MeshRenderer>();
-            _rim = GameObject.Find("Cylinder.001").GetComponent<MeshRenderer>();
+            _basket = PhotonView.Find(networkVar.basketIDs[0]).transform.GetChild(0).GetComponent<MeshRenderer>();
+            _rim = _basket.transform.GetChild(0).GetComponent<MeshRenderer>();
+            defaultBasketMaterial = _basket.material;
+            defaultRimMaterial = _rim.material;
         }
-        defaultBasketMaterial = _basket.material;
-        defaultRimMaterial = _rim.material;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_basket.material != defaultBasketMaterial)
+        if (_basket)
         {
-            timePassed += Time.deltaTime;
-            if (timePassed > timeBeforeResetMaterial)
+            if (_basket.material != defaultBasketMaterial)
             {
-                _basket.material = defaultBasketMaterial;
-                _rim.material = defaultRimMaterial;
+                timePassed += Time.deltaTime;
+                if (timePassed > timeBeforeResetMaterial)
+                {
+                    _basket.material = defaultBasketMaterial;
+                    _rim.material = defaultRimMaterial;
+                }
             }
         }
+        else
+        {
+            // view id might now be available at this time
+            if (networkVar.basketIDs[0] != -1)
+            {
+                _basket = PhotonView.Find(networkVar.basketIDs[0]).transform.GetChild(0).GetComponent<MeshRenderer>();
+                _rim = _basket.transform.GetChild(0).GetComponent<MeshRenderer>();
+                defaultBasketMaterial = _basket.material;
+                defaultRimMaterial = _rim.material;
+            }
+        }
+        
 	}
 
     private void OnTriggerEnter(Collider other)

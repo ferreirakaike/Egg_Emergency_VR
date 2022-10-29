@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.XR.Interaction.Toolkit;
+using Photon.Pun;
 
-public class GameplayManager : MonoBehaviour
+public class GameplayManager : MonoBehaviourPunCallbacks
 {
 	public TextMeshProUGUI scoreText;
 	public static int score = 0;
@@ -27,11 +28,13 @@ public class GameplayManager : MonoBehaviour
 	public GameObject graveDown;
 	
 	private TwoHandGrabInteractable basket;
+	private NetworkVariablesAndReferences networkVar;
 	
     // Start is called before the first frame update
     void Start()
     {
-			basket = GameObject.Find("/Basket").GetComponent<TwoHandGrabInteractable>();
+			networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
+			basket = PhotonView.Find(networkVar.basketIDs[0]).GetComponent<TwoHandGrabInteractable>();
 			scoreText.text = $"{score}";
 			
 			switch(MainMenu.difficulty) {

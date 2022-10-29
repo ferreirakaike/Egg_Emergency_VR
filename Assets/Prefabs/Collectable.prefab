@@ -127,8 +127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef465964e8b4903468d588fcdddfe5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _basket: {fileID: 0}
-  _rim: {fileID: 0}
   successBasketMaterial: {fileID: 2100000, guid: 3612949b605218340ac8bf3b97c95df8,
     type: 2}
   failureBasketMaterial: {fileID: 2100000, guid: 0e9f349b877765041b20c5c69e614c59,
