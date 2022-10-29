@@ -45,10 +45,10 @@ public class NetworkPlayer : MonoBehaviour
         {
             MapPosition(leftHand, leftHandOrigin);
             MapPosition(rightHand, rightHandOrigin);
-            // leftHandAnimator.SetFloat("Grip", leftHandOriginAnimator.GetFloat("Grip"));
-            // rightHandAnimator.SetFloat("Grip", rightHandOriginAnimator.GetFloat("Grip"));
-            // leftHandAnimator.SetFloat("Trigger", leftHandOriginAnimator.GetFloat("Trigger"));
-            // rightHandAnimator.SetFloat("Trigger", rightHandOriginAnimator.GetFloat("Trigger"));
+            leftHandAnimator.SetFloat("Grip", leftHandOriginAnimator.GetFloat("Grip"));
+            rightHandAnimator.SetFloat("Grip", rightHandOriginAnimator.GetFloat("Grip"));
+            leftHandAnimator.SetFloat("Trigger", leftHandOriginAnimator.GetFloat("Trigger"));
+            rightHandAnimator.SetFloat("Trigger", rightHandOriginAnimator.GetFloat("Trigger"));
         }
     }
 
