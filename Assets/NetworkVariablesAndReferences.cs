@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks
+public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObservable
 {
     /// <summary>
     /// Keep reference of how many player have grabbed their basket. Start the game if the number
@@ -69,5 +69,40 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks
         gameplayManager.enabled = true;
         gameplay.enabled = true;
         shadowBasket1.SetActive(false);
+    }
+
+    /// <summary>
+    /// Send and receive data with the network via Photon View.
+    /// Put all variables that need to be synced regularly here.
+    /// Send and receive order must match
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="info"></param>
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(playerGrabbed);
+            stream.SendNext(playerIDs[0]);
+            stream.SendNext(playerIDs[1]);
+            stream.SendNext(basketIDs[0]);
+            stream.SendNext(basketIDs[1]);
+        }
+        else if (stream.IsReading)
+        {
+            IsChanged<int>((int)stream.ReceiveNext(), playerGrabbed);
+            IsChanged<int>((int)stream.ReceiveNext(), playerIDs[0]);
+            IsChanged<int>((int)stream.ReceiveNext(), playerIDs[1]);
+            IsChanged<int>((int)stream.ReceiveNext(), basketIDs[0]);
+            IsChanged<int>((int)stream.ReceiveNext(), basketIDs[1]);
+        }
+    }
+
+    private void IsChanged<T>(T newData, T oldData)
+    {
+        if (Comparer<T>.Default.Compare(newData, oldData) != 0)
+        {
+            oldData = newData;
+        }
     }
 }
