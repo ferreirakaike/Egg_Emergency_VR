@@ -19,19 +19,14 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
     }
     public override void OnJoinedRoom()
     {
-        Debug.Log("HERE");
         base.OnJoinedRoom();
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("HERE");
             spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", playerSpawnLocations[0].position, playerSpawnLocations[0].rotation);
             spawnedBasketPrefab =PhotonNetwork.Instantiate("Network Basket", basketSpawnLocations[0].position, basketSpawnLocations[0].rotation);
             spawnedBasketPrefab.transform.localScale = new Vector3(25,25,25);
-            Debug.Log(networkVar.basketIDs[0].ToString());
             networkVar.basketIDs[0] = spawnedBasketPrefab.GetPhotonView().ViewID;
-            Debug.Log(spawnedBasketPrefab.GetPhotonView().ViewID.ToString());
             networkVar.playerIDs[0] = spawnedPlayerPrefab.GetPhotonView().ViewID;
-            Debug.Log(networkVar.basketIDs[0].ToString());
         }
         else
         {

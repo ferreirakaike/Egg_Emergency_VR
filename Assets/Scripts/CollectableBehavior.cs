@@ -33,7 +33,7 @@ public class CollectableBehavior : MonoBehaviour
 		_gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
 
         // view id might now be available at this time
-        if (networkVar.basketIDs[0] != -1)
+        if (networkVar.basketIDs[0] > 0)
         {
             _basket = PhotonView.Find(networkVar.basketIDs[0]).transform.GetChild(0).GetComponent<MeshRenderer>();
             _rim = _basket.transform.GetChild(0).GetComponent<MeshRenderer>();
@@ -60,7 +60,7 @@ public class CollectableBehavior : MonoBehaviour
         else
         {
             // view id might now be available at this time
-            if (networkVar.basketIDs[0] != -1)
+            if (networkVar.basketIDs[0] > 0)
             {
                 _basket = PhotonView.Find(networkVar.basketIDs[0]).transform.GetChild(0).GetComponent<MeshRenderer>();
                 _rim = _basket.transform.GetChild(0).GetComponent<MeshRenderer>();
