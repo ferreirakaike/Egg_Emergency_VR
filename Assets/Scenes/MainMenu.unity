@@ -5627,6 +5627,8 @@ GameObject:
   - component: {fileID: 421877686}
   - component: {fileID: 421877690}
   - component: {fileID: 421877691}
+  - component: {fileID: 421877692}
+  - component: {fileID: 421877693}
   m_Layer: 5
   m_Name: UI Canvas
   m_TagString: Untagged
@@ -5756,6 +5758,45 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2147483647
   m_RaycastTriggerInteraction: 2
+--- !u!95 &421877692
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421877685}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f3666504a11f8ed49a4eb9ecc604a6be, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &421877693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421877685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93560c151be5f43aaa41c69fba615970, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RoomNameInput: {fileID: 0}
+  LobbyNameInput: {fileID: 0}
+  ExpectedUsersInput: {fileID: 0}
+  LobbyTypeInput: {fileID: 0}
+  OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!64 &427437662
 MeshCollider:
   m_ObjectHideFlags: 0

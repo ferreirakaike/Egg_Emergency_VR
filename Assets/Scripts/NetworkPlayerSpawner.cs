@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Unity.XR.CoreUtils;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
 {
@@ -61,5 +62,6 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
     {
         base.OnMasterClientSwitched(newMasterClient);
         PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene("OwnerLeftRoom");
     }
 }
