@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/KaiScene.unity
     guid: 535d2bd025b2d2c4da6af8319da670c3
+  - enabled: 1
+    path: Assets/Scenes/OwnerLeftRoom.unity
+    guid: a696b3aef0567114dadd0fec27377e55
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: a4663ede6ce2a89468e21aa1ccdb6a4e,
       type: 2}

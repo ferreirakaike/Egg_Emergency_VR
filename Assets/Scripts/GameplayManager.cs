@@ -29,41 +29,45 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	
 	private TwoHandGrabInteractable basket;
 	private NetworkVariablesAndReferences networkVar;
-	
-    // Start is called before the first frame update
-    void Start()
-    {
-			networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
-			basket = PhotonView.Find(networkVar.basketIDs[0]).GetComponent<TwoHandGrabInteractable>();
-			score = 0;
-			gameIsOver = false;
-			scoreText.text = $"{score}";
-			
-			switch(MainMenu.difficulty) {
-				case Difficulty.Easy:
-					heart1.SetActive(true);
-					heart2.SetActive(true);
-					heart3.SetActive(true);
-					heart4.SetActive(true);
-					heart5.SetActive(true);
-					health = 5;
-					break;
-				case Difficulty.Medium:
-					heart2.SetActive(true);
-					heart3.SetActive(true);
-					heart4.SetActive(true);
-					health = 3;
-					break;
-				case Difficulty.Hard:
-					heart3.SetActive(true);
-					health = 1;
-					break;
-			}
-			foreach(var rayInteractor in rayInteractors)
-			{
-				rayInteractor.SetActive(false);
-			}
-    }
+
+	/// <summary>
+	/// Override the on enable method of MonoBehaviourPunCallbacks.
+	/// Instantiates necessary variables
+	/// </summary>
+	public override void OnEnable()
+	{
+		base.OnEnable();
+		networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
+		basket = PhotonView.Find(networkVar.basketIDs[0]).GetComponent<TwoHandGrabInteractable>();
+		score = 0;
+		gameIsOver = false;
+		scoreText.text = $"{score}";
+		
+		switch(MainMenu.difficulty) {
+			case Difficulty.Easy:
+				heart1.SetActive(true);
+				heart2.SetActive(true);
+				heart3.SetActive(true);
+				heart4.SetActive(true);
+				heart5.SetActive(true);
+				health = 5;
+				break;
+			case Difficulty.Medium:
+				heart2.SetActive(true);
+				heart3.SetActive(true);
+				heart4.SetActive(true);
+				health = 3;
+				break;
+			case Difficulty.Hard:
+				heart3.SetActive(true);
+				health = 1;
+				break;
+		}
+		foreach(var rayInteractor in rayInteractors)
+		{
+			rayInteractor.SetActive(false);
+		}
+	}
 
     // Update is called once per frame
     void FixedUpdate()
@@ -129,7 +133,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		allHearts.SetActive(false);
 		GameOver.moveCanvasToStart = true;
 		GameplayManager.gameIsOver = true;
-		networkVar.isGameOver = true;
+		networkVar.UpdateVariables(true, ref networkVar.isGameOver);
 		graveUpright.SetActive(false);
 		graveDown.SetActive(true);
 

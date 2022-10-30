@@ -15,12 +15,12 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     /// <summary>
     /// Store the view ID of each network player prefab
     /// </summary>
-    public int[] playerIDs = new int[2];
+    public int[] playerIDs = {-1, -1};
 
     /// <summary>
     /// Store the view ID of each network basket prefab
     /// </summary>
-    public int[] basketIDs = new int[2];
+    public int[] basketIDs = {-1, -1};
 
     /// <summary>
     /// Hold the reference to game over state. Set by gameplay manager
@@ -36,10 +36,6 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     // Start is called before the first frame update
     void Start()
     {
-        playerIDs[0] = -1;
-        playerIDs[1] = -1;
-        basketIDs[0] = -1;
-        basketIDs[1] = -1;
     }
 
     public override void OnJoinedRoom()
@@ -69,6 +65,18 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         }
     }
 
+    /// <summary>
+    /// Function used to call RPC to sync variaables across the network
+    /// </summary>
+    /// <param name="newData">New Serializable object of type T</param>
+    /// <param name="oldData">Old Serializable object of type T</param>
+    /// <typeparam name="T">Serializable data types like int, float, object[], string, etc</typeparam>
+    public void UpdateVariables<T>(T newData,ref T oldData)
+    {
+        photonView.RPC("SyncUpdatedVaraibles", RpcTarget.AllBuffered, new T[]{newData, oldData});
+        Debug.Log("Syncing Variable");
+    }
+
     [PunRPC]
     private void StartGameplay()
     {
@@ -76,6 +84,12 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         gameplay.enabled = true;
         shadowBasket1.SetActive(false);
         PhotonNetwork.CurrentRoom.IsOpen = false;
+    }
+
+    [PunRPC]
+    private void SyncUpdatedVaraibles<T>(T newData,ref T oldData)
+    {
+        oldData = newData;
     }
 
     /// <summary>
@@ -89,21 +103,21 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(playerGrabbed);
-            stream.SendNext(playerIDs[0]);
-            stream.SendNext(playerIDs[1]);
-            stream.SendNext(basketIDs[0]);
-            stream.SendNext(basketIDs[1]);
-            stream.SendNext(isGameOver);
+            // stream.SendNext(playerGrabbed);
+            // stream.SendNext(playerIDs[0]);
+            // stream.SendNext(playerIDs[1]);
+            // stream.SendNext(basketIDs[0]);
+            // stream.SendNext(basketIDs[1]);
+            // stream.SendNext(isGameOver);
         }
         else if (stream.IsReading)
         {
-            IsChanged<int>((int)stream.ReceiveNext(), playerGrabbed);
-            IsChanged<int>((int)stream.ReceiveNext(), playerIDs[0]);
-            IsChanged<int>((int)stream.ReceiveNext(), playerIDs[1]);
-            IsChanged<int>((int)stream.ReceiveNext(), basketIDs[0]);
-            IsChanged<int>((int)stream.ReceiveNext(), basketIDs[1]);
-            IsChanged<bool>((bool)stream.ReceiveNext(), isGameOver);
+            // IsChanged<int>((int)stream.ReceiveNext(), playerGrabbed);
+            // IsChanged<int>((int)stream.ReceiveNext(), playerIDs[0]);
+            // IsChanged<int>((int)stream.ReceiveNext(), playerIDs[1]);
+            // IsChanged<int>((int)stream.ReceiveNext(), basketIDs[0]);
+            // IsChanged<int>((int)stream.ReceiveNext(), basketIDs[1]);
+            // IsChanged<bool>((bool)stream.ReceiveNext(), isGameOver);
         }
     }
 
