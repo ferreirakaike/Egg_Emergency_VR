@@ -89,8 +89,9 @@ public class CollectableBehavior : MonoBehaviour
         }*/
         else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
         {
-            _basket.material = defaultBasketMaterial;
-            _rim.material = defaultRimMaterial;
+            _basket.material = failureBasketMaterial;
+            _rim.material = failureRimMaterial;
+            timePassed = 0;
             _audioManager.PlayMissedSound();
             _gameplayManager.DecreaseScore();
         }
