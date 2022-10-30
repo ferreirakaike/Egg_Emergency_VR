@@ -35,22 +35,27 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
 			networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
 			basket = PhotonView.Find(networkVar.basketIDs[0]).GetComponent<TwoHandGrabInteractable>();
+			score = 0;
+			gameIsOver = false;
 			scoreText.text = $"{score}";
 			
 			switch(MainMenu.difficulty) {
 				case Difficulty.Easy:
+					heart1.SetActive(true);
+					heart2.SetActive(true);
+					heart3.SetActive(true);
+					heart4.SetActive(true);
+					heart5.SetActive(true);
 					health = 5;
 					break;
 				case Difficulty.Medium:
-					heart1.SetActive(false);
-					heart5.SetActive(false);
+					heart2.SetActive(true);
+					heart3.SetActive(true);
+					heart4.SetActive(true);
 					health = 3;
 					break;
 				case Difficulty.Hard:
-					heart1.SetActive(false);
-					heart2.SetActive(false);
-					heart4.SetActive(false);
-					heart5.SetActive(false);
+					heart3.SetActive(true);
 					health = 1;
 					break;
 			}

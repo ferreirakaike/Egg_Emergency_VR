@@ -75,6 +75,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         gameplayManager.enabled = true;
         gameplay.enabled = true;
         shadowBasket1.SetActive(false);
+        PhotonNetwork.CurrentRoom.IsOpen = false;
     }
 
     /// <summary>

@@ -18,11 +18,25 @@ public class Gameplay : MonoBehaviour
     private float difficulty;
     private GameObject a;
 
-    // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
         Debug.Log("Starting Coroutine to spawn objects");
         StartCoroutine(collectableWave());
+        switch(MainMenu.difficulty) 
+        {
+            case Difficulty.Easy:
+                startingDifficulty = 1.5f;
+                spawnTime = 2.5f;
+                break;
+            case Difficulty.Medium:
+                startingDifficulty = 3.5f;
+                spawnTime = 1.75f;
+                break;
+            case Difficulty.Hard:
+                startingDifficulty = 5.5f;
+                spawnTime = 1.25f;
+                break;
+        }
     }
 
     private void spawnCollectable() {
@@ -62,11 +76,11 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator collectableWave() {
         while(true) {
-            difficulty = startingDifficulty + Time.time / 30;
-            if (difficulty > 4.0f) {
-                difficulty = 4.0f;
+            difficulty = startingDifficulty + Time.time / 60;
+            if (difficulty > 8.0f) {
+                difficulty = 8.0f;
             }
-            spawnTime = 2.0f - (Time.time / 40) ;
+            spawnTime = spawnTime - (Time.time / 60) ;
             if (spawnTime < 0.25f) {
                 spawnTime = 0.25f;
             }
