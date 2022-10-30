@@ -17,6 +17,14 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
     {
         networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
     }
+
+    void Update()
+    {
+        if (networkVar.isGameOver)
+        {
+            spawnedPlayerPrefab.SetActive(false);
+        }
+    }
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();

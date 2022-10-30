@@ -22,6 +22,11 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     /// </summary>
     public int[] basketIDs = new int[2];
 
+    /// <summary>
+    /// Hold the reference to game over state. Set by gameplay manager
+    /// </summary>
+    public bool isGameOver = false;
+
     private int roomCapacity;
     private bool gameStarted = false;
     private Gameplay gameplay;
@@ -44,6 +49,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         gameplay = FindObjectOfType<Gameplay>();
         gameplayManager = FindObjectOfType<GameplayManager>();
         shadowBasket1 = GameObject.Find("Shadow Basket");
+        isGameOver = false;
     }
 
     void Reset()
@@ -87,6 +93,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
             stream.SendNext(playerIDs[1]);
             stream.SendNext(basketIDs[0]);
             stream.SendNext(basketIDs[1]);
+            stream.SendNext(isGameOver);
         }
         else if (stream.IsReading)
         {
@@ -95,6 +102,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
             IsChanged<int>((int)stream.ReceiveNext(), playerIDs[1]);
             IsChanged<int>((int)stream.ReceiveNext(), basketIDs[0]);
             IsChanged<int>((int)stream.ReceiveNext(), basketIDs[1]);
+            IsChanged<bool>((bool)stream.ReceiveNext(), isGameOver);
         }
     }
 

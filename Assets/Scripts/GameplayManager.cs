@@ -124,6 +124,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		allHearts.SetActive(false);
 		GameOver.moveCanvasToStart = true;
 		GameplayManager.gameIsOver = true;
+		networkVar.isGameOver = true;
 		graveUpright.SetActive(false);
 		graveDown.SetActive(true);
 
