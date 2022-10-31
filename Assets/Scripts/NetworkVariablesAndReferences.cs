@@ -66,15 +66,46 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     }
 
     /// <summary>
-    /// Function used to call RPC to sync variaables across the network
+    /// Update the number of players who have grabbed their basket.
+    /// Use as a counter to know when to start game.
+    /// Game is started when the number of player grabbed is the same as room capacity.
     /// </summary>
-    /// <param name="newData">New Serializable object of type T</param>
-    /// <param name="oldData">Old Serializable object of type T</param>
-    /// <typeparam name="T">Serializable data types like int, float, object[], string, etc</typeparam>
-    public void UpdateVariables<T>(T newData,ref T oldData)
+    public void UpdatePlayerGrabbed()
     {
-        photonView.RPC("SyncUpdatedVaraibles", RpcTarget.AllBuffered, new T[]{newData, oldData});
-        Debug.Log("Syncing Variable");
+        photonView.RPC("SyncPlayerGrabbed", RpcTarget.AllBuffered);
+        Debug.Log("Syncing # Player Grabbed");
+    }
+
+    /// <summary>
+    /// Update the player photonview ID
+    /// </summary>
+    /// <param name="newData">Photonview ID of the player</param>
+    /// <param name="playerIndex">Player index. 0 is Master, 1 is client</param>
+    public void UpdatePlayerIDs(int newData, int playerIndex)
+    {
+        photonView.RPC("SyncPlayerIDs", RpcTarget.AllBuffered, new int[] {newData, playerIndex});
+        Debug.Log("Syncing Player IDs");
+    }
+
+    /// <summary>
+    /// Update the basket photonview ID
+    /// </summary>
+    /// <param name="newData">Photonview ID of the basket</param>
+    /// <param name="playerIndex">Player index. 0 is Master, 1 is client</param>
+    public void UpdateBasketIDs(int newData, int playerIndex)
+    {
+        photonView.RPC("SyncBasketIDs", RpcTarget.AllBuffered, new int[] {newData, playerIndex});
+        Debug.Log("Syncing Basket IDs");
+    }
+
+    /// <summary>
+    /// Update the game over boolean
+    /// </summary>
+    /// <param name="newData">Game over state</param>
+    public void UpdateIsGameOver(bool newData)
+    {
+        photonView.RPC("SyncBasketIDs", RpcTarget.AllBuffered, newData);
+        Debug.Log("Syncing isGameOver");
     }
 
     [PunRPC]
@@ -87,9 +118,27 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     }
 
     [PunRPC]
-    private void SyncUpdatedVaraibles<T>(T newData,ref T oldData)
+    private void SyncPlayerIDs(int newData, int playerIndex)
     {
-        oldData = newData;
+        playerIDs[playerIndex] = newData;
+    }
+
+    [PunRPC]
+    private void SyncBasketIDs(int newData, int playerIndex)
+    {
+        basketIDs[playerIndex] = newData;
+    }
+
+    [PunRPC]
+    private void SyncIsGameOver(bool newData)
+    {
+        isGameOver = newData;
+    }
+
+    [PunRPC]
+    private void SyncPlayerGrabbed()
+    {
+        playerGrabbed++;
     }
 
     /// <summary>
@@ -97,8 +146,8 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     /// Put all variables that need to be synced regularly here.
     /// Send and receive order must match
     /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="info"></param>
+    /// <param name="stream">In/Out datastream</param>
+    /// <param name="info">General message information like sent and received time</param>
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)

@@ -147,7 +147,7 @@ public class TwoHandGrabInteractable : XRGrabInteractable
             Debug.Log("First hand grab");
             if (!networkVarSet)
             {
-                networkVar.UpdateVariables(networkVar.playerGrabbed + 1, ref networkVar.playerGrabbed);
+                networkVar.UpdatePlayerGrabbed();
                 networkVarSet = true;
             }
             

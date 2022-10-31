@@ -34,8 +34,8 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
             spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", playerSpawnLocations[0].position, playerSpawnLocations[0].rotation);
             spawnedBasketPrefab =PhotonNetwork.Instantiate("Network Basket", basketSpawnLocations[0].position, basketSpawnLocations[0].rotation);
             spawnedBasketPrefab.transform.localScale = new Vector3(25,25,25);
-            networkVar.UpdateVariables(spawnedBasketPrefab.GetPhotonView().ViewID, ref networkVar.basketIDs[0]);
-            networkVar.UpdateVariables(spawnedPlayerPrefab.GetPhotonView().ViewID, ref networkVar.playerIDs[0]);
+            networkVar.UpdateBasketIDs(spawnedBasketPrefab.GetPhotonView().ViewID, 0);
+            networkVar.UpdatePlayerIDs(spawnedPlayerPrefab.GetPhotonView().ViewID, 0);
         }
         else
         {
@@ -45,8 +45,8 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
             origin.transform.rotation = playerSpawnLocations[1].rotation;
             spawnedBasketPrefab =PhotonNetwork.Instantiate("Network Basket", basketSpawnLocations[1].position, basketSpawnLocations[1].rotation);
             spawnedBasketPrefab.transform.localScale = new Vector3(25,25,25);
-            networkVar.UpdateVariables(spawnedBasketPrefab.GetPhotonView().ViewID, ref networkVar.basketIDs[1]);
-            networkVar.UpdateVariables(spawnedPlayerPrefab.GetPhotonView().ViewID, ref networkVar.playerIDs[1]);
+            networkVar.UpdateBasketIDs(spawnedBasketPrefab.GetPhotonView().ViewID, 1);
+            networkVar.UpdatePlayerIDs(spawnedPlayerPrefab.GetPhotonView().ViewID, 1);
         }
         Debug.Log("Joined Room");
     }
