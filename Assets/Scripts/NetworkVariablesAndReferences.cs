@@ -83,7 +83,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     /// <param name="playerIndex">Player index. 0 is Master, 1 is client</param>
     public void UpdatePlayerIDs(int newData, int playerIndex)
     {
-        photonView.RPC("SyncPlayerIDs", RpcTarget.AllBuffered, new int[] {newData, playerIndex});
+        photonView.RPC("SyncPlayerIDs", RpcTarget.AllBuffered, newData, playerIndex);
         Debug.Log("Syncing Player IDs");
     }
 
@@ -94,7 +94,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     /// <param name="playerIndex">Player index. 0 is Master, 1 is client</param>
     public void UpdateBasketIDs(int newData, int playerIndex)
     {
-        photonView.RPC("SyncBasketIDs", RpcTarget.AllBuffered, new int[] {newData, playerIndex});
+        photonView.RPC("SyncBasketIDs", RpcTarget.AllBuffered, newData, playerIndex);
         Debug.Log("Syncing Basket IDs");
     }
 
