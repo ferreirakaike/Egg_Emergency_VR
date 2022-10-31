@@ -22,6 +22,7 @@ public class CollectableBehavior : MonoBehaviour
     public Material failureBasketMaterial;
     public Material successRimMaterial;
     public Material failureRimMaterial;
+    public ParticleSystem explosion;
     public float timeBeforeResetMaterial = 0.5f;
     private static float timePassed = 0;
 
@@ -89,6 +90,8 @@ public class CollectableBehavior : MonoBehaviour
         }*/
         else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
         {
+            GameObject explo = Instantiate(explosion.gameObject, gameObject.transform.position, Quaternion.Euler(-90, 0, 0));
+            explo.SetActive(true);
             _basket.material = failureBasketMaterial;
             _rim.material = failureRimMaterial;
             timePassed = 0;

@@ -14,6 +14,7 @@ public class Gameplay : MonoBehaviour
     public PathCreator leftPath;
     public PathCreator rightPath;
     public EndOfPathInstruction end;
+    public ParticleSystem expl;
 
     private float difficulty;
     private GameObject a;
@@ -61,6 +62,8 @@ public class Gameplay : MonoBehaviour
 
         var script = a.GetComponent<PathFollower>();
         script.speed = difficulty;
+        var script2 = a.GetComponent<CollectableBehavior>();
+        script2.explosion = expl;
         
         int chosenPath = Random.Range(0, 3);
 
