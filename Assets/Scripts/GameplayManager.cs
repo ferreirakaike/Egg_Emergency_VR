@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.XR.Interaction.Toolkit;
+using Photon.Pun;
 
-public class GameplayManager : MonoBehaviour
+public class GameplayManager : MonoBehaviourPunCallbacks
 {
 	public TextMeshProUGUI scoreText;
 	public static int score = 0;
@@ -27,35 +28,46 @@ public class GameplayManager : MonoBehaviour
 	public GameObject graveDown;
 	
 	private TwoHandGrabInteractable basket;
-	
-    // Start is called before the first frame update
-    void Start()
-    {
-			basket = GameObject.Find("/Basket").GetComponent<TwoHandGrabInteractable>();
-			scoreText.text = $"{score}";
-			
-			switch(MainMenu.difficulty) {
-				case Difficulty.Easy:
-					health = 5;
-					break;
-				case Difficulty.Medium:
-					heart1.SetActive(false);
-					heart5.SetActive(false);
-					health = 3;
-					break;
-				case Difficulty.Hard:
-					heart1.SetActive(false);
-					heart2.SetActive(false);
-					heart4.SetActive(false);
-					heart5.SetActive(false);
-					health = 1;
-					break;
-			}
-			foreach(var rayInteractor in rayInteractors)
-			{
-				rayInteractor.SetActive(false);
-			}
-    }
+	private NetworkVariablesAndReferences networkVar;
+
+	/// <summary>
+	/// Override the on enable method of MonoBehaviourPunCallbacks.
+	/// Instantiates necessary variables
+	/// </summary>
+	public override void OnEnable()
+	{
+		base.OnEnable();
+		networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
+		basket = PhotonView.Find(networkVar.basketIDs[0]).GetComponent<TwoHandGrabInteractable>();
+		score = 0;
+		gameIsOver = false;
+		scoreText.text = $"{score}";
+		
+		switch(MainMenu.difficulty) {
+			case Difficulty.Easy:
+				heart1.SetActive(true);
+				heart2.SetActive(true);
+				heart3.SetActive(true);
+				heart4.SetActive(true);
+				heart5.SetActive(true);
+				health = 5;
+				break;
+			case Difficulty.Medium:
+				heart2.SetActive(true);
+				heart3.SetActive(true);
+				heart4.SetActive(true);
+				health = 3;
+				break;
+			case Difficulty.Hard:
+				heart3.SetActive(true);
+				health = 1;
+				break;
+		}
+		foreach(var rayInteractor in rayInteractors)
+		{
+			rayInteractor.SetActive(false);
+		}
+	}
 
     // Update is called once per frame
     void FixedUpdate()
@@ -121,6 +133,7 @@ public class GameplayManager : MonoBehaviour
 		allHearts.SetActive(false);
 		GameOver.moveCanvasToStart = true;
 		GameplayManager.gameIsOver = true;
+		networkVar.UpdateIsGameOver(true);
 		graveUpright.SetActive(false);
 		graveDown.SetActive(true);
 

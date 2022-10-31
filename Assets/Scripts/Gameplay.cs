@@ -14,14 +14,33 @@ public class Gameplay : MonoBehaviour
     public PathCreator leftPath;
     public PathCreator rightPath;
     public EndOfPathInstruction end;
+    public ParticleSystem expl;
 
     private float difficulty;
     private GameObject a;
+    private float currentTime;
+    private float previousTime;
 
-    // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
+        Debug.Log("Starting Coroutine to spawn objects");
+        previousTime = currentTime;
         StartCoroutine(collectableWave());
+        switch(MainMenu.difficulty) 
+        {
+            case Difficulty.Easy:
+                startingDifficulty = 1.5f;
+                spawnTime = 2.5f;
+                break;
+            case Difficulty.Medium:
+                startingDifficulty = 2.75f;
+                spawnTime = 2.25f;
+                break;
+            case Difficulty.Hard:
+                startingDifficulty = 4f;
+                spawnTime = 2f;
+                break;
+        }
     }
 
     private void spawnCollectable() {
@@ -39,11 +58,12 @@ public class Gameplay : MonoBehaviour
             a = Instantiate(collectablePrefab) as GameObject;
             a.tag = "Collectable";
         }
+        a.SetActive(true);
 
-
-        
         var script = a.GetComponent<PathFollower>();
         script.speed = difficulty;
+        var script2 = a.GetComponent<CollectableBehavior>();
+        script2.explosion = expl;
         
         int chosenPath = Random.Range(0, 3);
 
@@ -61,11 +81,13 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator collectableWave() {
         while(true) {
-            difficulty = startingDifficulty + Time.time / 30;
-            if (difficulty > 4.0f) {
-                difficulty = 4.0f;
+            currentTime = Time.time;
+            float deltaTime = currentTime - previousTime;
+            difficulty = startingDifficulty + (deltaTime / 1700);
+            if (difficulty > 8.0f) {
+                difficulty = 8.0f;
             }
-            spawnTime = 2.0f - (Time.time / 40) ;
+            spawnTime = spawnTime - (deltaTime / 2000) ;
             if (spawnTime < 0.25f) {
                 spawnTime = 0.25f;
             }

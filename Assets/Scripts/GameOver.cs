@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.UI;
 using TMPro;
+using Photon.Pun;
 
 
 public class GameOver : MonoBehaviour {
@@ -63,6 +64,7 @@ public class GameOver : MonoBehaviour {
 	
 	public void OpenMainMenu() {
 		audioManager.PlayButtonClickSound();
+		PhotonNetwork.Disconnect();
 		SceneManager.LoadScene("MainMenu");
 	}
 }

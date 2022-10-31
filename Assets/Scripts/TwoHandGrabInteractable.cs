@@ -23,10 +23,14 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     public TwoHandRotationType twoHandRotationType;
     private Quaternion initialRotationOffset;
     private Transform currentTransform;
+    private NetworkVariablesAndReferences networkVar;
+    private bool networkVarSet;
 
     // Start is called before the first frame update
     void Start()
     {
+        networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
+        networkVarSet = false;
     }
 
     // Update is called once per frame
@@ -141,6 +145,12 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         if (interactorsSelecting.Count == 1)
         {
             Debug.Log("First hand grab");
+            if (!networkVarSet)
+            {
+                networkVar.UpdatePlayerGrabbed();
+                networkVarSet = true;
+            }
+            
             // GetComponent<XRTintInteractableVisual>().enabled = false;
             // GetComponent<XRTintInteractableVisual>().enabled = true;
             // GetComponent<XRTintInteractableVisual>().tintColor = Color.green;
