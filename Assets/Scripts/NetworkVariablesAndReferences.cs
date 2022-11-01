@@ -104,7 +104,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     /// <param name="newData">Game over state</param>
     public void UpdateIsGameOver(bool newData)
     {
-        photonView.RPC("SyncBasketIDs", RpcTarget.AllBuffered, newData);
+        photonView.RPC("SyncIsGameOver", RpcTarget.AllBuffered, newData);
         Debug.Log("Syncing isGameOver");
     }
 
