@@ -14,7 +14,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	public static int score = 0;
 	public int health = 0;
 	public static bool gameIsOver = false;
-	public List<GameObject> rayInteractors;
 	
 	public GameObject heart1;
 	public GameObject heart2;
@@ -65,10 +64,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 				health = 1;
 				break;
 		}
-		foreach(var rayInteractor in rayInteractors)
-		{
-			rayInteractor.SetActive(false);
-		}
 	}
 	
     // Start is called before the first frame update
@@ -100,10 +95,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 					heart3.SetActive(true);
 					health = 1;
 					break;
-			}
-			foreach(var rayInteractor in rayInteractors)
-			{
-				rayInteractor.SetActive(false);
 			}
     }
 
@@ -175,13 +166,5 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		networkVar.UpdateIsGameOver(true);
 		graveUpright.SetActive(false);
 		graveDown.SetActive(true);
-
-		foreach(var rayInteractor in rayInteractors)
-		{
-			rayInteractor.SetActive(true);
-			rayInteractor.GetComponentInParent<XRDirectInteractor>().enabled = false;
-			// disbale hand prefab
-			rayInteractor.transform.parent.GetChild(0).gameObject.SetActive(false);
-		}
 	}
 }

@@ -1,5 +1,106 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4004999306784939375
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8271541487067194610}
+  - component: {fileID: 6298371228269448173}
+  - component: {fileID: 3647936596789940184}
+  - component: {fileID: 7004489087759476938}
+  - component: {fileID: 7176733384770432281}
+  - component: {fileID: 3671918932922011801}
+  m_Layer: 9
+  m_Name: OuterColliders
+  m_TagString: Basket
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8271541487067194610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4004999306784939375}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7704737172042851227}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6298371228269448173
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4004999306784939375}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.01970923, y: 0.02044663, z: 0.00052489026}
+  m_Center: {x: 0.00059310644, y: 0.000041966436, z: -0.019906715}
+--- !u!65 &3647936596789940184
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4004999306784939375}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.019947156, y: 0.0031061927, z: 0.0182552}
+  m_Center: {x: 0.00028184414, y: 0.012432826, z: -0.011041545}
+--- !u!65 &7004489087759476938
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4004999306784939375}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.0030298745, y: 0.020260068, z: 0.018143307}
+  m_Center: {x: 0.011940198, y: -0.000025082825, z: -0.011097539}
+--- !u!65 &7176733384770432281
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4004999306784939375}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.019947162, y: 0.002883648, z: 0.018466938}
+  m_Center: {x: 0.00028184414, y: -0.012360379, z: -0.0109357145}
+--- !u!65 &3671918932922011801
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4004999306784939375}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.0028882467, y: 0.02026007, z: 0.01831921}
+  m_Center: {x: -0.012289095, y: -0.000025082827, z: -0.011009554}
 --- !u!1 &4230721606204531826
 GameObject:
   m_ObjectHideFlags: 0
@@ -667,7 +768,7 @@ GameObject:
   - component: {fileID: 4230721607285989465}
   m_Layer: 9
   m_Name: Cylinder.001
-  m_TagString: Untagged
+  m_TagString: Basket
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1180,6 +1281,7 @@ Transform:
   m_Children:
   - {fileID: 4230721607286177270}
   - {fileID: 7462472512415951032}
+  - {fileID: 8271541487067194610}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}

@@ -29,8 +29,8 @@ public class GameOver : MonoBehaviour {
 	
 	void Update() {
 		if (GameOver.moveCanvasToStart) {
-			uiCanvas.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-			float finalZPosition = -9.0f;
+			uiCanvas.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+			float finalZPosition = -10.4f;
 			Vector3 newCanvasPosition = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, finalZPosition);
 			uiCanvas.transform.position = Vector3.MoveTowards(uiCanvas.transform.position, newCanvasPosition, 10.0f * Time.deltaTime);
 			if (uiCanvas.transform.position.z <= finalZPosition) {
@@ -38,7 +38,7 @@ public class GameOver : MonoBehaviour {
 				animateButtonsToStart = true;
 			}
 		} else if (animateButtonsToStart) {
-			float finalYPosition = 18.3f;//1.550f + (18.3f - 4.1f);
+			float finalYPosition = -16.8f;//1.550f + (18.3f - 4.1f);
 			Vector3 newGameLabelPosition = new Vector3(gameLabel.transform.localPosition.x, finalYPosition, gameLabel.transform.localPosition.z);
 			gameLabel.transform.localPosition = Vector3.MoveTowards(gameLabel.transform.localPosition, newGameLabelPosition, 10.0f * Time.deltaTime);
 			if (gameLabel.transform.localPosition.y >= finalYPosition) {

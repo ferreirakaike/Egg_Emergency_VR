@@ -9,7 +9,7 @@ public class Gameplay : MonoBehaviour
     public GameObject collectablePrefab;
     public GameObject deterrentPrefab;
     public float spawnTime = 1.0f;
-    public float startingDifficulty = 2.0f;
+    private float startingDifficulty;
     public PathCreator path;
     public PathCreator leftPath;
     public PathCreator rightPath;
@@ -20,12 +20,13 @@ public class Gameplay : MonoBehaviour
     private GameObject a;
     private float currentTime;
     private float previousTime;
+    private NetworkVariablesAndReferences networkVar;
 
     void OnEnable()
     {
+        networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
         Debug.Log("Starting Coroutine to spawn objects");
         previousTime = currentTime;
-        StartCoroutine(collectableWave());
         switch(MainMenu.difficulty) 
         {
             case Difficulty.Easy:
@@ -41,6 +42,7 @@ public class Gameplay : MonoBehaviour
                 spawnTime = 2f;
                 break;
         }
+        StartCoroutine(collectableWave());
     }
 
     private void spawnCollectable() {
@@ -80,7 +82,7 @@ public class Gameplay : MonoBehaviour
     }
 
     IEnumerator collectableWave() {
-        while(true) {
+        while(!networkVar.isGameOver) {
             currentTime = Time.time;
             float deltaTime = currentTime - previousTime;
             difficulty = startingDifficulty + (deltaTime / 1700);
