@@ -161,16 +161,16 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         }
         else if (stream.IsReading)
         {
-            // IsChanged<int>((int)stream.ReceiveNext(), playerGrabbed);
-            // IsChanged<int>((int)stream.ReceiveNext(), playerIDs[0]);
-            // IsChanged<int>((int)stream.ReceiveNext(), playerIDs[1]);
-            // IsChanged<int>((int)stream.ReceiveNext(), basketIDs[0]);
-            // IsChanged<int>((int)stream.ReceiveNext(), basketIDs[1]);
-            // IsChanged<bool>((bool)stream.ReceiveNext(), isGameOver);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref playerGrabbed);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref playerIDs[0]);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref playerIDs[1]);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref basketIDs[0]);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref basketIDs[1]);
+            // IsChanged<bool>((bool)stream.ReceiveNext(),ref isGameOver);
         }
     }
 
-    private void IsChanged<T>(T newData, T oldData)
+    private void IsChanged<T>(T newData, ref T oldData)
     {
         if (Comparer<T>.Default.Compare(newData, oldData) != 0)
         {
