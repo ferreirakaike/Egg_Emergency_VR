@@ -9,6 +9,7 @@ using TMPro;
 
 public class ColliderUIButton : XRSimpleInteractable
 {
+    public Material clickedButtonMaterial;
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Collectable") || other.gameObject.CompareTag("Deterrent") 
@@ -18,7 +19,16 @@ public class ColliderUIButton : XRSimpleInteractable
         }
         // currently on one of the hand controller
         Debug.Log("TriggerEntered");
-        GetComponent<Image>().material = Resources.Load("Material/Pressed Button Material.mat", typeof(Material)) as Material;
+        if (clickedButtonMaterial)
+        {
+            GetComponent<Image>().material = clickedButtonMaterial;
+        }
+        else
+        {
+             GetComponent<Image>().material = Resources.Load("Pressed Button Material.mat", typeof(Material)) as Material;
+        }
+        
+       
         // args.interactorObject.transform.GetComponent<XRDirectInteractor>().xrController.SendHapticImpulse(0.25f, 0.25f);
         // base.OnActivated(new ActivateEventArgs());
         StartCoroutine(ClickAfterASecond());

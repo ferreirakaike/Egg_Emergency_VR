@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
+using Photon.Pun;
 
 
 public class Gameplay : MonoBehaviour
@@ -21,6 +22,8 @@ public class Gameplay : MonoBehaviour
     private float currentTime;
     private float previousTime;
     private NetworkVariablesAndReferences networkVar;
+    // start at 100 to avoid conflicts
+    private static int photonViewIDtoAssign = 100;
 
     void OnEnable()
     {
@@ -59,6 +62,12 @@ public class Gameplay : MonoBehaviour
         else {
             a = Instantiate(collectablePrefab) as GameObject;
             a.tag = "Collectable";
+        }
+        PhotonView photonView = a.GetPhotonView();
+        photonView.ViewID = photonViewIDtoAssign++;
+        if (photonViewIDtoAssign > 999)
+        {
+            photonViewIDtoAssign = 100;
         }
         a.SetActive(true);
 
