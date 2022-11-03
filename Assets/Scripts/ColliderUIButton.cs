@@ -11,7 +11,8 @@ public class ColliderUIButton : XRSimpleInteractable
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Collectable") || other.gameObject.CompareTag("Deterrent"))
+        if (other.gameObject.CompareTag("Collectable") || other.gameObject.CompareTag("Deterrent") 
+        || other.gameObject.CompareTag("Basket") || other.gameObject.CompareTag("InnerBasket"))
         {
             return;
         }

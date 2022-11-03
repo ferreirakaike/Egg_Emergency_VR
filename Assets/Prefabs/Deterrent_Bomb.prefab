@@ -14,13 +14,15 @@ GameObject:
   - component: {fileID: 5221567870735493672}
   - component: {fileID: 6801099898042332749}
   - component: {fileID: 3290869334503224014}
+  - component: {fileID: 5922171928167130871}
+  - component: {fileID: 335161397084423712}
   m_Layer: 0
   m_Name: Deterrent_Bomb
-  m_TagString: Untagged
+  m_TagString: Deterrent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4801067474852713192
 Transform:
   m_ObjectHideFlags: 0
@@ -28,14 +30,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5326352921325422674}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+  m_LocalRotation: {x: -0.7069834, y: 0, z: 0, w: 0.7072302}
   m_LocalPosition: {x: 1.2614509, y: 0.678, z: 0.146}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -89.98, y: 0, z: 0}
 --- !u!33 &8434972700833226061
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -111,6 +113,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef465964e8b4903468d588fcdddfe5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultBasketMaterial: {fileID: 2100000, guid: 081e4816add2d024cbfa48d939d0643f,
+    type: 2}
+  defaultRimMaterial: {fileID: 2100000, guid: 4fb23aef4c909cd4ba6a2362c72a2e69, type: 2}
   successBasketMaterial: {fileID: 2100000, guid: 3612949b605218340ac8bf3b97c95df8,
     type: 2}
   failureBasketMaterial: {fileID: 2100000, guid: 0e9f349b877765041b20c5c69e614c59,
@@ -118,7 +123,8 @@ MonoBehaviour:
   successRimMaterial: {fileID: 2100000, guid: 07b84c2d304b2f043b0e198793ac1523, type: 2}
   failureRimMaterial: {fileID: 2100000, guid: 1aa08753ebb0d94408a1eb671f312d46, type: 2}
   explosion: {fileID: 0}
-  timeBeforeResetMaterial: 0.5
+  timeBeforeResetMaterial: 0.3
+  playerIndex: 0
 --- !u!114 &3290869334503224014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,3 +140,42 @@ MonoBehaviour:
   pathCreator: {fileID: 0}
   endOfPathInstruction: 0
   speed: 5
+--- !u!114 &5922171928167130871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5326352921325422674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 335161397084423712}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &335161397084423712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5326352921325422674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1

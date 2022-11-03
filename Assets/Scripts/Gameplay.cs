@@ -31,11 +31,11 @@ public class Gameplay : MonoBehaviour
         {
             case Difficulty.Easy:
                 startingDifficulty = 1.5f;
-                spawnTime = 2.5f;
+                spawnTime = 3f;
                 break;
             case Difficulty.Medium:
                 startingDifficulty = 2.75f;
-                spawnTime = 2.25f;
+                spawnTime = 2.5f;
                 break;
             case Difficulty.Hard:
                 startingDifficulty = 4f;
@@ -66,6 +66,9 @@ public class Gameplay : MonoBehaviour
         script.speed = difficulty;
         var script2 = a.GetComponent<CollectableBehavior>();
         script2.explosion = expl;
+
+        // set this to 0 or 1for multiplayer
+        script2.playerIndex = 0;
         
         int chosenPath = Random.Range(0, 3);
 
