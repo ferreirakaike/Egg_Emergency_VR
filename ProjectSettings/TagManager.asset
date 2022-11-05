@@ -9,6 +9,8 @@ TagManager:
   - InnerBasket
   - Deterrent
   - Collectable
+  - LeftHand
+  - RightHand
   layers:
   - Default
   - TransparentFX

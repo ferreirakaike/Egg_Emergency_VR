@@ -9,6 +9,8 @@ using TMPro;
 
 public class ColliderUIButton : XRSimpleInteractable
 {
+    private bool rightHandClicked = false;
+    private bool leftHandClicked = false;
     public Material clickedButtonMaterial;
     private void OnTriggerEnter(Collider other)
     {
@@ -28,15 +30,48 @@ public class ColliderUIButton : XRSimpleInteractable
              GetComponent<Image>().material = Resources.Load("Pressed Button Material.mat", typeof(Material)) as Material;
         }
         
-       
-        // args.interactorObject.transform.GetComponent<XRDirectInteractor>().xrController.SendHapticImpulse(0.25f, 0.25f);
-        // base.OnActivated(new ActivateEventArgs());
+        if (other.gameObject.CompareTag("LeftHand") && !leftHandClicked)
+        {
+            leftHandClicked = true;
+
+            // get xr controller
+            GameObject controller = other.gameObject;
+            while(!controller.GetComponentInParent<XROrigin>())
+            {
+                controller = controller.transform.parent.gameObject;
+            }
+            controller.GetComponent<XRDirectInteractor>().xrController.SendHapticImpulse(0.25f, 0.25f);
+        }
+        if (other.gameObject.CompareTag("RightHand") && !leftHandClicked)
+        {
+            rightHandClicked = true;
+
+            // get xr controller
+            GameObject controller = other.gameObject;
+            while(!controller.GetComponentInParent<XROrigin>())
+            {
+                controller = controller.transform.parent.gameObject;
+            }
+            controller.GetComponent<XRDirectInteractor>().xrController.SendHapticImpulse(0.25f, 0.25f);
+        }
         StartCoroutine(ClickAfterASecond());
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("LeftHand"))
+        {
+            leftHandClicked = false;
+        }
+        if (other.gameObject.CompareTag("RightHand"))
+        {
+            rightHandClicked = false;
+        }
     }
 
     IEnumerator ClickAfterASecond()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.1f);
         base.OnActivated(new ActivateEventArgs());
     }
 }
