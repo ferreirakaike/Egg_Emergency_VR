@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
+using Photon.Pun;
 
 
 public class Gameplay : MonoBehaviour
@@ -9,7 +10,7 @@ public class Gameplay : MonoBehaviour
     public GameObject collectablePrefab;
     public GameObject deterrentPrefab;
     public float spawnTime = 1.0f;
-    public float startingDifficulty = 2.0f;
+    private float startingDifficulty;
     public PathCreator path;
     public PathCreator leftPath;
     public PathCreator rightPath;
@@ -20,27 +21,31 @@ public class Gameplay : MonoBehaviour
     private GameObject a;
     private float currentTime;
     private float previousTime;
+    private NetworkVariablesAndReferences networkVar;
+    // start at 100 to avoid conflicts
+    private static int photonViewIDtoAssign = 100;
 
     void OnEnable()
     {
+        networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
         Debug.Log("Starting Coroutine to spawn objects");
         previousTime = currentTime;
-        StartCoroutine(collectableWave());
         switch(MainMenu.difficulty) 
         {
             case Difficulty.Easy:
                 startingDifficulty = 1.5f;
-                spawnTime = 2.5f;
+                spawnTime = 3f;
                 break;
             case Difficulty.Medium:
                 startingDifficulty = 2.75f;
-                spawnTime = 2.25f;
+                spawnTime = 2.5f;
                 break;
             case Difficulty.Hard:
                 startingDifficulty = 4f;
                 spawnTime = 2f;
                 break;
         }
+        StartCoroutine(collectableWave());
     }
 
     private void spawnCollectable() {
@@ -58,12 +63,21 @@ public class Gameplay : MonoBehaviour
             a = Instantiate(collectablePrefab) as GameObject;
             a.tag = "Collectable";
         }
+        PhotonView photonView = a.GetPhotonView();
+        photonView.ViewID = photonViewIDtoAssign++;
+        if (photonViewIDtoAssign > 999)
+        {
+            photonViewIDtoAssign = 100;
+        }
         a.SetActive(true);
 
         var script = a.GetComponent<PathFollower>();
         script.speed = difficulty;
         var script2 = a.GetComponent<CollectableBehavior>();
         script2.explosion = expl;
+
+        // set this to 0 or 1for multiplayer
+        script2.playerIndex = 0;
         
         int chosenPath = Random.Range(0, 3);
 
@@ -80,7 +94,7 @@ public class Gameplay : MonoBehaviour
     }
 
     IEnumerator collectableWave() {
-        while(true) {
+        while(!networkVar.isGameOver) {
             currentTime = Time.time;
             float deltaTime = currentTime - previousTime;
             difficulty = startingDifficulty + (deltaTime / 1700);

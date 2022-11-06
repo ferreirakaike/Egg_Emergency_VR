@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using Photon.Pun;
 
 // reference https://www.youtube.com/watch?v=Ie0-oKN3Lq0
 // need to modify current prefab to use
@@ -67,31 +68,6 @@ public class TwoHandGrabInteractable : XRGrabInteractable
 
     public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
     {
-        // if (interactorsSelecting.Count == 2)
-        // {
-        //     // updateTargetBoth();
-        //     base.ProcessInteractable (updatePhase);
-        // }
-        // else
-        // {
-        //     base.ProcessInteractable (updatePhase);
-        // }
-        // if(interactorsSelecting.Count == 2)
-        // {
-        //     // Compute rotation
-        //     if(snapToSecondHand)
-        //     {
-        //         interactorsSelecting[0].transform.rotation = GetTwoHandRotation();
-        //     }
-        //     else
-        //     {
-        //         interactorsSelecting[0].transform.rotation = GetTwoHandRotation() * initialRotationOffset;
-        //     }
-        //     updateTargetBoth();
-
-        // }
-        // base.ProcessInteractable(updatePhase);
-        // currentTransform = this.transform;
         if (interactorsSelecting.Count == 1)
         {
             base.ProcessInteractable(updatePhase);
@@ -140,7 +116,6 @@ public class TwoHandGrabInteractable : XRGrabInteractable
 
     protected override void OnSelectEntered(SelectEnterEventArgs args)
     {
-        // args.interactorObject.transform.GetChild(0).gameObject.SetActive(false);
         base.OnSelectEntered(args);
         if (interactorsSelecting.Count == 1)
         {
@@ -149,21 +124,22 @@ public class TwoHandGrabInteractable : XRGrabInteractable
             {
                 networkVar.UpdatePlayerGrabbed();
                 networkVarSet = true;
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    PhotonView.Find(networkVar.shadowBasketIDs[0]).gameObject.SetActive(false);
+                }
+                else
+                {
+                    PhotonView.Find(networkVar.shadowBasketIDs[1]).gameObject.SetActive(false);
+                }
             }
-            
-            // GetComponent<XRTintInteractableVisual>().enabled = false;
-            // GetComponent<XRTintInteractableVisual>().enabled = true;
-            // GetComponent<XRTintInteractableVisual>().tintColor = Color.green;
         }
         if (interactorsSelecting.Count == 2)
         {
             Debug.Log("Second hand grab");
-            // GetComponent<XRTintInteractableVisual>().enabled = false;
             initialRotationOffset = Quaternion.Inverse(GetTwoHandRotation()) * GetAttachTransform(interactorsSelecting[0]).rotation;
             initialHandPosition1 = interactorsSelecting[0].transform.position;
             initialHandPosition2 = interactorsSelecting[1].transform.position;
-            // set x axis to point toward first hand
-            // this.transform.right = interactorsSelecting[0].transform.right;
             initialObjectRotation = this.transform.rotation;
             initialObjectScale = this.transform.localScale;
             initialObjectDirection = this.transform.position - (initialHandPosition1 + initialHandPosition2) * 0.5f;
@@ -172,18 +148,14 @@ public class TwoHandGrabInteractable : XRGrabInteractable
 
     protected override void OnSelectExited(SelectExitEventArgs args)
     {
-        // args.interactorObject.transform.GetChild(0).gameObject.SetActive(true);
         base.OnSelectExited(args);
         if (interactorsSelecting.Count == 1)
         {
             Debug.Log("One hand exited");
-            // GetComponent<XRTintInteractableVisual>().enabled = true;
         }
         if (interactorsSelecting.Count == 0)
         {
             Debug.Log("Both hands exited");
-            // GetComponent<XRTintInteractableVisual>().enabled = true;
-            // GetComponent<XRTintInteractableVisual>().tintColor = Color.yellow;
             this.transform.localScale = new Vector3(25,25,25);
             this.GetComponent<Rigidbody>().isKinematic = false;
         }

@@ -23,6 +23,11 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     public int[] basketIDs = {-1, -1};
 
     /// <summary>
+    /// Store the view ID of each network shadow basket prefab
+    /// </summary>
+    public int[] shadowBasketIDs = {-1, -1};
+
+    /// <summary>
     /// Hold the reference to game over state. Set by gameplay manager
     /// </summary>
     public bool isGameOver = false;
@@ -31,7 +36,6 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     private bool gameStarted = false;
     private Gameplay gameplay;
     private GameplayManager gameplayManager;
-    private GameObject shadowBasket1;
 
     // Start is called before the first frame update
     void Start()
@@ -44,7 +48,6 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         roomCapacity = PhotonNetwork.CurrentRoom.PlayerCount;
         gameplay = FindObjectOfType<Gameplay>();
         gameplayManager = FindObjectOfType<GameplayManager>();
-        shadowBasket1 = GameObject.Find("Shadow Basket");
         isGameOver = false;
     }
 
@@ -99,6 +102,17 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     }
 
     /// <summary>
+    /// Update the shadow basket photonview ID
+    /// </summary>
+    /// <param name="newData">Photonview ID of the basket</param>
+    /// <param name="playerIndex">Player index. 0 is Master, 1 is client</param>
+    public void UpdateShadowBasketIDs(int newData, int playerIndex)
+    {
+        photonView.RPC("SyncShadowBasketIDs", RpcTarget.AllBuffered, newData, playerIndex);
+        Debug.Log("Syncing Basket IDs");
+    }
+
+    /// <summary>
     /// Update the game over boolean
     /// </summary>
     /// <param name="newData">Game over state</param>
@@ -113,7 +127,6 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     {
         gameplayManager.enabled = true;
         gameplay.enabled = true;
-        shadowBasket1.SetActive(false);
         PhotonNetwork.CurrentRoom.IsOpen = false;
     }
 
@@ -127,6 +140,12 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     private void SyncBasketIDs(int newData, int playerIndex)
     {
         basketIDs[playerIndex] = newData;
+    }
+
+    [PunRPC]
+    private void SyncShadowBasketIDs(int newData, int playerIndex)
+    {
+        shadowBasketIDs[playerIndex] = newData;
     }
 
     [PunRPC]
@@ -161,16 +180,16 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         }
         else if (stream.IsReading)
         {
-            // IsChanged<int>((int)stream.ReceiveNext(), playerGrabbed);
-            // IsChanged<int>((int)stream.ReceiveNext(), playerIDs[0]);
-            // IsChanged<int>((int)stream.ReceiveNext(), playerIDs[1]);
-            // IsChanged<int>((int)stream.ReceiveNext(), basketIDs[0]);
-            // IsChanged<int>((int)stream.ReceiveNext(), basketIDs[1]);
-            // IsChanged<bool>((bool)stream.ReceiveNext(), isGameOver);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref playerGrabbed);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref playerIDs[0]);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref playerIDs[1]);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref basketIDs[0]);
+            // IsChanged<int>((int)stream.ReceiveNext(),ref basketIDs[1]);
+            // IsChanged<bool>((bool)stream.ReceiveNext(),ref isGameOver);
         }
     }
 
-    private void IsChanged<T>(T newData, T oldData)
+    private void IsChanged<T>(T newData, ref T oldData)
     {
         if (Comparer<T>.Default.Compare(newData, oldData) != 0)
         {

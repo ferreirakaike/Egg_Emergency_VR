@@ -10,21 +10,27 @@ using Photon.Pun;
 public class CollectableBehavior : MonoBehaviour
 {
     //public GameObject GreenParticleGameObject;
-    private MeshRenderer _basket = null;
-    private MeshRenderer _rim = null;
+    private static MeshRenderer _basket = null;
+    private static MeshRenderer _rim = null;
     private NetworkVariablesAndReferences networkVar;
 
     private AudioManager _audioManager;
 	private GameplayManager _gameplayManager;
-    private Material defaultBasketMaterial;
-    private Material defaultRimMaterial;
+    public Material defaultBasketMaterial;
+    public Material defaultRimMaterial;
     public Material successBasketMaterial;
     public Material failureBasketMaterial;
     public Material successRimMaterial;
     public Material failureRimMaterial;
     public ParticleSystem explosion;
-    public float timeBeforeResetMaterial = 0.5f;
+    public float timeBeforeResetMaterial = 0.3f;
+    public int playerIndex = 0;
     private static float timePassed = 0;
+
+    // keep track of whether the object has collided with the basket
+    // this is to prevent collision with outter colliders after colliding with inner colliders
+    private bool collided = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -34,12 +40,11 @@ public class CollectableBehavior : MonoBehaviour
 		_gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
 
         // view id might now be available at this time
-        if (networkVar.basketIDs[0] > 0)
+        // set by gameplay with some logic
+        if (networkVar.basketIDs[playerIndex] > 0)
         {
-            _basket = PhotonView.Find(networkVar.basketIDs[0]).transform.GetChild(0).GetComponent<MeshRenderer>();
+            _basket = PhotonView.Find(networkVar.basketIDs[playerIndex]).transform.GetChild(0).GetComponent<MeshRenderer>();
             _rim = _basket.transform.GetChild(0).GetComponent<MeshRenderer>();
-            defaultBasketMaterial = _basket.material;
-            defaultRimMaterial = _rim.material;
         }
     }
 
@@ -61,12 +66,10 @@ public class CollectableBehavior : MonoBehaviour
         else
         {
             // view id might now be available at this time
-            if (networkVar.basketIDs[0] > 0)
+            if (networkVar.basketIDs[playerIndex] > 0)
             {
-                _basket = PhotonView.Find(networkVar.basketIDs[0]).transform.GetChild(0).GetComponent<MeshRenderer>();
+                _basket = PhotonView.Find(networkVar.basketIDs[playerIndex]).transform.GetChild(0).GetComponent<MeshRenderer>();
                 _rim = _basket.transform.GetChild(0).GetComponent<MeshRenderer>();
-                defaultBasketMaterial = _basket.material;
-                defaultRimMaterial = _rim.material;
             }
         }
         
@@ -74,43 +77,42 @@ public class CollectableBehavior : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Collided with: " + other.gameObject.name);
-        if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
+        if (gameObject.tag.Equals("Deterrent"))
         {
-            _audioManager.PlayCollectSound();
-            _gameplayManager.IncreaseScore();
-            // _greenLight.SetActive(true);
-            _basket.material = successBasketMaterial;
-            _rim.material = successRimMaterial;
-            timePassed = 0;
+            Debug.Log("Collided with " + other.gameObject.tag);
         }
-        /*else if (other.gameObject.tag.Equals("Basket"))
+        if (!collided)
         {
-
-        }*/
-        else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
-        {
-            GameObject explo = Instantiate(explosion.gameObject, gameObject.transform.position, Quaternion.Euler(-90, 0, 0));
-            explo.SetActive(true);
-            _basket.material = failureBasketMaterial;
-            _rim.material = failureRimMaterial;
-            timePassed = 0;
-            _audioManager.PlayMissedSound();
-            _gameplayManager.DecreaseScore();
-        }
-        else
-        {
-            if (gameObject.tag.Equals("Collectable"))
+            collided = true;
+            if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
             {
-                _audioManager.PlayMissedSound();
-                // _redLight.SetActive(true);
-                _gameplayManager.DecreaseScore();
-                _basket.material = failureBasketMaterial;
-                _rim.material = failureRimMaterial;
+                _audioManager.PlayCollectSound();
+                _gameplayManager.IncreaseScore();
+                _basket.material = successBasketMaterial;
+                _rim.material = successRimMaterial;
                 timePassed = 0;
             }
+            else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
+            {
+                GameObject explo = Instantiate(explosion.gameObject, gameObject.transform.position, Quaternion.Euler(-90, 0, 0));
+                explo.SetActive(true);
+                _basket.material = failureBasketMaterial;
+                _rim.material = failureRimMaterial;
+                _audioManager.PlayMissedSound();
+                _gameplayManager.DecreaseScore();
+            }
+            else
+            {
+                if (gameObject.tag.Equals("Collectable"))
+                {
+                    _audioManager.PlayMissedSound();
+                    _gameplayManager.DecreaseScore();
+                    _basket.material = failureBasketMaterial;
+                    _rim.material = failureRimMaterial;
+                    timePassed = 0;
+                }
+            }
+            Destroy(this.gameObject);
         }
-
-        Destroy(this.gameObject);
     }
 }

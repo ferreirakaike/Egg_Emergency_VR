@@ -9,14 +9,24 @@ public class PathFollower : MonoBehaviour
     public EndOfPathInstruction endOfPathInstruction;
     public float speed = 5;
     float distanceTravelled;
+    private NetworkVariablesAndReferences networkVar;
+
+    void Start()
+    {
+        networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
+    }
 
     void Update()
     {
-        if (pathCreator != null)
+        if (pathCreator != null && !networkVar.isGameOver)
         {
             distanceTravelled += speed * Time.deltaTime;
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
+        }
+        else if (networkVar.isGameOver)
+        {
+            Destroy(this.gameObject);
         }
     }
 }
