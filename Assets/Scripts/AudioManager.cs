@@ -6,6 +6,8 @@ public class AudioManager : MonoBehaviour
 {
     public AudioSource CollectSound;
     public AudioSource MissedSound;
+    public AudioSource BombSound;
+    public AudioSource BackGroundMusic;
 
     // Start is called before the first frame update
     void Start()
@@ -27,5 +29,15 @@ public class AudioManager : MonoBehaviour
     public void PlayMissedSound()
     {
         MissedSound.Play();
+    }
+
+    public void PlayBombSound()
+    {
+        BombSound.Play();
+    }
+
+    public void StopBackgroundMusic()
+    {
+        BackGroundMusic.Stop();
     }
 }
