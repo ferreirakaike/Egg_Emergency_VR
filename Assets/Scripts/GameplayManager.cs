@@ -9,7 +9,8 @@ using Photon.Pun;
 public class GameplayManager : MonoBehaviourPunCallbacks
 {
 	private MainMenuAudioManager audioManager;
-	
+	private AudioManager nonMainMenuAudioManager;
+
 	public TextMeshProUGUI scoreText;
 	public static int score = 0;
 	public int health = 0;
@@ -70,6 +71,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     void Start()
     {
 			audioManager = GameObject.Find("UISoundManager").GetComponent<MainMenuAudioManager>();
+			nonMainMenuAudioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
 			networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
 			basket = PhotonView.Find(networkVar.basketIDs[0]).GetComponent<TwoHandGrabInteractable>();
 			score = 0;
@@ -158,6 +160,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	
 	public void gameOver()
 	{
+		nonMainMenuAudioManager.StopBackgroundMusic();
 		audioManager.PlayGameOverSound();
 		scoreCanvas.SetActive(false);
 		allHearts.SetActive(false);

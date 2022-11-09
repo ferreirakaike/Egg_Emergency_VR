@@ -98,7 +98,7 @@ public class CollectableBehavior : MonoBehaviour
                 explo.SetActive(true);
                 _basket.material = failureBasketMaterial;
                 _rim.material = failureRimMaterial;
-                _audioManager.PlayMissedSound();
+                _audioManager.PlayBombSound();
                 _gameplayManager.DecreaseScore();
             }
             else
