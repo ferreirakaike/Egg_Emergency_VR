@@ -2,9 +2,11 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -112,5 +114,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
   {
     Debug.Log("A new player joined the room");
     base.OnPlayerEnteredRoom(newPlayer);
+  }
+
+  public void SetMultiplayer(Toggle setting)
+  {
+    isMultiplayer = setting.isOn;
   }
 }

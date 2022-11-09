@@ -39,7 +39,7 @@ public class MainMenu : MonoBehaviour {
 		uiCanvas.transform.position = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, 0.07f);
 		moveCanvasToStart = true;
 		networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-		overrideButton = transform.parent.Find("OverrideDropdownButton").GetChild(0).gameObject;
+		overrideButton = transform.Find("OverrideDropdownButton").GetChild(0).gameObject;
 	}
 	
 	void Update() {
@@ -136,6 +136,7 @@ public class MainMenu : MonoBehaviour {
 		}
 		dropdown.SetActive(true);
 		multiplayerToggle.SetActive(true);
+		difficultyDropdown.SetActive(true);
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
 	}
@@ -186,6 +187,8 @@ public class MainMenu : MonoBehaviour {
 			createButton.SetActive(true);
 			dropdown.SetActive(false);
 			overrideButton.SetActive(false);
+			difficultyDropdown.SetActive(false);
+			startButton.SetActive(false);
 			exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit";
 		}
 		
