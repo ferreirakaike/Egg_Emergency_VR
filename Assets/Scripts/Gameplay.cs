@@ -45,7 +45,10 @@ public class Gameplay : MonoBehaviour
                 spawnTime = 2f;
                 break;
         }
-        StartCoroutine(collectableWave());
+        if(PhotonNetwork.IsMasterClient)
+        {
+            StartCoroutine(collectableWave());
+        }
     }
 
     private void spawnCollectable() {

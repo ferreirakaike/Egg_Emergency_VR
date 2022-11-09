@@ -40,16 +40,20 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     // Start is called before the first frame update
     void Start()
     {
-    }
-
-    public override void OnJoinedRoom()
-    {
-        base.OnJoinedRoom();
         roomCapacity = PhotonNetwork.CurrentRoom.PlayerCount;
         gameplay = FindObjectOfType<Gameplay>();
         gameplayManager = FindObjectOfType<GameplayManager>();
         isGameOver = false;
     }
+
+    // public override void OnJoinedRoom()
+    // {
+    //     base.OnJoinedRoom();
+    //     roomCapacity = PhotonNetwork.CurrentRoom.PlayerCount;
+    //     gameplay = FindObjectOfType<Gameplay>();
+    //     gameplayManager = FindObjectOfType<GameplayManager>();
+    //     isGameOver = false;
+    // }
 
     void Reset()
     {

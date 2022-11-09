@@ -42,7 +42,7 @@ public class ColliderUIButton : XRSimpleInteractable
             }
             controller.GetComponent<XRDirectInteractor>().xrController.SendHapticImpulse(0.25f, 0.25f);
         }
-        if (other.gameObject.CompareTag("RightHand") && !leftHandClicked)
+        if (other.gameObject.CompareTag("RightHand") && !rightHandClicked)
         {
             rightHandClicked = true;
 
@@ -71,7 +71,7 @@ public class ColliderUIButton : XRSimpleInteractable
 
     IEnumerator ClickAfterASecond()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.01f);
         base.OnActivated(new ActivateEventArgs());
     }
 }

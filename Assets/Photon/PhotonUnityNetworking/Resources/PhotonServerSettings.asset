@@ -49,6 +49,8 @@ MonoBehaviour:
   - SyncPlayerGrabbed
   - SyncPlayerIDs
   - SyncShadowBasketIDs
+  - UpdateCurrentRoomIndex
+  - UpdateAvailability
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
