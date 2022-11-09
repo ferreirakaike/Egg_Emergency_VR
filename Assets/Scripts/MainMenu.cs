@@ -187,6 +187,7 @@ public class MainMenu : MonoBehaviour {
 			createButton.SetActive(true);
 			dropdown.SetActive(false);
 			overrideButton.SetActive(false);
+			multiplayerToggle.SetActive(false);
 			difficultyDropdown.SetActive(false);
 			startButton.SetActive(false);
 			exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit";
