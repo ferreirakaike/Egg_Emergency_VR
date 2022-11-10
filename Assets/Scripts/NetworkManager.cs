@@ -7,11 +7,24 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Linq;
+public class Room
+{
+  public Room(int roomNumber, bool isMultiplayer)
+  {
+    this.roomNumber = roomNumber;
+    this.isMultiplayer = isMultiplayer;
+  }
+  public int roomNumber;
+  public bool isMultiplayer;
 
+  // if room is created, then master joined room, so player count is always 1
+  public int playerCount = 1;
+}
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
   public bool isMultiplayer = false;
-  public List<RoomInfo> roomCreated = new List<RoomInfo>();
+  public List<Room> roomCreated = new List<Room>();
   public List<int> availableRoom = new List<int>(){1,2,3,4,5,6,7,8,9,10};
   // Start is called before the first frame update
   void Start()
@@ -43,14 +56,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     base.OnRoomListUpdate(roomList);
     foreach (RoomInfo room in roomList)
     {
-      if (!room.RemovedFromList && !roomCreated.Contains(room))
+      if (room.RemovedFromList && !availableRoom.Contains(Int32.Parse(room.Name)))
       {
-        roomCreated.Add(room);
-      }
-      else if (room.RemovedFromList && roomCreated.Contains(room))
-      {
-        roomCreated.Remove(room);
-        roomCreated.Sort();
         photonView.RPC("UpdateAvailability", RpcTarget.AllBuffered, Int32.Parse(room.Name));
       }
     }
@@ -80,26 +87,54 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
       return false;
     }
-    photonView.RPC("UpdateAvailability", RpcTarget.AllBuffered, roomNumber * -1);
+    photonView.RPC("UpdateAvailability", RpcTarget.AllBuffered, roomNumber * -1, isMultiplayer);
     return true;
   }
 
   public bool JoinRoom(int roomNumber)
   {
-    return PhotonNetwork.JoinRoom(roomNumber.ToString());
+    bool result = PhotonNetwork.JoinRoom(roomNumber.ToString());
+    if (result)
+    {
+      photonView.RPC("UpdateRoomPlayerCount", RpcTarget.AllBuffered, roomNumber, 1);
+    }
+    return result;
   }
 
   [PunRPC]
-  private void UpdateAvailability(int roomNumber = 0)
+  private void UpdateRoomPlayerCount(int roomNumber, int numberToAdd)
+  {
+    foreach (Room room in roomCreated)
+    {
+      if (room.roomNumber == roomNumber)
+      {
+        room.playerCount += numberToAdd;
+        break;
+      }
+    }
+  }
+
+  [PunRPC]
+  private void UpdateAvailability(int roomNumber = 0, bool multiplayer = false)
   {
     if (roomNumber < 0)
     {
       availableRoom.Remove(roomNumber * -1);
+      roomCreated.Add(new Room(roomNumber * -1, multiplayer));
+      roomCreated = roomCreated.OrderBy(x => x.roomNumber).ToList();
     }
     else if (roomNumber > 0)
     {
       availableRoom.Add(roomNumber);
       availableRoom.Sort();
+      foreach (Room room in roomCreated)
+      {
+        if (room.roomNumber == roomNumber)
+        {
+          roomCreated.Remove(room);
+          break;
+        }
+      }
     }
   }
 

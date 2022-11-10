@@ -149,11 +149,11 @@ public class MainMenu : MonoBehaviour {
 		TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
 		tmp_dropdown.ClearOptions();
 		List<TMP_Dropdown.OptionData> dropdown_options = new List<TMP_Dropdown.OptionData>();
-		foreach (RoomInfo room in networkManager.roomCreated)
+		foreach (Room room in networkManager.roomCreated)
 		{
-			if (!room.RemovedFromList && (room.MaxPlayers > room.PlayerCount))
+			if (room.isMultiplayer && room.playerCount < 2)
 			{
-				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.Name});
+				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.roomNumber.ToString()});
 			}
 		}
 		
