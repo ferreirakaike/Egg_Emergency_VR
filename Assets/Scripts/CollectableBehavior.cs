@@ -86,11 +86,19 @@ public class CollectableBehavior : MonoBehaviour
             collided = true;
             if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
             {
-                _audioManager.PlayCollectSound();
-                _gameplayManager.IncreaseScore();
                 _basket.material = successBasketMaterial;
                 _rim.material = successRimMaterial;
                 timePassed = 0;
+                if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                {
+                    _audioManager.PlayCollectSound();
+                    _gameplayManager.IncreaseScore(); // change this to increase score for player 0 or for master
+                }
+                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                {
+                    _audioManager.PlayCollectSound();
+                    _gameplayManager.IncreaseScore(); // change this to increase score for player 1 or for client
+                }
             }
             else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
             {
@@ -98,18 +106,34 @@ public class CollectableBehavior : MonoBehaviour
                 explo.SetActive(true);
                 _basket.material = failureBasketMaterial;
                 _rim.material = failureRimMaterial;
-                _audioManager.PlayBombSound();
-                _gameplayManager.DecreaseScore();
+                if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                {
+                    _audioManager.PlayBombSound();
+                    _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
+                }
+                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                {
+                    _audioManager.PlayBombSound();
+                    _gameplayManager.DecreaseScore(); // change this to decrease score for player 1 or for client
+                }
             }
             else
             {
                 if (gameObject.tag.Equals("Collectable"))
                 {
-                    _audioManager.PlayMissedSound();
-                    _gameplayManager.DecreaseScore();
                     _basket.material = failureBasketMaterial;
                     _rim.material = failureRimMaterial;
                     timePassed = 0;
+                    if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                    {
+                        _audioManager.PlayMissedSound();
+                        _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
+                    }
+                    else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                    {
+                        _audioManager.PlayMissedSound();
+                        _gameplayManager.DecreaseScore(); // change this to decrease score for player 1 or for client
+                    }
                 }
             }
             Destroy(this.gameObject);

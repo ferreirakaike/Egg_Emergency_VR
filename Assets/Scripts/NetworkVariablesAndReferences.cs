@@ -44,16 +44,12 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         gameplay = FindObjectOfType<Gameplay>();
         gameplayManager = FindObjectOfType<GameplayManager>();
         isGameOver = false;
+        // if it gets laggy, decrease these
+        // default sendRate = 30 times/sec
+        // default serializationrate = 10 times/sec
+        PhotonNetwork.SerializationRate = 40;
+        PhotonNetwork.SendRate = 50;
     }
-
-    // public override void OnJoinedRoom()
-    // {
-    //     base.OnJoinedRoom();
-    //     roomCapacity = PhotonNetwork.CurrentRoom.PlayerCount;
-    //     gameplay = FindObjectOfType<Gameplay>();
-    //     gameplayManager = FindObjectOfType<GameplayManager>();
-    //     isGameOver = false;
-    // }
 
     void Reset()
     {

@@ -90,7 +90,7 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         base.OnMasterClientSwitched(newMasterClient);
-        PhotonNetwork.Disconnect();
+        PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene("OwnerLeftRoom");
     }
 }

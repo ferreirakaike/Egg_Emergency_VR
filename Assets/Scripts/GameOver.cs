@@ -64,7 +64,7 @@ public class GameOver : MonoBehaviour {
 	
 	public void OpenMainMenu() {
 		audioManager.PlayButtonClickSound();
-		PhotonNetwork.Disconnect();
+		PhotonNetwork.LeaveRoom();
 		SceneManager.LoadScene("MainMenu");
 	}
 }
