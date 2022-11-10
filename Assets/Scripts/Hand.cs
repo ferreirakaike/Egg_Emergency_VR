@@ -4,8 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
+/// <summary>
+/// This class is used to animate the hands
+/// </summary>
 public class Hand : MonoBehaviour
 {
+    /// <summary>
+    /// User-defined animation speed of the hand.
+    /// </summary>
     public float animationSpeed;
     Animator animator;
     private float gripTarget;

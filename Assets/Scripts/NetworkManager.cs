@@ -7,15 +7,28 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Linq;
 
+/// <summary>
+/// This class handles communication with the server, creating rooms, and putting users into rooms
+/// </summary>
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
-  public bool isMultiplayer = false;
-  public List<RoomInfo> roomCreated = new List<RoomInfo>();
+  /// <summary>
+  /// Variable that determines whether the room's setting is set to Multiplayer
+  /// </summary>
+  public static bool isMultiplayer = true;
+
+  /// <summary>
+  /// A List that holds the number of available room that user can join/create
+  /// </summary>
+  /// <typeparam name="int">Room number</typeparam>
+  /// <returns></returns>
   public List<int> availableRoom = new List<int>(){1,2,3,4,5,6,7,8,9,10};
   // Start is called before the first frame update
   void Start()
   {
+    isMultiplayer = true;
     ConnectToServer();
   }
 
@@ -31,6 +44,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     Debug.Log("Trying to connect to server ... ");
   }
 
+  /// <summary>
+  /// Override parent method. As user connect to the server, he is immediately joining the lobby.
+  /// </summary>
   public override void OnConnectedToMaster()
   {
     Debug.Log("Connected to server");
@@ -38,30 +54,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     PhotonNetwork.JoinLobby();
   }
 
-  public override void OnRoomListUpdate(List<RoomInfo> roomList)
-  {
-    base.OnRoomListUpdate(roomList);
-    foreach (RoomInfo room in roomList)
-    {
-      if (!room.RemovedFromList && !roomCreated.Contains(room))
-      {
-        roomCreated.Add(room);
-      }
-      else if (room.RemovedFromList && roomCreated.Contains(room))
-      {
-        roomCreated.Remove(room);
-        roomCreated.Sort();
-        photonView.RPC("UpdateAvailability", RpcTarget.AllBuffered, Int32.Parse(room.Name));
-      }
-    }
-  }
-
+  /// <summary>
+  /// Override parent method. This was mainly used for debugging
+  /// </summary>
   public override void OnJoinedLobby()
   {
     base.OnJoinedLobby();
     Debug.Log("Joined Lobby");
   }
 
+  /// <summary>
+  /// This method is used to create a room with the room name set to the passed in room number.
+  /// </summary>
+  /// <param name="roomNumber">Room number that is used to set the name of the room.</param>
+  /// <returns>Returns true if the room creation request is sucessfully put into the network queue. Returns false otherwise.</returns>
   public bool InitializeRoom(int roomNumber)
   {
     RoomOptions roomOptions = new RoomOptions();
@@ -80,29 +86,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
       return false;
     }
-    photonView.RPC("UpdateAvailability", RpcTarget.AllBuffered, roomNumber * -1);
     return true;
   }
 
+  /// <summary>
+  /// This method allows user to join room that was previously created.
+  /// </summary>
+  /// <param name="roomNumber">Room number that the user wants to join</param>
+  /// <returns>Returns true if the room joining request is sucessfully put into the network queue. Returns false otherwise.</returns>
   public bool JoinRoom(int roomNumber)
   {
     return PhotonNetwork.JoinRoom(roomNumber.ToString());
   }
 
-  [PunRPC]
-  private void UpdateAvailability(int roomNumber = 0)
-  {
-    if (roomNumber < 0)
-    {
-      availableRoom.Remove(roomNumber * -1);
-    }
-    else if (roomNumber > 0)
-    {
-      availableRoom.Add(roomNumber);
-      availableRoom.Sort();
-    }
-  }
-
+  /// <summary>
+  /// Override parent method. Upon successfully joining a room, the user is immediately teleported into the game scene
+  /// </summary>
   public override void OnJoinedRoom()
   {
     Debug.Log("Joined room successfully");
@@ -110,12 +109,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     SceneManager.LoadScene("KaiScene");
   }
 
-  public override void OnPlayerEnteredRoom(Player newPlayer)
-  {
-    Debug.Log("A new player joined the room");
-    base.OnPlayerEnteredRoom(newPlayer);
-  }
-
+  /// <summary>
+  /// This method sets the game mode to either single player or multiplayer based on the passed in toggle state.
+  /// </summary>
+  /// <param name="setting">The toggle that holds the value of whether the game mode should be set to multiplayer or not</param>
   public void SetMultiplayer(Toggle setting)
   {
     isMultiplayer = setting.isOn;

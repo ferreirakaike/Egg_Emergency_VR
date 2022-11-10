@@ -4,9 +4,16 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 [RequireComponent(typeof(ActionBasedController))]
+/// <summary>
+/// This class is used to send grip and trigger value to the Hand class to trigger the hand animation.
+/// </summary>
 public class HandController : MonoBehaviour
 {
     ActionBasedController controller;
+
+    /// <summary>
+    /// This variable holds the reference to an XRController with a Hand class attached.
+    /// </summary>
     public Hand hand;
     
     // Start is called before the first frame update

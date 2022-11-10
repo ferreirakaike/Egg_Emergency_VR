@@ -7,10 +7,17 @@ using UnityEngine.UI;
 using Unity.XR.CoreUtils;
 using TMPro;
 
+/// <summary>
+/// This class works together with the colliders to enable collision for UI canvas.
+/// </summary>
 public class ColliderUIButton : XRSimpleInteractable
 {
     private bool rightHandClicked = false;
     private bool leftHandClicked = false;
+
+    /// <summary>
+    /// This variable holds the material of the button for when it is clicked.
+    /// </summary>
     public Material clickedButtonMaterial;
     private void OnTriggerEnter(Collider other)
     {

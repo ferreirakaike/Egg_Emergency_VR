@@ -7,11 +7,24 @@ using Photon.Pun;
 // reference https://www.youtube.com/watch?v=Ie0-oKN3Lq0
 // need to modify current prefab to use
 
-
+/// <summary>
+/// Class that inherits from XRGrabInteractable that enables the grabbing of objects using 2 hands
+/// </summary>
 public class TwoHandGrabInteractable : XRGrabInteractable
 {
+    /// <summary>
+    /// User-set boolean variable that determines whether a grabbed object should be scaled based on the distance between hands
+    /// </summary>
     public bool scaleObject = true;
+
+    /// <summary>
+    /// Variable that set the minimum scale of the grabbed object
+    /// </summary>
     public float minScale = 15f;
+    
+    /// <summary>
+    /// Variable that set the maximum scale of the grabbed object
+    /// </summary>
     public float maxScale = 50f;
 
     private Vector3 initialHandPosition1;
@@ -19,9 +32,7 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     private Quaternion initialObjectRotation;
     private Vector3 initialObjectScale;
     private Vector3 initialObjectDirection;
-    public bool snapToSecondHand = false;
-    public enum TwoHandRotationType { None, First, Second};
-    public TwoHandRotationType twoHandRotationType;
+
     private Quaternion initialRotationOffset;
     private Transform currentTransform;
     private NetworkVariablesAndReferences networkVar;
@@ -66,6 +77,11 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         this.transform.position = (0.5f * (currentHandPosition1 + currentHandPosition2)) + (handRotation * (initialObjectDirection * percentage));
     }
 
+    /// <summary>
+    /// Override parent method. If the number of hands grabbing the object is 1, then do default behavior.
+    /// If the number of hands grabbing the object is 2, then do math to determine position and scale
+    /// </summary>
+    /// <param name="updatePhase">XRInteractionUpdateOrder.UpdatePhase</param>
     public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
     {
         if (interactorsSelecting.Count == 1)
@@ -74,38 +90,11 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         }
         else if(interactorsSelecting.Count == 2 && updatePhase == XRInteractionUpdateOrder.UpdatePhase.Dynamic)
         {
-            // Compute rotation
-            if(snapToSecondHand)
-            {
-                GetAttachTransform(interactorsSelecting[0]).rotation = GetTwoHandRotation();
-            }
-            else
-            {
-                GetAttachTransform(interactorsSelecting[0]).rotation = GetTwoHandRotation() * initialRotationOffset;
-            }
             updateTargetBoth();
 
         }
         
         currentTransform = this.transform;
-    }
-
-    private Quaternion GetTwoHandRotation()
-    {
-        Quaternion targetRotation;
-        if (twoHandRotationType == TwoHandRotationType.None)
-        {
-            targetRotation = Quaternion.LookRotation(GetAttachTransform(interactorsSelecting[1]).position - GetAttachTransform(interactorsSelecting[0]).position);
-        }
-        else if (twoHandRotationType == TwoHandRotationType.First)
-        {
-            targetRotation = Quaternion.LookRotation(GetAttachTransform(interactorsSelecting[1]).position - GetAttachTransform(interactorsSelecting[0]).position, GetAttachTransform(interactorsSelecting[0]).up);
-        }
-        else
-        {
-            targetRotation = Quaternion.LookRotation(GetAttachTransform(interactorsSelecting[1]).position - GetAttachTransform(interactorsSelecting[0]).position, GetAttachTransform(interactorsSelecting[1]).up);
-        }
-        return targetRotation;
     }
 
     protected override void Awake() 
@@ -137,7 +126,6 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         if (interactorsSelecting.Count == 2)
         {
             Debug.Log("Second hand grab");
-            initialRotationOffset = Quaternion.Inverse(GetTwoHandRotation()) * GetAttachTransform(interactorsSelecting[0]).rotation;
             initialHandPosition1 = interactorsSelecting[0].transform.position;
             initialHandPosition2 = interactorsSelecting[1].transform.position;
             initialObjectRotation = this.transform.rotation;

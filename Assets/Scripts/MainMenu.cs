@@ -9,24 +9,76 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 
+/// <summary>
+/// Enum that holds the difficulty of the game
+/// </summary>
 public enum Difficulty {
 	Easy = 0,
 	Medium = 1,
 	Hard = 2
 }
 
-public class MainMenu : MonoBehaviour {
+
+/// <summary>
+/// Main menu class where user can select to create room, join room, set room difficulty, etc.
+/// </summary>
+public class MainMenu : MonoBehaviourPunCallbacks {
+	/// <summary>
+	/// This variable holds the currently set game difficulty
+	/// </summary>
 	public static Difficulty difficulty = Difficulty.Easy;
 	private MainMenuAudioManager audioManager;
+
+	/// <summary>
+	/// Reference to the UICanvas gameobject
+	/// </summary>
 	public GameObject uiCanvas;
+
+	/// <summary>
+	/// Reference to the Menu title
+	/// </summary>
 	public GameObject gameLabel;
+
+	/// <summary>
+	/// Reference to the Create Room button
+	/// </summary>
 	public GameObject createButton;
+
+	/// <summary>
+	/// Reference to the Start game button
+	/// </summary>
 	public GameObject startButton;
+
+	/// <summary>
+	/// Reference to the Exit game button
+	/// </summary>
 	public GameObject exitButton;
+
+	/// <summary>
+	/// Reference to the Join room button
+	/// </summary>
 	public GameObject joinButton;
+
+	/// <summary>
+	/// Reference to the Notification text in the UI Menu
+	/// </summary>
+	public GameObject notificationText;
+
+	/// <summary>
+	/// Reference to the room number dropdown menu
+	/// </summary>
 	public GameObject dropdown;
+
+	/// <summary>
+	/// Reference to the difficulty dropdown menu
+	/// </summary>
 	public GameObject difficultyDropdown;
+
+	/// <summary>
+	/// Reference to the multiplater toggle
+	/// </summary>
 	public GameObject multiplayerToggle;
+
 	private GameObject overrideButton;
 	private NetworkManager networkManager;
 	
@@ -39,7 +91,8 @@ public class MainMenu : MonoBehaviour {
 		uiCanvas.transform.position = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, 0.07f);
 		moveCanvasToStart = true;
 		networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-		overrideButton = transform.Find("OverrideDropdownButton").GetChild(0).gameObject;
+		overrideButton = transform.Find("OverrideDropdownButton").gameObject;
+		difficulty = Difficulty.Easy;
 	}
 	
 	void Update() {
@@ -85,10 +138,13 @@ public class MainMenu : MonoBehaviour {
 		}
 	}
 	
+	/// <summary>
+	/// This method puts the user into a room and start the game
+	/// </summary>
 	public void StartGame() {
+		audioManager.PlayButtonClickSound();
 		if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Start")
 		{
-			audioManager.PlayButtonClickSound();
 			TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
 			int result;
 			if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
@@ -97,6 +153,9 @@ public class MainMenu : MonoBehaviour {
 				{
 					Debug.Log("Failed to create room");
 				}
+				notificationText.GetComponent<TextMeshProUGUI>().text = "";
+				StartCoroutine(SetNotification("Failed to create room. Room already exist or network error.\nPlease try creating different a room or join a room"));
+				notificationText.SetActive(true);
 			}
 		}
 		else if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Join")
@@ -109,12 +168,55 @@ public class MainMenu : MonoBehaviour {
 				{
 					Debug.Log("Failed to join room");
 				}
+				notificationText.GetComponent<TextMeshProUGUI>().text = "";
+				StartCoroutine(SetNotification("Failed to join room. Room is either full or does not exist.\nPlease create a room or join a different room"));
+				notificationText.SetActive(true);
 			}
 		}
 	}
 
+	/// <summary>
+	/// Override parent method. This method stop the SetNotification coroutine in the current scene
+	/// </summary>
+	public override void OnJoinedRoom()
+	{
+		base.OnJoinedRoom();
+		StopCoroutine(SetNotification());
+	}
+
+	IEnumerator SetNotification(string str = null)
+	{
+		if (str != null)
+		{
+			yield return new WaitForSeconds(1);
+			notificationText.GetComponent<TextMeshProUGUI>().text = str;
+		}
+  }
+
+	/// <summary>
+	/// This method is used to set the notice for when Multiplayer toggle is set
+	/// </summary>
+	/// <param name="setting"></param>
+	public void SetMultiplayerNotification(Toggle setting)
+  {
+    if(setting.isOn)
+		{
+			notificationText.GetComponent<TextMeshProUGUI>().text = "NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode";
+			notificationText.SetActive(true);
+		}
+		else
+		{
+			notificationText.GetComponent<TextMeshProUGUI>().text = "";
+			notificationText.SetActive(false);
+		}
+  }
+
+	/// <summary>
+	/// This method displays the dropdown menus so that user can select a room number and set room difficulty before creating a room.
+	/// </summary>
 	public void OnCreateRoomButtonClicked()
 	{
+		audioManager.PlayButtonClickSound();
 		startButton.SetActive(true);
 		createButton.SetActive(false);
 		joinButton.SetActive(false);
@@ -126,55 +228,54 @@ public class MainMenu : MonoBehaviour {
 				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.ToString()});
 		}
 		
-		if (dropdown_options.Count == 0)
-		{
-			Debug.Log("Maximum number of rooms have been reached. Please join a room instead");
-		}
-		else
-		{
-			tmp_dropdown.AddOptions(dropdown_options);
-		}
+		tmp_dropdown.AddOptions(dropdown_options);
 		dropdown.SetActive(true);
 		multiplayerToggle.SetActive(true);
 		difficultyDropdown.SetActive(true);
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
+		if(NetworkManager.isMultiplayer)
+		{
+			notificationText.GetComponent<TextMeshProUGUI>().text = "NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode";
+			notificationText.SetActive(true);
+		}
 	}
 
+	/// <summary>
+	/// This method displays a dropdown list of room numbers that user could potentially join
+	/// </summary>
 	public void OnJoinRoomButtonClicked()
 	{
+		audioManager.PlayButtonClickSound();
 		startButton.SetActive(true);
 		createButton.SetActive(false);
 		joinButton.SetActive(false);
 		TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
 		tmp_dropdown.ClearOptions();
 		List<TMP_Dropdown.OptionData> dropdown_options = new List<TMP_Dropdown.OptionData>();
-		foreach (RoomInfo room in networkManager.roomCreated)
+		foreach (int room in networkManager.availableRoom)
 		{
-			if (!room.RemovedFromList && (room.MaxPlayers > room.PlayerCount))
-			{
-				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.Name});
-			}
+				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.ToString()});
 		}
 		
-		if (dropdown_options.Count == 0)
-		{
-			Debug.Log("No room existed, please create a room instead");
-		}
-		else
-		{
-			tmp_dropdown.AddOptions(dropdown_options);
-		}
+		tmp_dropdown.AddOptions(dropdown_options);
 		dropdown.SetActive(true);
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Join";
 	}
 	
+	/// <summary>
+	/// This method is used to set the difficulty of the game.
+	/// </summary>
+	/// <param name="dropdown">This is the selected value from the difficulty dropdown menu.</param>
 	public void SelectDifficulty(TMP_Dropdown dropdown) {
 		audioManager.PlayButtonClickSound();
 		MainMenu.difficulty = (Difficulty)dropdown.value;
 	}
 	
+	/// <summary>
+	/// This method is used to close the application wehen the Exit button is clicked.
+	/// </summary>
 	public void Exit() {
 		if (exitButton.GetComponentInChildren<TextMeshProUGUI>().text == "Exit")
 		{
@@ -183,6 +284,7 @@ public class MainMenu : MonoBehaviour {
 		}
 		else if (exitButton.GetComponentInChildren<TextMeshProUGUI>().text == "Back")
 		{
+			audioManager.PlayButtonClickSound();
 			joinButton.SetActive(true);
 			createButton.SetActive(true);
 			dropdown.SetActive(false);
@@ -190,6 +292,7 @@ public class MainMenu : MonoBehaviour {
 			multiplayerToggle.SetActive(false);
 			difficultyDropdown.SetActive(false);
 			startButton.SetActive(false);
+			notificationText.SetActive(false);
 			exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit";
 		}
 		

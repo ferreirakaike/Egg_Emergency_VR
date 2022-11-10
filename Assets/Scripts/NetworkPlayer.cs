@@ -6,11 +6,23 @@ using Photon.Pun;
 using UnityEngine.XR.Interaction.Toolkit;
 using Unity.XR.CoreUtils;
 
+/// <summary>
+/// The class that controls the movement and animation of the networked player
+/// </summary>
 public class NetworkPlayer : MonoBehaviour
 {
+    /// <summary>
+    /// Variable that holds the refernce to the user's left hand prefab
+    /// </summary>
     public Transform leftHand;
+
     private Animator leftHandAnimator;
+
+    /// <summary>
+    /// Variable that holds the reference to the user's right hand prefab
+    /// </summary>
     public Transform rightHand;
+
     private Animator rightHandAnimator;
     private PhotonView photonView;
     private Transform leftHandOrigin;
