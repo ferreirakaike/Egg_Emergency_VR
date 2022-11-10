@@ -60,11 +60,15 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     void Update()
     {
         // update rpc only if needed. Don't polute the data stream
-        if (!gameStarted && roomCapacity > 0 && (roomCapacity == playerGrabbed))
+        if (!gameStarted)
         {
-            gameStarted = true;
-            photonView.RPC("StartGameplay", RpcTarget.AllBuffered);
-            Debug.Log("Starting game");
+            roomCapacity = PhotonNetwork.CurrentRoom.MaxPlayers;
+            if(roomCapacity > 0 && (roomCapacity == playerGrabbed))
+            {
+                gameStarted = true;
+                photonView.RPC("StartGameplay", RpcTarget.AllBuffered);
+                Debug.Log("Starting game");
+            }
         }
     }
 
@@ -127,7 +131,10 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     {
         gameplayManager.enabled = true;
         gameplay.enabled = true;
-        PhotonNetwork.CurrentRoom.IsOpen = false;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+        }
     }
 
     [PunRPC]

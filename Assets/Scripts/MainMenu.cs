@@ -15,7 +15,7 @@ public enum Difficulty {
 	Hard = 2
 }
 
-public class MainMenu : MonoBehaviour {
+public class MainMenu : MonoBehaviourPunCallbacks {
 	public static Difficulty difficulty = Difficulty.Easy;
 	private MainMenuAudioManager audioManager;
 	public GameObject uiCanvas;
@@ -24,6 +24,7 @@ public class MainMenu : MonoBehaviour {
 	public GameObject startButton;
 	public GameObject exitButton;
 	public GameObject joinButton;
+	public GameObject notificationText;
 	public GameObject dropdown;
 	public GameObject difficultyDropdown;
 	public GameObject multiplayerToggle;
@@ -39,7 +40,7 @@ public class MainMenu : MonoBehaviour {
 		uiCanvas.transform.position = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, 0.07f);
 		moveCanvasToStart = true;
 		networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-		overrideButton = transform.Find("OverrideDropdownButton").GetChild(0).gameObject;
+		overrideButton = transform.Find("OverrideDropdownButton").gameObject;
 	}
 	
 	void Update() {
@@ -86,9 +87,9 @@ public class MainMenu : MonoBehaviour {
 	}
 	
 	public void StartGame() {
+		audioManager.PlayButtonClickSound();
 		if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Start")
 		{
-			audioManager.PlayButtonClickSound();
 			TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
 			int result;
 			if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
@@ -97,6 +98,9 @@ public class MainMenu : MonoBehaviour {
 				{
 					Debug.Log("Failed to create room");
 				}
+				notificationText.GetComponent<TextMeshProUGUI>().text = "";
+				StartCoroutine(SetNotification("Failed to create room. Room already exist or network error.\nPlease try creating different a room or join a room"));
+				notificationText.SetActive(true);
 			}
 		}
 		else if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Join")
@@ -109,12 +113,45 @@ public class MainMenu : MonoBehaviour {
 				{
 					Debug.Log("Failed to join room");
 				}
+				notificationText.GetComponent<TextMeshProUGUI>().text = "";
+				StartCoroutine(SetNotification("Failed to join room. Room is either full or does not exist.\nPlease create a room or join a different room"));
+				notificationText.SetActive(true);
 			}
 		}
 	}
 
+	public override void OnJoinedRoom()
+	{
+		base.OnJoinedRoom();
+		StopCoroutine(SetNotification());
+	}
+
+	IEnumerator SetNotification(string str = null)
+	{
+		if (str != null)
+		{
+			yield return new WaitForSeconds(1);
+			notificationText.GetComponent<TextMeshProUGUI>().text = str;
+		}
+  }
+
+	public void SetMultiplayerNotification(Toggle setting)
+  {
+    if(setting.isOn)
+		{
+			notificationText.GetComponent<TextMeshProUGUI>().text = "NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode";
+			notificationText.SetActive(true);
+		}
+		else
+		{
+			notificationText.GetComponent<TextMeshProUGUI>().text = "";
+			notificationText.SetActive(false);
+		}
+  }
+
 	public void OnCreateRoomButtonClicked()
 	{
+		audioManager.PlayButtonClickSound();
 		startButton.SetActive(true);
 		createButton.SetActive(false);
 		joinButton.SetActive(false);
@@ -126,45 +163,34 @@ public class MainMenu : MonoBehaviour {
 				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.ToString()});
 		}
 		
-		if (dropdown_options.Count == 0)
-		{
-			Debug.Log("Maximum number of rooms have been reached. Please join a room instead");
-		}
-		else
-		{
-			tmp_dropdown.AddOptions(dropdown_options);
-		}
+		tmp_dropdown.AddOptions(dropdown_options);
 		dropdown.SetActive(true);
 		multiplayerToggle.SetActive(true);
 		difficultyDropdown.SetActive(true);
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
+		if(NetworkManager.isMultiplayer)
+		{
+			notificationText.GetComponent<TextMeshProUGUI>().text = "NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode";
+			notificationText.SetActive(true);
+		}
 	}
 
 	public void OnJoinRoomButtonClicked()
 	{
+		audioManager.PlayButtonClickSound();
 		startButton.SetActive(true);
 		createButton.SetActive(false);
 		joinButton.SetActive(false);
 		TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
 		tmp_dropdown.ClearOptions();
 		List<TMP_Dropdown.OptionData> dropdown_options = new List<TMP_Dropdown.OptionData>();
-		foreach (Room room in networkManager.roomCreated)
+		foreach (int room in networkManager.availableRoom)
 		{
-			if (room.isMultiplayer && room.playerCount < 2)
-			{
-				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.roomNumber.ToString()});
-			}
+				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.ToString()});
 		}
 		
-		if (dropdown_options.Count == 0)
-		{
-			Debug.Log("No room existed, please create a room instead");
-		}
-		else
-		{
-			tmp_dropdown.AddOptions(dropdown_options);
-		}
+		tmp_dropdown.AddOptions(dropdown_options);
 		dropdown.SetActive(true);
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Join";
@@ -183,6 +209,7 @@ public class MainMenu : MonoBehaviour {
 		}
 		else if (exitButton.GetComponentInChildren<TextMeshProUGUI>().text == "Back")
 		{
+			audioManager.PlayButtonClickSound();
 			joinButton.SetActive(true);
 			createButton.SetActive(true);
 			dropdown.SetActive(false);
@@ -190,6 +217,7 @@ public class MainMenu : MonoBehaviour {
 			multiplayerToggle.SetActive(false);
 			difficultyDropdown.SetActive(false);
 			startButton.SetActive(false);
+			notificationText.SetActive(false);
 			exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit";
 		}
 		

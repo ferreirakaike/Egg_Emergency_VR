@@ -23,8 +23,7 @@ public class Room
 }
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
-  public bool isMultiplayer = false;
-  public List<Room> roomCreated = new List<Room>();
+  public static bool isMultiplayer = true;
   public List<int> availableRoom = new List<int>(){1,2,3,4,5,6,7,8,9,10};
   // Start is called before the first frame update
   void Start()
@@ -51,18 +50,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     PhotonNetwork.JoinLobby();
   }
 
-  public override void OnRoomListUpdate(List<RoomInfo> roomList)
-  {
-    base.OnRoomListUpdate(roomList);
-    foreach (RoomInfo room in roomList)
-    {
-      if (room.RemovedFromList && !availableRoom.Contains(Int32.Parse(room.Name)))
-      {
-        photonView.RPC("UpdateAvailability", RpcTarget.AllBuffered, Int32.Parse(room.Name));
-      }
-    }
-  }
-
   public override void OnJoinedLobby()
   {
     base.OnJoinedLobby();
@@ -87,55 +74,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
       return false;
     }
-    photonView.RPC("UpdateAvailability", RpcTarget.AllBuffered, roomNumber * -1, isMultiplayer);
     return true;
   }
 
   public bool JoinRoom(int roomNumber)
   {
-    bool result = PhotonNetwork.JoinRoom(roomNumber.ToString());
-    if (result)
-    {
-      photonView.RPC("UpdateRoomPlayerCount", RpcTarget.AllBuffered, roomNumber, 1);
-    }
-    return result;
-  }
-
-  [PunRPC]
-  private void UpdateRoomPlayerCount(int roomNumber, int numberToAdd)
-  {
-    foreach (Room room in roomCreated)
-    {
-      if (room.roomNumber == roomNumber)
-      {
-        room.playerCount += numberToAdd;
-        break;
-      }
-    }
-  }
-
-  [PunRPC]
-  private void UpdateAvailability(int roomNumber = 0, bool multiplayer = false)
-  {
-    if (roomNumber < 0)
-    {
-      availableRoom.Remove(roomNumber * -1);
-      roomCreated.Add(new Room(roomNumber * -1, multiplayer));
-      roomCreated = roomCreated.OrderBy(x => x.roomNumber).ToList();
-    }
-    else if (roomNumber > 0)
-    {
-      availableRoom.Add(roomNumber);
-      availableRoom.Sort();
-      foreach (Room room in roomCreated)
-      {
-        if (room.roomNumber == roomNumber)
-        {
-          roomCreated.Remove(room);
-          break;
-        }
-      }
-    }
+    return PhotonNetwork.JoinRoom(roomNumber.ToString());
   }
 
   public override void OnJoinedRoom()
