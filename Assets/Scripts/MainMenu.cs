@@ -9,25 +9,76 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 
+/// <summary>
+/// Enum that holds the difficulty of the game
+/// </summary>
 public enum Difficulty {
 	Easy = 0,
 	Medium = 1,
 	Hard = 2
 }
 
+
+/// <summary>
+/// Main menu class where user can select to create room, join room, set room difficulty, etc.
+/// </summary>
 public class MainMenu : MonoBehaviourPunCallbacks {
+	/// <summary>
+	/// This variable holds the currently set game difficulty
+	/// </summary>
 	public static Difficulty difficulty = Difficulty.Easy;
 	private MainMenuAudioManager audioManager;
+
+	/// <summary>
+	/// Reference to the UICanvas gameobject
+	/// </summary>
 	public GameObject uiCanvas;
+
+	/// <summary>
+	/// Reference to the Menu title
+	/// </summary>
 	public GameObject gameLabel;
+
+	/// <summary>
+	/// Reference to the Create Room button
+	/// </summary>
 	public GameObject createButton;
+
+	/// <summary>
+	/// Reference to the Start game button
+	/// </summary>
 	public GameObject startButton;
+
+	/// <summary>
+	/// Reference to the Exit game button
+	/// </summary>
 	public GameObject exitButton;
+
+	/// <summary>
+	/// Reference to the Join room button
+	/// </summary>
 	public GameObject joinButton;
+
+	/// <summary>
+	/// Reference to the Notification text in the UI Menu
+	/// </summary>
 	public GameObject notificationText;
+
+	/// <summary>
+	/// Reference to the room number dropdown menu
+	/// </summary>
 	public GameObject dropdown;
+
+	/// <summary>
+	/// Reference to the difficulty dropdown menu
+	/// </summary>
 	public GameObject difficultyDropdown;
+
+	/// <summary>
+	/// Reference to the multiplater toggle
+	/// </summary>
 	public GameObject multiplayerToggle;
+
 	private GameObject overrideButton;
 	private NetworkManager networkManager;
 	
@@ -41,6 +92,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		moveCanvasToStart = true;
 		networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 		overrideButton = transform.Find("OverrideDropdownButton").gameObject;
+		difficulty = Difficulty.Easy;
 	}
 	
 	void Update() {
@@ -86,6 +138,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
 	}
 	
+	/// <summary>
+	/// This method puts the user into a room and start the game
+	/// </summary>
 	public void StartGame() {
 		audioManager.PlayButtonClickSound();
 		if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Start")
@@ -120,6 +175,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	/// <summary>
+	/// Override parent method. This method stop the SetNotification coroutine in the current scene
+	/// </summary>
 	public override void OnJoinedRoom()
 	{
 		base.OnJoinedRoom();
@@ -135,6 +193,10 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
   }
 
+	/// <summary>
+	/// This method is used to set the notice for when Multiplayer toggle is set
+	/// </summary>
+	/// <param name="setting"></param>
 	public void SetMultiplayerNotification(Toggle setting)
   {
     if(setting.isOn)
@@ -149,6 +211,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
   }
 
+	/// <summary>
+	/// This method displays the dropdown menus so that user can select a room number and set room difficulty before creating a room.
+	/// </summary>
 	public void OnCreateRoomButtonClicked()
 	{
 		audioManager.PlayButtonClickSound();
@@ -176,6 +241,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	/// <summary>
+	/// This method displays a dropdown list of room numbers that user could potentially join
+	/// </summary>
 	public void OnJoinRoomButtonClicked()
 	{
 		audioManager.PlayButtonClickSound();
@@ -196,11 +264,18 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Join";
 	}
 	
+	/// <summary>
+	/// This method is used to set the difficulty of the game.
+	/// </summary>
+	/// <param name="dropdown">This is the selected value from the difficulty dropdown menu.</param>
 	public void SelectDifficulty(TMP_Dropdown dropdown) {
 		audioManager.PlayButtonClickSound();
 		MainMenu.difficulty = (Difficulty)dropdown.value;
 	}
 	
+	/// <summary>
+	/// This method is used to close the application wehen the Exit button is clicked.
+	/// </summary>
 	public void Exit() {
 		if (exitButton.GetComponentInChildren<TextMeshProUGUI>().text == "Exit")
 		{

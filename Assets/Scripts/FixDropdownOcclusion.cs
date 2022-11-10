@@ -5,6 +5,10 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
+
+/// <summary>
+/// This class is used together with a UI button to fix the occulusion behavior of the TextMeshPro dropdown menu
+/// </summary>
 public class FixDropdownOcclusion : TMP_Dropdown
 {
     private GameObject overrideButtonText;
@@ -15,6 +19,11 @@ public class FixDropdownOcclusion : TMP_Dropdown
         base.Start();
         overrideButtonText = transform.parent.Find("OverrideDropdownButton").GetChild(0).gameObject;
     }
+
+    /// <summary>
+    /// Override parent method. This method moves the Override Button to the location of the dropdown and set the overrideSorting of the Canvas component of the child of the dropdown to false to fix occulusion
+    /// </summary>
+    /// <param name="eventData"></param>
     public override void OnPointerClick(PointerEventData eventData)
     {
         // base.OnPointerClick(eventData);
@@ -37,6 +46,9 @@ public class FixDropdownOcclusion : TMP_Dropdown
         }
     }
 
+    /// <summary>
+    /// This method updates the text of the override button and disable it.
+    /// </summary>
     public void UpdateText()
     {
         overrideButtonText.GetComponent<TextMeshProUGUI>().text = dropdown.options[dropdown.value].text;

@@ -4,6 +4,11 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
+
+/// <summary>
+/// Class that holds everything and anything networked. This class keeps variables that others can reference.
+/// This class also sync variable changes across the network.
+/// </summary>
 public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObservable
 {
     /// <summary>

@@ -40,12 +40,12 @@ public class Gameplay : MonoBehaviourPunCallbacks
         switch(MainMenu.difficulty) 
         {
             case Difficulty.Easy:
-                startingDifficulty = 1.5f;
-                spawnTime = 3f;
+                startingDifficulty = 1.75f;
+                spawnTime = 3.5f;
                 break;
             case Difficulty.Medium:
                 startingDifficulty = 2.75f;
-                spawnTime = 2.5f;
+                spawnTime = 2.85f;
                 break;
             case Difficulty.Hard:
                 startingDifficulty = 4f;
@@ -64,11 +64,11 @@ public class Gameplay : MonoBehaviourPunCallbacks
         while(!networkVar.isGameOver) {
             currentTime = Time.time;
             float deltaTime = currentTime - previousTime;
-            difficulty = startingDifficulty + (deltaTime / 1700);
+            difficulty = startingDifficulty + (deltaTime / 2700);
             if (difficulty > 8.0f) {
                 difficulty = 8.0f;
             }
-            spawnTime = spawnTime - (deltaTime / 2000) ;
+            spawnTime = spawnTime - (deltaTime / 3000) ;
             if (spawnTime < 0.25f) {
                 spawnTime = 0.25f;
             }
