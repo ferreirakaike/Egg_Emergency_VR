@@ -147,15 +147,28 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		{
 			TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
 			int result;
-			if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
+			if (PhotonNetwork.InRoom)
+			{
+				StartCoroutine(SetNotification("You are already in a room.\nPlease hit\"Back\" and try again!", 0));
+				notificationText.SetActive(true);
+			}
+			else if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
 			{
 				if (!networkManager.InitializeRoom(result))
 				{
 					Debug.Log("Failed to create room");
+					StartCoroutine(SetNotification("Failed to create room due network error!", 0));
+					notificationText.SetActive(true);
 				}
-			}
-			StartCoroutine(SetNotification("Waiting for second player to join ...", 0));
-			notificationText.SetActive(true);
+				else
+				{
+					if (NetworkManager.isMultiplayer)
+					{
+						StartCoroutine(SetNotification("Waiting for second player to join ...", 0));
+						notificationText.SetActive(true);
+					}
+				}
+			}			
 		}
 		else if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Join")
 		{
@@ -196,12 +209,17 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	}
 
 	/// <summary>
-	/// Override parent method. This method stop the SetNotification coroutine in the current scene
+	/// Override parent method. This method stop the SetNotification coroutine in the current scene.
+	/// This method will also start the game if the game mode is set to single player
 	/// </summary>
 	public override void OnJoinedRoom()
 	{
 		base.OnJoinedRoom();
 		StopCoroutine(SetNotification());
+		if (!NetworkManager.isMultiplayer)
+		{
+			PhotonNetwork.LoadLevel("KaiScene");
+		}
 	}
 
 	IEnumerator SetNotification(string str = null, float delay = 1f)
