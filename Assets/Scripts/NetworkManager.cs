@@ -52,6 +52,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     Debug.Log("Connected to server");
     base.OnConnectedToMaster();
     PhotonNetwork.JoinLobby();
+    PhotonNetwork.AutomaticallySyncScene = true;
   }
 
   /// <summary>
@@ -106,7 +107,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
   {
     Debug.Log("Joined room successfully");
     base.OnJoinedRoom();
-    SceneManager.LoadScene("KaiScene");
+  }
+
+  /// <summary>
+  /// Override parent method. Upon a new player entering the room, load game scene
+  /// </summary>
+  /// <param name="newPlayer">New Player that joined the room</param>
+  public override void OnPlayerEnteredRoom(Player newPlayer)
+  {
+    base.OnPlayerEnteredRoom(newPlayer);
+    PhotonNetwork.LoadLevel("KaiScene");
   }
 
   /// <summary>

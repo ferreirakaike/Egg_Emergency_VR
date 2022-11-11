@@ -153,10 +153,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				{
 					Debug.Log("Failed to create room");
 				}
-				notificationText.GetComponent<TextMeshProUGUI>().text = "";
-				StartCoroutine(SetNotification("Failed to create room. Room already exist or network error.\nPlease try creating different a room or join a room"));
-				notificationText.SetActive(true);
 			}
+			StartCoroutine(SetNotification("Waiting for second player to join ...", 0));
+			notificationText.SetActive(true);
 		}
 		else if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Join")
 		{
@@ -167,12 +166,33 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				if (!networkManager.JoinRoom(result))
 				{
 					Debug.Log("Failed to join room");
-				}
-				notificationText.GetComponent<TextMeshProUGUI>().text = "";
-				StartCoroutine(SetNotification("Failed to join room. Room is either full or does not exist.\nPlease create a room or join a different room"));
-				notificationText.SetActive(true);
+				}				
 			}
 		}
+	}
+
+	/// <summary>
+	/// Override parent method. Notify player if the room creation failed
+	/// </summary>
+	/// <param name="returnCode"></param>
+	/// <param name="message"></param>
+	public override void OnCreateRoomFailed (short returnCode, string message)
+	{
+		base.OnCreateRoomFailed(returnCode, message);
+		StartCoroutine(SetNotification("Failed to create room. Room already exist or network error.\nPlease try creating different a room or join a room", 0.5f));
+		notificationText.SetActive(true);
+	}
+
+	/// <summary>
+	/// Override parent method. Notify player if the room joining failed
+	/// </summary>
+	/// <param name="returnCode"></param>
+	/// <param name="message"></param>
+	public override void OnJoinRoomFailed (short returnCode, string message)
+	{
+		base.OnJoinRoomFailed(returnCode, message);
+		StartCoroutine(SetNotification("Failed to join room. Room is either full or does not exist.\nPlease create a room or join a different room", 0.5f));
+		notificationText.SetActive(true);
 	}
 
 	/// <summary>
@@ -184,11 +204,11 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		StopCoroutine(SetNotification());
 	}
 
-	IEnumerator SetNotification(string str = null)
+	IEnumerator SetNotification(string str = null, float delay = 1f)
 	{
 		if (str != null)
 		{
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(delay);
 			notificationText.GetComponent<TextMeshProUGUI>().text = str;
 		}
   }
@@ -284,6 +304,10 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
 		else if (exitButton.GetComponentInChildren<TextMeshProUGUI>().text == "Back")
 		{
+			if (PhotonNetwork.InRoom)
+			{
+				PhotonNetwork.LeaveRoom();
+			}
 			audioManager.PlayButtonClickSound();
 			joinButton.SetActive(true);
 			createButton.SetActive(true);
