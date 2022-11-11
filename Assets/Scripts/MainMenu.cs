@@ -149,7 +149,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 			int result;
 			if (PhotonNetwork.InRoom)
 			{
-				StartCoroutine(SetNotification("You are already in a room.\nPlease hit\"Back\" and try again!", 0));
+				StartCoroutine(SetNotification("You are already in a room.\nPlease hit \"Back\" and try again!", 0));
 				notificationText.SetActive(true);
 			}
 			else if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
@@ -204,6 +204,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	public override void OnJoinRoomFailed (short returnCode, string message)
 	{
 		base.OnJoinRoomFailed(returnCode, message);
+		StartCoroutine(SetNotification("", 0f));
 		StartCoroutine(SetNotification("Failed to join room. Room is either full or does not exist.\nPlease create a room or join a different room", 0.5f));
 		notificationText.SetActive(true);
 	}
