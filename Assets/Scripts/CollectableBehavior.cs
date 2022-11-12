@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 // Change scorekeeping multiplier
 // Record video
 // Weekly report
 
-public class CollectableBehavior : MonoBehaviour
+public class CollectableBehavior : MonoBehaviourPunCallbacks
 {
     //public GameObject GreenParticleGameObject;
     private static MeshRenderer _basket = null;
@@ -135,7 +136,28 @@ public class CollectableBehavior : MonoBehaviour
                     }
                 }
             }
-            Destroy(this.gameObject);
+            // Master / Client destroy their own object
+            if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
+            else if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
         }
     }
+
+    /// <summary>
+    /// Override parent method. This method destroys the collectable that corresponds to the leaving player
+    /// </summary>
+    public override void OnPlayerLeftRoom(Player player)
+    {
+        base.OnPlayerLeftRoom(player);
+        if(!player.IsMasterClient && playerIndex == 1)
+        {
+            PhotonNetwork.Destroy(this.gameObject);
+        }
+    }
+
 }
