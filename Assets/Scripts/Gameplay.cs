@@ -57,11 +57,12 @@ public class Gameplay : MonoBehaviourPunCallbacks
         while(!networkVar.isGameOver) {
             currentTime = Time.time;
             float deltaTime = currentTime - previousTime;
-            difficulty = startingDifficulty + (deltaTime / 2700);
+            previousTime = currentTime;
+            difficulty = startingDifficulty + (deltaTime / 150);
             if (difficulty > 8.0f) {
                 difficulty = 8.0f;
             }
-            spawnTime = spawnTime - (deltaTime / 3000) ;
+            spawnTime = spawnTime - (deltaTime / 200) ;
             if (spawnTime < 0.25f) {
                 spawnTime = 0.25f;
             }

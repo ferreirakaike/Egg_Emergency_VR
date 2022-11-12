@@ -75,6 +75,8 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         base.OnLeftRoom();
+        GameObject photonVoiceClient = GameObject.Find("PhotonVoice");
+        Destroy(photonVoiceClient);
         PhotonNetwork.Destroy(spawnedPlayerPrefab);
         PhotonNetwork.Destroy(spawnedBasketPrefab);
     }
