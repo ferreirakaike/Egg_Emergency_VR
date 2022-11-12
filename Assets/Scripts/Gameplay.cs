@@ -29,6 +29,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
         base.OnEnable();
         networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
         Debug.Log("Starting Coroutine to spawn objects");
+        currentTime = Time.time;
         previousTime = currentTime;
         switch(MainMenu.difficulty) 
         {
