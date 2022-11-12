@@ -8,8 +8,6 @@ using Photon.Realtime;
 
 public class Gameplay : MonoBehaviourPunCallbacks
 {
-    public GameObject collectablePrefab;
-    public GameObject deterrentPrefab;
     public float spawnTime = 1.0f;
     private float startingDifficulty;
     public PathCreator path;
@@ -19,16 +17,11 @@ public class Gameplay : MonoBehaviourPunCallbacks
     public PathCreator leftPath2;
     public PathCreator rightPath2;
     public EndOfPathInstruction end;
-    public ParticleSystem expl;
-
     private float difficulty;
     private GameObject a;
     private float currentTime;
     private float previousTime;
     private NetworkVariablesAndReferences networkVar;
-    // start at 100 to avoid conflicts
-    private static int photonViewIDtoAssignForMaster = 100;
-    private static int photonViewIDtoAssignForClient = 999;
     private float deterrentChance = 15.0f;
 
     public override void OnEnable()
@@ -64,11 +57,12 @@ public class Gameplay : MonoBehaviourPunCallbacks
         while(!networkVar.isGameOver) {
             currentTime = Time.time;
             float deltaTime = currentTime - previousTime;
-            difficulty = startingDifficulty + (deltaTime / 2700);
+            previousTime = currentTime;
+            difficulty = startingDifficulty + (deltaTime / 150);
             if (difficulty > 8.0f) {
                 difficulty = 8.0f;
             }
-            spawnTime = spawnTime - (deltaTime / 3000) ;
+            spawnTime = spawnTime - (deltaTime / 200) ;
             if (spawnTime < 0.25f) {
                 spawnTime = 0.25f;
             }
@@ -88,19 +82,18 @@ public class Gameplay : MonoBehaviourPunCallbacks
 		}
 		
         if (deterrentRoll < (int)deterrentChance) {
-            a = Instantiate(deterrentPrefab) as GameObject;
+            a = PhotonNetwork.Instantiate("Deterrent_Bomb", transform.position, new Quaternion(-90,0,0,0)) as GameObject;
             a.tag = "Deterrent";
         }
         else {
-            a = Instantiate(collectablePrefab) as GameObject;
+            a = PhotonNetwork.Instantiate("Collectable", transform.position, new Quaternion(-90,0,0,0)) as GameObject;
             a.tag = "Collectable";
         }
-        PhotonView photonView = a.GetPhotonView();
-
+        // Since object is spawned using PhotonNetwork.Instantiate, let photon handle viewID assignment
+        
         var script = a.GetComponent<PathFollower>();
         script.speed = difficulty;
         var script2 = a.GetComponent<CollectableBehavior>();
-        script2.explosion = expl;
         
         script.endOfPathInstruction = end;
         
@@ -108,11 +101,6 @@ public class Gameplay : MonoBehaviourPunCallbacks
         // client uses path left2, path2, right2
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.ViewID = photonViewIDtoAssignForMaster++;
-            if (photonViewIDtoAssignForMaster > 549)
-            {
-                photonViewIDtoAssignForMaster = 100;
-            }
             // set this to 0 or 1for multiplayer
             script2.playerIndex = 0;
             if (chosenPath == 0) {
@@ -127,11 +115,6 @@ public class Gameplay : MonoBehaviourPunCallbacks
         }
         else
         {
-            photonView.ViewID = photonViewIDtoAssignForClient--;
-            if (photonViewIDtoAssignForClient < 551)
-            {
-                photonViewIDtoAssignForClient = 999;
-            }
             // set this to 0 or 1for multiplayer
             script2.playerIndex = 1;
             if (chosenPath == 0) {

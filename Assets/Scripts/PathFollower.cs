@@ -1,5 +1,6 @@
 using UnityEngine;
 using PathCreation;
+using Photon.Pun;
 
 // Moves along a path at constant speed.
 // Depending on the end of path instruction, will either loop, reverse, or stop at the end of the path.
@@ -26,7 +27,15 @@ public class PathFollower : MonoBehaviour
         }
         else if (networkVar.isGameOver)
         {
-            Destroy(this.gameObject);
+            // Master / Client destroy their own object
+            if (this.gameObject.GetComponent<CollectableBehavior>().playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
+            else if (this.gameObject.GetComponent<CollectableBehavior>().playerIndex == 0 && PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
         }
     }
 }

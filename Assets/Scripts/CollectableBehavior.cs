@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 // Change scorekeeping multiplier
 // Record video
 // Weekly report
 
-public class CollectableBehavior : MonoBehaviour
+public class CollectableBehavior : MonoBehaviourPunCallbacks
 {
     //public GameObject GreenParticleGameObject;
     private static MeshRenderer _basket = null;
@@ -22,7 +23,6 @@ public class CollectableBehavior : MonoBehaviour
     public Material failureBasketMaterial;
     public Material successRimMaterial;
     public Material failureRimMaterial;
-    public ParticleSystem explosion;
     public float timeBeforeResetMaterial = 0.3f;
     public int playerIndex = 0;
     private static float timePassed = 0;
@@ -102,7 +102,7 @@ public class CollectableBehavior : MonoBehaviour
             }
             else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
             {
-                GameObject explo = Instantiate(explosion.gameObject, gameObject.transform.position, Quaternion.Euler(-90, 0, 0));
+                GameObject explo = PhotonNetwork.Instantiate("ExplosionEffect", gameObject.transform.position, Quaternion.Euler(-90, 0, 0));
                 explo.SetActive(true);
                 _basket.material = failureBasketMaterial;
                 _rim.material = failureRimMaterial;
@@ -136,7 +136,28 @@ public class CollectableBehavior : MonoBehaviour
                     }
                 }
             }
-            Destroy(this.gameObject);
+            // Master / Client destroy their own object
+            if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
+            else if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
         }
     }
+
+    /// <summary>
+    /// Override parent method. This method destroys the collectable that corresponds to the leaving player
+    /// </summary>
+    public override void OnPlayerLeftRoom(Player player)
+    {
+        base.OnPlayerLeftRoom(player);
+        if(!player.IsMasterClient && playerIndex == 1)
+        {
+            PhotonNetwork.Destroy(this.gameObject);
+        }
+    }
+
 }

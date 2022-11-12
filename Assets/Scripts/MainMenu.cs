@@ -147,16 +147,28 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		{
 			TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
 			int result;
-			if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
+			if (PhotonNetwork.InRoom)
+			{
+				StartCoroutine(SetNotification("You are already in a room.\nPlease hit \"Back\" and try again!", 0));
+				notificationText.SetActive(true);
+			}
+			else if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
 			{
 				if (!networkManager.InitializeRoom(result))
 				{
 					Debug.Log("Failed to create room");
+					StartCoroutine(SetNotification("Failed to create room due network error!", 0));
+					notificationText.SetActive(true);
 				}
-				notificationText.GetComponent<TextMeshProUGUI>().text = "";
-				StartCoroutine(SetNotification("Failed to create room. Room already exist or network error.\nPlease try creating different a room or join a room"));
-				notificationText.SetActive(true);
-			}
+				else
+				{
+					if (NetworkManager.isMultiplayer)
+					{
+						StartCoroutine(SetNotification("Waiting for second player to join ...", 0));
+						notificationText.SetActive(true);
+					}
+				}
+			}			
 		}
 		else if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Join")
 		{
@@ -167,28 +179,55 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				if (!networkManager.JoinRoom(result))
 				{
 					Debug.Log("Failed to join room");
-				}
-				notificationText.GetComponent<TextMeshProUGUI>().text = "";
-				StartCoroutine(SetNotification("Failed to join room. Room is either full or does not exist.\nPlease create a room or join a different room"));
-				notificationText.SetActive(true);
+				}				
 			}
 		}
 	}
 
 	/// <summary>
-	/// Override parent method. This method stop the SetNotification coroutine in the current scene
+	/// Override parent method. Notify player if the room creation failed
+	/// </summary>
+	/// <param name="returnCode"></param>
+	/// <param name="message"></param>
+	public override void OnCreateRoomFailed (short returnCode, string message)
+	{
+		base.OnCreateRoomFailed(returnCode, message);
+		StartCoroutine(SetNotification("Failed to create room. Room already exist or network error.\nPlease try creating different a room or join a room", 0.5f));
+		notificationText.SetActive(true);
+	}
+
+	/// <summary>
+	/// Override parent method. Notify player if the room joining failed
+	/// </summary>
+	/// <param name="returnCode"></param>
+	/// <param name="message"></param>
+	public override void OnJoinRoomFailed (short returnCode, string message)
+	{
+		base.OnJoinRoomFailed(returnCode, message);
+		StartCoroutine(SetNotification("", 0f));
+		StartCoroutine(SetNotification("Failed to join room. Room is either full or does not exist.\nPlease create a room or join a different room", 0.5f));
+		notificationText.SetActive(true);
+	}
+
+	/// <summary>
+	/// Override parent method. This method stop the SetNotification coroutine in the current scene.
+	/// This method will also start the game if the game mode is set to single player
 	/// </summary>
 	public override void OnJoinedRoom()
 	{
 		base.OnJoinedRoom();
 		StopCoroutine(SetNotification());
+		if (!NetworkManager.isMultiplayer)
+		{
+			PhotonNetwork.LoadLevel("KaiScene");
+		}
 	}
 
-	IEnumerator SetNotification(string str = null)
+	IEnumerator SetNotification(string str = null, float delay = 1f)
 	{
 		if (str != null)
 		{
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(delay);
 			notificationText.GetComponent<TextMeshProUGUI>().text = str;
 		}
   }
@@ -284,6 +323,10 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
 		else if (exitButton.GetComponentInChildren<TextMeshProUGUI>().text == "Back")
 		{
+			if (PhotonNetwork.InRoom)
+			{
+				PhotonNetwork.LeaveRoom();
+			}
 			audioManager.PlayButtonClickSound();
 			joinButton.SetActive(true);
 			createButton.SetActive(true);
