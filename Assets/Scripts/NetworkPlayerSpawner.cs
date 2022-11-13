@@ -76,7 +76,10 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
     {
         base.OnLeftRoom();
         GameObject photonVoiceClient = GameObject.Find("PhotonVoice");
-        Destroy(photonVoiceClient);
+        if (photonVoiceClient)
+        {
+            Destroy(photonVoiceClient);
+        }
         PhotonNetwork.Destroy(spawnedPlayerPrefab);
         PhotonNetwork.Destroy(spawnedBasketPrefab);
     }
