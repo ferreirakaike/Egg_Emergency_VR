@@ -42,7 +42,6 @@ public class FixDropdownOcclusion : TMP_Dropdown
             Canvas canvas = transform.GetComponentInChildren<Canvas>();
             canvas.overrideSorting = false;
             overrideButtonText.transform.parent.position = transform.position;
-            Debug.Log(overrideButtonText.GetComponentInParent<RectTransform>().localPosition.ToString());
         }
     }
 

@@ -29,6 +29,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
         base.OnEnable();
         networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
         Debug.Log("Starting Coroutine to spawn objects");
+        currentTime = Time.time;
         previousTime = currentTime;
         switch(MainMenu.difficulty) 
         {
@@ -71,12 +72,12 @@ public class Gameplay : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(spawnTime);
             int deterrentRoll = Random.Range(0, 100);
             int chosenPath = Random.Range(0, 3);
-            photonView.RPC("spawnCollectable", RpcTarget.All, deterrentRoll, chosenPath);
+            photonView.RPC("spawnCollectable", RpcTarget.All, deterrentRoll, chosenPath, difficulty);
         }
     }
 
     [PunRPC]
-    private void spawnCollectable(int deterrentRoll, int chosenPath) {
+    private void spawnCollectable(int deterrentRoll, int chosenPath, float synced_difficulty) {
 		if (GameplayManager.gameIsOver) {
 			return;
 		}
@@ -92,7 +93,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
         // Since object is spawned using PhotonNetwork.Instantiate, let photon handle viewID assignment
         
         var script = a.GetComponent<PathFollower>();
-        script.speed = difficulty;
+        script.speed = synced_difficulty;
         var script2 = a.GetComponent<CollectableBehavior>();
         
         script.endOfPathInstruction = end;

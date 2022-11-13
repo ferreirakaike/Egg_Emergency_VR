@@ -55,7 +55,7 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
             spawnedShadowBasketPrefab = PhotonNetwork.Instantiate("Network Shadow Basket", basketSpawnLocations[1].position, basketSpawnLocations[1].rotation);
             spawnedBasketPrefab.transform.localScale = new Vector3(25,25,25);
             networkVar.UpdateBasketIDs(spawnedBasketPrefab.GetPhotonView().ViewID, 1);
-            networkVar.UpdateShadowBasketIDs(spawnedShadowBasketPrefab.GetPhotonView().ViewID, 0);
+            networkVar.UpdateShadowBasketIDs(spawnedShadowBasketPrefab.GetPhotonView().ViewID, 1);
             networkVar.UpdatePlayerIDs(spawnedPlayerPrefab.GetPhotonView().ViewID, 1);
         }
         Debug.Log("Joined Room");
@@ -63,7 +63,7 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (networkVar.isGameOver)
+        if (networkVar.isGameOver && spawnedPlayerPrefab)
         {
             spawnedPlayerPrefab.SetActive(false);
         }
@@ -76,7 +76,10 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
     {
         base.OnLeftRoom();
         GameObject photonVoiceClient = GameObject.Find("PhotonVoice");
-        Destroy(photonVoiceClient);
+        if (photonVoiceClient)
+        {
+            Destroy(photonVoiceClient);
+        }
         PhotonNetwork.Destroy(spawnedPlayerPrefab);
         PhotonNetwork.Destroy(spawnedBasketPrefab);
     }

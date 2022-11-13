@@ -259,7 +259,8 @@ AudioSource:
   m_GameObject: {fileID: 66609007}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 85e5b35e65935264fbbf3aeaea6b4737,
+    type: 2}
   m_audioClip: {fileID: 8300000, guid: 14f730bdb0e2c1e4cbd2e11e96bd8377, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -422,7 +423,8 @@ MonoBehaviour:
   ApplyDontDestroyOnLoad: 1
   runInBackground: 1
   statsResetInterval: 1000
-  speakerPrefab: {fileID: 0}
+  speakerPrefab: {fileID: 9070114333080570782, guid: 3c030cd3b25d43e46a533d8ebe4ad849,
+    type: 3}
   primaryRecorder: {fileID: 85430763}
   usePrimaryRecorder: 0
   Settings:

@@ -11,8 +11,8 @@ using Photon.Realtime;
 public class CollectableBehavior : MonoBehaviourPunCallbacks
 {
     //public GameObject GreenParticleGameObject;
-    private static MeshRenderer _basket = null;
-    private static MeshRenderer _rim = null;
+    private MeshRenderer _basket = null;
+    private MeshRenderer _rim = null;
     private NetworkVariablesAndReferences networkVar;
 
     private AudioManager _audioManager;
@@ -77,10 +77,6 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter(Collider other)
     {
-        if (gameObject.tag.Equals("Deterrent"))
-        {
-            Debug.Log("Collided with " + other.gameObject.tag);
-        }
         if (!collided)
         {
             collided = true;
@@ -88,14 +84,15 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
             {
                 _basket.material = successBasketMaterial;
                 _rim.material = successRimMaterial;
-                timePassed = 0;
                 if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
                 {
+                    timePassed = 0;
                     _audioManager.PlayCollectSound();
                     _gameplayManager.IncreaseScore(); // change this to increase score for player 0 or for master
                 }
                 else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
                 {
+                    timePassed = 0;
                     _audioManager.PlayCollectSound();
                     _gameplayManager.IncreaseScore(); // change this to increase score for player 1 or for client
                 }
@@ -123,14 +120,15 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 {
                     _basket.material = failureBasketMaterial;
                     _rim.material = failureRimMaterial;
-                    timePassed = 0;
                     if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
                     {
+                        timePassed = 0;
                         _audioManager.PlayMissedSound();
                         _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
                     }
                     else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
                     {
+                        timePassed = 0;
                         _audioManager.PlayMissedSound();
                         _gameplayManager.DecreaseScore(); // change this to decrease score for player 1 or for client
                     }
