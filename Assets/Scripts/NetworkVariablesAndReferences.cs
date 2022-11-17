@@ -68,12 +68,12 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         if (!gameStarted)
         {
             roomCapacity = PhotonNetwork.CurrentRoom.MaxPlayers;
-            //if(roomCapacity > 0 && (roomCapacity == playerGrabbed))
-            //{
+            if(roomCapacity > 0 && (roomCapacity == playerGrabbed))
+            {
                 gameStarted = true;
                 photonView.RPC("StartGameplay", RpcTarget.AllBuffered);
                 Debug.Log("Starting game");
-			//}
+			}
         }
     }
 

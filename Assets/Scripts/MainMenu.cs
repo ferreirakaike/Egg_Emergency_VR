@@ -309,7 +309,8 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	/// <param name="dropdown">This is the selected value from the difficulty dropdown menu.</param>
 	public void SelectDifficulty(TMP_Dropdown dropdown) {
 		audioManager.PlayButtonClickSound();
-		MainMenu.difficulty = (Difficulty)dropdown.value;
+		Difficulty selectedDifficulty = (Difficulty)dropdown.value;
+		MainMenu.difficulty = selectedDifficulty;
 	}
 	
 	/// <summary>

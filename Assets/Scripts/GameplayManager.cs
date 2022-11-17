@@ -31,6 +31,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	public int playerOneStreak = 0;
 	
 	// Player Two
+	public GameObject otherGameScore;
 	public TextMeshProUGUI otherScoreText;
 	public static int otherScore = 0;
 	public int otherHealth = 0;
@@ -67,6 +68,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     }
 	
 	void StartTheGame() {
+		if (!NetworkManager.isMultiplayer) {
+			otherGameScore.SetActive(false);
+		}
 		audioManager = GameObject.Find("UISoundManager").GetComponent<MainMenuAudioManager>();
 		nonMainMenuAudioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
 		networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
@@ -118,8 +122,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 				break;
 			case Difficulty.Hard:
 				// Player One
-				otherHeart3.SetActive(true);
-				otherHealth = 1;
+				heart3.SetActive(true);
+				health = 1;
 				// Player Two
 				otherHeart3.SetActive(true);
 				otherHealth = 1;
@@ -198,6 +202,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 					heart2.SetActive(false);
 				} else if (health == 1) {
 					heart1.SetActive(false);
+					health--;
 					gameOver();
 				}
 				break;
@@ -208,12 +213,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 					heart3.SetActive(false);
 				} else if (health == 1) {
 					heart2.SetActive(false);
+					health--;
 					gameOver();
 				}
 				break;
 			case Difficulty.Hard:
 				if (health > 0) {
 					heart3.SetActive(false);
+					health--;
 					gameOver();
 				}
 				break;
@@ -241,6 +248,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 					otherHeart2.SetActive(false);
 				} else if (otherHealth == 1) {
 					otherHeart1.SetActive(false);
+					otherHealth--;
 					gameOver();
 				}
 				break;
@@ -251,12 +259,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 					otherHeart3.SetActive(false);
 				} else if (otherHealth == 1) {
 					otherHeart2.SetActive(false);
+					otherHealth--;
 					gameOver();
 				}
 				break;
 			case Difficulty.Hard:
 				if (otherHealth > 0) {
 					otherHeart3.SetActive(false);
+					otherHealth--;
 					gameOver();
 				}
 				break;
@@ -267,14 +277,27 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	
 	public void gameOver()
 	{
-		nonMainMenuAudioManager.StopBackgroundMusic();
-		audioManager.PlayGameOverSound();
-		scoreCanvas.SetActive(false);
-		allHearts.SetActive(false);
-		GameOver.moveCanvasToStart = true;
-		GameplayManager.gameIsOver = true;
-		networkVar.UpdateIsGameOver(true);
-		graveUpright.SetActive(false);
-		graveDown.SetActive(true);
+		if (!GameplayManager.gameIsOver) {
+			GameplayManager.gameIsOver = true;
+			nonMainMenuAudioManager.StopBackgroundMusic();
+			audioManager.PlayGameOverSound();
+			scoreCanvas.SetActive(false);
+			otherScoreCanvas.SetActive(false);
+			allHearts.SetActive(false);
+			otherAllHearts.SetActive(false);
+			GameOver.moveCanvasToStart = true;
+			if (NetworkManager.isMultiplayer) {
+				GameOver.moveOtherCanvasToStart = true;
+			}
+			if (health <= 0) {
+				graveUpright.SetActive(false);
+				graveDown.SetActive(true);
+			}
+			if (otherHealth <= 0) {
+				otherGraveUpright.SetActive(false);
+				otherGraveDown.SetActive(true);
+			}
+			networkVar.UpdateIsGameOver(true);
+		}
 	}
 }
