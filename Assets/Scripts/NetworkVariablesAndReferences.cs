@@ -73,7 +73,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
                 gameStarted = true;
                 photonView.RPC("StartGameplay", RpcTarget.AllBuffered);
                 Debug.Log("Starting game");
-            }
+			}
         }
     }
 
@@ -171,6 +171,42 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     {
         playerGrabbed++;
     }
+	
+	public void UpdateIncreaseScore(int amount, int player)
+	{
+        photonView.RPC("SyncIncreaseScore", RpcTarget.AllBuffered, amount, player);
+        Debug.Log("Syncing IncreaseScore");
+	}
+	
+	public void UpdateDecreaseScore(int player)
+	{
+        photonView.RPC("SyncDecreaseScore", RpcTarget.AllBuffered, player);
+        Debug.Log("Syncing DecreaseScore");
+	}
+	
+	[PunRPC]
+	private void SyncIncreaseScore(int amount, int player)
+	{
+		GameplayManager gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
+		if (player == 0) {
+			gameplayManager.IncreasePlayerOneScore(amount);
+		}
+		else if (player == 1) {
+			gameplayManager.IncreasePlayerTwoScore(amount);
+		}
+	}
+	
+	[PunRPC]
+	private void SyncDecreaseScore(int player)
+	{
+		GameplayManager gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
+		if (player == 0) {
+			gameplayManager.DecreasePlayerOneScore();
+		}
+		else if (player == 1) {
+			gameplayManager.DecreasePlayerTwoScore();
+		}
+	}
 
     /// <summary>
     /// Send and receive data with the network via Photon View.
