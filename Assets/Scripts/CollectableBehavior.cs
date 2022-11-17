@@ -84,17 +84,22 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
             {
                 _basket.material = successBasketMaterial;
                 _rim.material = successRimMaterial;
-                if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+				
+				if (playerIndex == 0 && PhotonNetwork.IsMasterClient && gameObject.transform.position.x <= 3.0f)
                 {
                     timePassed = 0;
                     _audioManager.PlayCollectSound();
-                    _gameplayManager.IncreaseScore(); // change this to increase score for player 0 or for master
+					int amount = _gameplayManager.calculateIncreaseScore();
+					//_gameplayManager.IncreasePlayerOneScore(amount);
+					networkVar.UpdateIncreaseScore(amount, 0);
                 }
-                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient && gameObject.transform.position.x >= 3.0f)
                 {
                     timePassed = 0;
                     _audioManager.PlayCollectSound();
-                    _gameplayManager.IncreaseScore(); // change this to increase score for player 1 or for client
+					int amount = _gameplayManager.calculateIncreaseScore();
+					//_gameplayManager.IncreasePlayerTwoScore(amount);
+					networkVar.UpdateIncreaseScore(amount, 1);
                 }
             }
             else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
@@ -103,15 +108,18 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 explo.SetActive(true);
                 _basket.material = failureBasketMaterial;
                 _rim.material = failureRimMaterial;
-                if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+				
+				if (playerIndex == 0 && PhotonNetwork.IsMasterClient && gameObject.transform.position.x <= 3.0f)
                 {
                     _audioManager.PlayBombSound();
-                    _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
+					//_gameplayManager.DecreasePlayerOneScore();
+					networkVar.UpdateDecreaseScore(0);
                 }
-                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient && gameObject.transform.position.x >= 3.0f)
                 {
                     _audioManager.PlayBombSound();
-                    _gameplayManager.DecreaseScore(); // change this to decrease score for player 1 or for client
+					//_gameplayManager.DecreasePlayerTwoScore();
+					networkVar.UpdateDecreaseScore(1);
                 }
             }
             else
@@ -120,17 +128,20 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 {
                     _basket.material = failureBasketMaterial;
                     _rim.material = failureRimMaterial;
-                    if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+					
+					if (playerIndex == 0 && PhotonNetwork.IsMasterClient && gameObject.transform.position.x <= 3.0f)
                     {
                         timePassed = 0;
                         _audioManager.PlayMissedSound();
-                        _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
+						//_gameplayManager.DecreasePlayerOneScore();
+						networkVar.UpdateDecreaseScore(0);
                     }
-                    else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                    else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient && gameObject.transform.position.x >= 3.0f)
                     {
                         timePassed = 0;
                         _audioManager.PlayMissedSound();
-                        _gameplayManager.DecreaseScore(); // change this to decrease score for player 1 or for client
+						//_gameplayManager.DecreasePlayerTwoScore();
+						networkVar.UpdateDecreaseScore(1);
                     }
                 }
             }
