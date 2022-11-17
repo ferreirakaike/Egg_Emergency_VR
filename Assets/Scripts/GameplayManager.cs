@@ -28,6 +28,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	public GameObject allHearts;
 	public GameObject graveUpright;
 	public GameObject graveDown;
+	public int playerOneStreak = 0;
 	
 	// Player Two
 	public TextMeshProUGUI otherScoreText;
@@ -43,6 +44,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	public GameObject otherAllHearts;
 	public GameObject otherGraveUpright;
 	public GameObject otherGraveDown;
+	public int playerTwoStreak = 0;
 	
 	private TwoHandGrabInteractable basket;
 	private TwoHandGrabInteractable otherBasket;
@@ -158,6 +160,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	 	}
 		GameplayManager.score += scoreIncrease;
 		scoreText.text = $"{GameplayManager.score}";
+		playerOneStreak++;
+		if (playerOneStreak >= 5) {
+			// TODO: -- Show Player One Send Deterrent UI
+		}
 	}
 	
 	public void IncreasePlayerTwoScore(int scoreIncrease) {
@@ -166,12 +172,19 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	 	}
 		GameplayManager.otherScore += scoreIncrease;
 		otherScoreText.text = $"{GameplayManager.otherScore}";
+		playerTwoStreak++;
+		if (playerTwoStreak >= 5) {
+			// TODO: -- Show Player Two Send Deterrent UI
+		}
 	}
 	
 	public void DecreasePlayerOneScore() {
 		 if (GameplayManager.gameIsOver) {
 			 return;
 		 }
+		 playerOneStreak = 0;
+		 // TODO: -- Hide Player One Send Deterrent UI
+		 
 		 Instantiate(minusSign, new Vector3(0.03999999f, 0.45f, -8.3f), Quaternion.identity);
 		 switch(MainMenu.difficulty) {
 			case Difficulty.Easy:
@@ -212,6 +225,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		 if (GameplayManager.gameIsOver) {
 			 return;
 		 }
+		 playerOneStreak = 0;
+		 // TODO: -- Hide Player Two Send Deterrent UI
+		 
 		 Instantiate(minusSign, new Vector3(0.03999999f, 0.45f, -8.3f), Quaternion.identity);
 		 switch(MainMenu.difficulty) {
 			case Difficulty.Easy:
