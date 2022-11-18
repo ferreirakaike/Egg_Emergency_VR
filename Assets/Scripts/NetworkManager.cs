@@ -17,7 +17,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
   /// <summary>
   /// Variable that determines whether the room's setting is set to Multiplayer
   /// </summary>
-  public static bool isMultiplayer = true;
+  public static bool isMultiplayer = false;
 
   /// <summary>
   /// A List that holds the number of available room that user can join/create
@@ -28,7 +28,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
   // Start is called before the first frame update
   void Start()
   {
-    isMultiplayer = true;
+    isMultiplayer = false;
     ConnectToServer();
   }
 
