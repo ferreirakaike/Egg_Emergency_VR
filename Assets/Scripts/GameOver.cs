@@ -7,7 +7,9 @@ using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
 
-
+/// <summary>
+/// This class handles the behaviour of the game when game is over.
+/// </summary>
 public class GameOver : MonoBehaviour {
 	private MainMenuAudioManager audioManager;
 	
@@ -17,6 +19,9 @@ public class GameOver : MonoBehaviour {
 	private TextMeshProUGUI scoreText;
 	private GameObject mainMenuButton;
 	
+	/// <summary>
+	/// Boolean indicator as to when to move the gameover UI panel to in front of the player
+	/// </summary>
 	public static bool moveCanvasToStart = false;
 	private bool animateButtonsToStart = false;
 	private bool fadeButtonIn = false;

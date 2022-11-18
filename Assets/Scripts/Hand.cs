@@ -5,7 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 /// <summary>
-/// This class is used to animate the hands
+/// This class is used to animate the hands.
 /// </summary>
 public class Hand : MonoBehaviour
 {

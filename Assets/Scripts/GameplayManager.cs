@@ -6,6 +6,9 @@ using TMPro;
 using UnityEngine.XR.Interaction.Toolkit;
 using Photon.Pun;
 
+/// <summary>
+/// This class handles pointing for the player.
+/// </summary>
 public class GameplayManager : MonoBehaviourPunCallbacks
 {
 	private MainMenuAudioManager audioManager;
@@ -13,7 +16,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
 	private TextMeshProUGUI[] scoreText;
 	private TextMeshProUGUI[] deterrentCount;
-	public int health = 0;
+	private int health = 0;
+	/// <summary>
+	/// Public reference to indicate whether the game is still going on.
+	/// </summary>
 	public static bool gameIsOver = false;
 	
 	private GameObject[] heart1;
@@ -21,6 +27,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	private GameObject[] heart3;
 	private GameObject[] heart4;
 	private GameObject[] heart5;
+	/// <summary>
+	/// Reference to the minus sign that is to be spawned when user loses points.
+	/// </summary>
 	public GameObject minusSign;
 	
 	private GameObject scoreCanvas;
@@ -32,17 +41,28 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	
 	private TwoHandGrabInteractable basket;
 	private NetworkVariablesAndReferences networkVar;
+	/// <summary>
+	/// Variables that keep track of the scores of both users.
+	/// </summary>
+	/// <value>Index 0 is the score of MasterClient. Index 1 is the score of remote client</value>
 	public static int[] scores = {0, 0};
 	private int localPlayerIndex = -1;
 	private int otherPlayerIndex = -1;
 
 	private int gameStreak;
+	/// <summary>
+	/// Variables that keep track of how many deterrents each player has to send.
+	/// </summary>
+	/// <value>Index 0 is the number of deterrents of MasterClient. Index 1 is the number of deterrents of remote client</value>
 	public int[] deterrentsAvailable = {0, 0};
+	/// <summary>
+	/// User-defined value as to how long of a streak is needed before the user can send deterrents to the opponent.
+	/// </summary>
 	public int streakToDeterrent;
 	private bool firstTimeStreak = true;
 	/// <summary>
 	/// Override the on enable method of MonoBehaviourPunCallbacks.
-	/// Instantiates necessary variables
+	/// Instantiates necessary variables.
 	/// </summary>
 	public override void OnEnable()
 	{
@@ -127,6 +147,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		}
 	}
 
+	/// <summary>
+	/// Method that adds score to the user.
+	/// </summary>
 	public void IncreaseScore()
 	{
 		 if (GameplayManager.gameIsOver) {
@@ -154,6 +177,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		UpdateDeterrentCountText();
 	}
 
+	/// <summary>
+	/// Method that is used to update the deterrent count text for both users.
+	/// </summary>
 	public void UpdateDeterrentCountText()
 	{
 		photonView.RPC("SyncScore", RpcTarget.AllBuffered, deterrentCount[localPlayerIndex], localPlayerIndex);
@@ -223,6 +249,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		scoreText[playerIndex].text = $"{scores[playerIndex]}";
 	}
 
+	/// <summary>
+	/// Method that is used to take away life from the user.
+	/// </summary>
 	public void DecreaseScore()
 	{
 		if (GameplayManager.gameIsOver) {
@@ -246,6 +275,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		gameStreak = 0;
 	}
 	
+	/// <summary>
+	/// Method that is called to end the game.
+	/// </summary>
 	public void gameOver()
 	{
 		nonMainMenuAudioManager.StopBackgroundMusic();

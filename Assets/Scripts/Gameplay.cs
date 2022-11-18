@@ -5,17 +5,40 @@ using PathCreation;
 using Photon.Pun;
 using Photon.Realtime;
 
-
+/// <summary>
+/// This class handles the gameplay behaviors, i.e. when to spawn objects.
+/// </summary>
 public class Gameplay : MonoBehaviourPunCallbacks
 {
-    public float spawnTime = 1.0f;
+    private float spawnTime = 1.0f;
     private float startingDifficulty;
+    /// <summary>
+    /// Reference to the middle object spawn path
+    /// </summary>
     public PathCreator path;
+    /// <summary>
+    /// Reference to the left object spawn path
+    /// </summary>
     public PathCreator leftPath;
+    /// <summary>
+    /// Reference to the right object spawn path
+    /// </summary>
     public PathCreator rightPath;
+    /// <summary>
+    /// Reference to the middle object spawn path for remote player
+    /// </summary>
     public PathCreator path2;
+    /// <summary>
+    /// Reference to the left object spawn path for the remote player
+    /// </summary>
     public PathCreator leftPath2;
+    /// <summary>
+    /// Reference to the right object spawn path for the remote player
+    /// </summary>
     public PathCreator rightPath2;
+    /// <summary>
+    /// Default behavior of the spawned object when it reaches the end of path
+    /// </summary>
     public EndOfPathInstruction end;
     private float difficulty;
     private GameObject a;
@@ -23,12 +46,17 @@ public class Gameplay : MonoBehaviourPunCallbacks
     private float previousTime;
     private NetworkVariablesAndReferences networkVar;
     private float deterrentChance = 15.0f;
+    /// <summary>
+    /// User-defined difficulty of the game that is set by MasterCLient.
+    /// </summary>
     public static Difficulty menuDifficulty = Difficulty.Easy;
-    public int streakToSend;
     private GameplayManager gameplayManager;
     private Material sendingDeterrentMaterial;
     private int localPlayerIndex = 0;
 
+    /// <summary>
+    /// Override parent method. This method sets difficulties and set private variables to default values.
+    /// </summary>
     public override void OnEnable()
     {
         base.OnEnable();
@@ -68,11 +96,6 @@ public class Gameplay : MonoBehaviourPunCallbacks
         {
             localPlayerIndex = 1;
         }
-
-        if (streakToSend == 0)
-        {
-            streakToSend = 10;
-        }
     }
 
     private void Awake()
@@ -105,6 +128,9 @@ public class Gameplay : MonoBehaviourPunCallbacks
         }
     }
 
+    /// <summary>
+    /// This medthod checks as to whether a user is allowed to send deterrents to the opponent.
+    /// </summary>
     public void CheckAndSendDeterrent()
     {
        if (NetworkManager.isMultiplayer && gameplayManager.deterrentsAvailable[localPlayerIndex] > 0)
