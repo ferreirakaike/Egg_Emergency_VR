@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.016418736, g: 0.019242458, b: 0.021960208, a: 1}
+  m_IndirectSpecularColor: {r: 0.01602986, g: 0.018923363, b: 0.021959236, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &4
 LightmapSettings:
@@ -210,29 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 1405601108}
-  health: 0
-  heart1: {fileID: 0}
-  heart2: {fileID: 0}
-  heart3: {fileID: 0}
-  heart4: {fileID: 0}
-  heart5: {fileID: 0}
-  minusSign: {fileID: 0}
-  scoreCanvas: {fileID: 0}
-  allHearts: {fileID: 0}
-  graveUpright: {fileID: 0}
-  graveDown: {fileID: 0}
-  otherScoreText: {fileID: 0}
-  otherHealth: 0
-  otherHeart1: {fileID: 0}
-  otherHeart2: {fileID: 0}
-  otherHeart3: {fileID: 0}
-  otherHeart4: {fileID: 0}
-  otherHeart5: {fileID: 0}
-  otherMinusSign: {fileID: 0}
-  otherScoreCanvas: {fileID: 0}
-  otherAllHearts: {fileID: 0}
-  otherGraveUpright: {fileID: 0}
-  otherGraveDown: {fileID: 0}
+  score: 0
 --- !u!1 &5054389 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 196898, guid: 9128fac7ecb9c4b4085275bbf85879ee,
@@ -3391,8 +3369,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CollectSound: {fileID: 66609009}
   MissedSound: {fileID: 480116125}
-  BombSound: {fileID: 0}
-  BackGroundMusic: {fileID: 0}
 --- !u!1 &815912045 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 132970, guid: 9128fac7ecb9c4b4085275bbf85879ee,
@@ -5888,16 +5864,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 709b3becf2be54066a6e1e0440ed0b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiCanvas: {fileID: 0}
-  gameLabel: {fileID: 0}
-  createButton: {fileID: 0}
-  startButton: {fileID: 0}
-  exitButton: {fileID: 0}
-  joinButton: {fileID: 0}
-  notificationText: {fileID: 0}
-  dropdown: {fileID: 0}
-  difficultyDropdown: {fileID: 0}
-  multiplayerToggle: {fileID: 0}
 --- !u!114 &996351353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8203,7 +8169,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1577202014
 Transform:
   m_ObjectHideFlags: 0
@@ -8213,7 +8179,7 @@ Transform:
   m_GameObject: {fileID: 1577202013}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 15, y: 3.4507, z: 0.09692}
+  m_LocalScale: {x: 5.6604, y: 3.4507, z: 0.09692}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 772978026}
@@ -8239,7 +8205,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1577202013}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
