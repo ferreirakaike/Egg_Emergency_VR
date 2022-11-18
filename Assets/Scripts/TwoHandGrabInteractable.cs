@@ -37,18 +37,24 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     private Transform currentTransform;
     private NetworkVariablesAndReferences networkVar;
     private bool networkVarSet;
+    private Gameplay gameplay;
+    private float timeToNextActivate = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
         networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
+        gameplay = FindObjectOfType<Gameplay>();
         networkVarSet = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (timeToNextActivate > 0)
+        {
+            timeToNextActivate -= Time.deltaTime;
+        }
     }
 
     private void updateTargetBoth()
@@ -150,5 +156,16 @@ public class TwoHandGrabInteractable : XRGrabInteractable
         this.transform.position = currentTransform.position;
         this.transform.rotation = currentTransform.rotation;
     }
+
+  protected override void OnActivated(ActivateEventArgs args)
+  {
+    base.OnActivated(args);
+    if (timeToNextActivate <= 0)
+    {
+        gameplay.CheckAndSendDeterrent();
+        timeToNextActivate = 1;
+    }
+    
+  }
 
 }

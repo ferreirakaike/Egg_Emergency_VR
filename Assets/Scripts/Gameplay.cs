@@ -23,15 +23,25 @@ public class Gameplay : MonoBehaviourPunCallbacks
     private float previousTime;
     private NetworkVariablesAndReferences networkVar;
     private float deterrentChance = 15.0f;
+    public static Difficulty menuDifficulty = Difficulty.Easy;
+    public int streakToSend;
+    private GameplayManager gameplayManager;
+    private Material sendingDeterrentMaterial;
 
     public override void OnEnable()
     {
         base.OnEnable();
         networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
+        gameplayManager = FindObjectOfType<GameplayManager>();
+        sendingDeterrentMaterial = Resources.Load<Material>("Sending Bomb Material");
+        if (!sendingDeterrentMaterial)
+        {
+            Debug.Log("Failed to find mat");
+        }
         Debug.Log("Starting Coroutine to spawn objects");
         currentTime = Time.time;
         previousTime = currentTime;
-        switch(MainMenu.difficulty) 
+        switch(menuDifficulty) 
         {
             case Difficulty.Easy:
                 startingDifficulty = 1.75f;
@@ -51,6 +61,19 @@ public class Gameplay : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsMasterClient)
         {
             StartCoroutine(collectableWave());
+        }
+
+        if (streakToSend == 0)
+        {
+            streakToSend = 10;
+        }
+    }
+
+    private void Awake()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("setDifficulty", RpcTarget.All, MainMenu.difficulty);
         }
     }
 
@@ -76,10 +99,21 @@ public class Gameplay : MonoBehaviourPunCallbacks
         }
     }
 
+    public void CheckAndSendDeterrent()
+    {
+       if (gameplayManager.deterrentsAvailable > 0)
+       {
+            SendDeterrent();
+            gameplayManager.deterrentsAvailable--;
+            Debug.Log("Sent Deterrent");
+            gameplayManager.UpdateDeterrentCountText();
+       }
+    }
+
     /// <summary>
     /// Method for sending deterrent toward the other player
     /// </summary>
-    public void sendDeterrent()
+    private void SendDeterrent()
     {
         // maybe change deterrent mat a bit to differentiate
         // change mat in spawnCollectable
@@ -93,7 +127,13 @@ public class Gameplay : MonoBehaviourPunCallbacks
             target_player = 0;
         }
         int chosenPath = Random.Range(0, 3);
-        photonView.RPC("spawnCollectable", RpcTarget.All, 100, chosenPath, difficulty, target_player);
+        photonView.RPC("spawnCollectable", RpcTarget.All, 0, chosenPath, difficulty, target_player);
+    }
+
+    [PunRPC]
+    private void setDifficulty(Difficulty newDifficulty)
+    {
+        menuDifficulty = newDifficulty;
     }
 
     [PunRPC]
@@ -123,7 +163,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
             // Change mat when player send deterrent intentially
             if (target_player != -1)
             {
-                // TODO:
+                a.GetComponent<MeshRenderer>().material = sendingDeterrentMaterial;
             }
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
             

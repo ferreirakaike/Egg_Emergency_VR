@@ -80,17 +80,34 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
         if (!collided)
         {
             collided = true;
-            if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
+            if (other.gameObject.tag.Equals("Deterrent") && gameObject.tag.Equals("Collectable"))
+            {
+                // Do nothing, just destroy right after
+            }
+            else if (other.gameObject.tag.Equals("Collectable") && gameObject.tag.Equals("Deterrent"))
+            {
+                GameObject explo = PhotonNetwork.Instantiate("ExplosionEffect", gameObject.transform.position, Quaternion.Euler(-90, 0, 0));
+                explo.SetActive(true);
+                if (playerIndex == 0 && PhotonNetwork.IsMasterClient && gameObject.transform.position.x <= 3.0f)
+                {
+                    _audioManager.PlayBombSound();
+                }
+                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient && gameObject.transform.position.x >= 3.0f)
+                {
+                    _audioManager.PlayBombSound();
+                }
+            }
+            else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
             {
                 _basket.material = successBasketMaterial;
                 _rim.material = successRimMaterial;
-                if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                if (playerIndex == 0 && PhotonNetwork.IsMasterClient && gameObject.transform.position.x <= 3.0f)
                 {
                     timePassed = 0;
                     _audioManager.PlayCollectSound();
                     _gameplayManager.IncreaseScore(); // change this to increase score for player 0 or for master
                 }
-                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient && gameObject.transform.position.x >= 3.0f)
                 {
                     timePassed = 0;
                     _audioManager.PlayCollectSound();
@@ -103,12 +120,12 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 explo.SetActive(true);
                 _basket.material = failureBasketMaterial;
                 _rim.material = failureRimMaterial;
-                if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                if (playerIndex == 0 && PhotonNetwork.IsMasterClient && gameObject.transform.position.x <= 3.0f)
                 {
                     _audioManager.PlayBombSound();
                     _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
                 }
-                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient && gameObject.transform.position.x >= 3.0f)
                 {
                     _audioManager.PlayBombSound();
                     _gameplayManager.DecreaseScore(); // change this to decrease score for player 1 or for client
@@ -120,13 +137,13 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 {
                     _basket.material = failureBasketMaterial;
                     _rim.material = failureRimMaterial;
-                    if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                    if (playerIndex == 0 && PhotonNetwork.IsMasterClient && gameObject.transform.position.x <= 3.0f)
                     {
                         timePassed = 0;
                         _audioManager.PlayMissedSound();
                         _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
                     }
-                    else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+                    else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient && gameObject.transform.position.x >= 3.0f)
                     {
                         timePassed = 0;
                         _audioManager.PlayMissedSound();
@@ -135,11 +152,11 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 }
             }
             // Master / Client destroy their own object
-            if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
+            if (playerIndex == 1 && !PhotonNetwork.IsMasterClient && gameObject.transform.position.x >= 3.0f)
             {
                 PhotonNetwork.Destroy(this.gameObject);
             }
-            else if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+            else if (playerIndex == 0 && PhotonNetwork.IsMasterClient && gameObject.transform.position.x <= 3.0f)
             {
                 PhotonNetwork.Destroy(this.gameObject);
             }
