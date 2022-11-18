@@ -195,7 +195,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
             // Change mat when player send deterrent intentially
             if (target_player != -1)
             {
-                a.GetComponent<MeshRenderer>().material = sendingDeterrentMaterial;
+                photonView.RPC("SetRedDeterrentSkin", RpcTarget.All, a.GetPhotonView().ViewID);
             }
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
             
@@ -237,6 +237,12 @@ public class Gameplay : MonoBehaviourPunCallbacks
             }
             a.SetActive(true);
         }
+    }
+
+    [PunRPC]
+    private void SetRedDeterrentSkin(int viewID)
+    {
+        PhotonView.Find(viewID).GetComponent<MeshRenderer>().material = sendingDeterrentMaterial;
     }
 
 }

@@ -158,7 +158,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		float percentage = basket.transform.localScale.x / basket.maxScale;
 		int scoreIncrease = (int)(1f + (5f * (1f - percentage)));
 		scores[localPlayerIndex] += scoreIncrease;
-		photonView.RPC("SyncScore", RpcTarget.AllBuffered, scores[localPlayerIndex], localPlayerIndex);
+		photonView.RPC("SyncScore", RpcTarget.All, scores[localPlayerIndex], localPlayerIndex);
 		gameStreak++;
 		if (NetworkManager.isMultiplayer && (gameStreak % streakToDeterrent == 0))
 		{
@@ -182,7 +182,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	/// </summary>
 	public void UpdateDeterrentCountText()
 	{
-		photonView.RPC("SyncDeterrentCount", RpcTarget.AllBuffered, deterrentsAvailable[localPlayerIndex], localPlayerIndex);
+		photonView.RPC("SyncDeterrentCount", RpcTarget.All, deterrentsAvailable[localPlayerIndex], localPlayerIndex);
 	}
 
 	[PunRPC]
@@ -271,7 +271,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		{
 			networkVar.UpdateIsGameOver(true);
 		}
-		photonView.RPC("SyncHearts", RpcTarget.AllBuffered, health, localPlayerIndex);
+		photonView.RPC("SyncHearts", RpcTarget.All, health, localPlayerIndex);
 		gameStreak = 0;
 	}
 	
