@@ -55,6 +55,11 @@ MonoBehaviour:
   - UpdateRoomPlayerCount
   - Test
   - RPCRefreshPlayerValues
+  - setDifficulty
+  - SyncScore
+  - SyncTombstoneIDs
+  - SyncDeterrentCount
+  - SyncHearts
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

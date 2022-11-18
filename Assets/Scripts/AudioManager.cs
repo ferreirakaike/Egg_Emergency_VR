@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class that manages the audio of the scene
+/// </summary>
 public class AudioManager : MonoBehaviour
 {
     public AudioSource CollectSound;
@@ -9,33 +12,33 @@ public class AudioManager : MonoBehaviour
     public AudioSource BombSound;
     public AudioSource BackGroundMusic;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    /// <summary>
+    /// Method that is called to play the "THUD" sound when pumpkin is caught
+    /// </summary>
     public void PlayCollectSound()
     {
         CollectSound.Play();
     }
 
+    /// <summary>
+    /// Method that is called to play the laughing sound when pumpkin is missed
+    /// </summary>
     public void PlayMissedSound()
     {
         MissedSound.Play();
     }
 
+    /// <summary>
+    /// Method that is called to play the explosion sound when bomb is caught
+    /// </summary>
     public void PlayBombSound()
     {
         BombSound.Play();
     }
 
+    /// <summary>
+    /// Method that is called to stop the background music
+    /// </summary>
     public void StopBackgroundMusic()
     {
         BackGroundMusic.Stop();

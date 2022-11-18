@@ -33,6 +33,11 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     public int[] shadowBasketIDs = {-1, -1};
 
     /// <summary>
+    /// Store the view ID of each network gamescore/tombstone prefab
+    /// </summary>
+    public int[] tombstoneIDs = {-1, -1};
+
+    /// <summary>
     /// Hold the reference to game over state. Set by gameplay manager
     /// </summary>
     public bool isGameOver = false;
@@ -48,6 +53,10 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         roomCapacity = PhotonNetwork.CurrentRoom.PlayerCount;
         gameplay = FindObjectOfType<Gameplay>();
         gameplayManager = FindObjectOfType<GameplayManager>();
+        if (gameplayManager == null)
+        {
+            gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
+        }
         isGameOver = false;
         // if it gets laggy, decrease these
         // default sendRate = 30 times/sec
@@ -58,7 +67,8 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
 
     void Reset()
     {
-        gameStarted = false;    
+        gameStarted = false;
+        isGameOver = false;    
     }
 
     // Update is called once per frame
@@ -122,6 +132,17 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     }
 
     /// <summary>
+    /// Update the tombstone photonview ID
+    /// </summary>
+    /// <param name="newData">Photonview ID of the tombstone</param>
+    /// <param name="playerIndex">Player index. 0 is Master, 1 is client</param>
+    public void UpdateTombstoneIDs(int newData, int playerIndex)
+    {
+        photonView.RPC("SyncTombstoneIDs", RpcTarget.AllBuffered, newData, playerIndex);
+        Debug.Log("Syncing Tombstone IDs");
+    }
+
+    /// <summary>
     /// Update the game over boolean
     /// </summary>
     /// <param name="newData">Game over state</param>
@@ -161,9 +182,19 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     }
 
     [PunRPC]
+    private void SyncTombstoneIDs(int newData, int playerIndex)
+    {
+        tombstoneIDs[playerIndex] = newData;
+    }
+
+    [PunRPC]
     private void SyncIsGameOver(bool newData)
     {
         isGameOver = newData;
+        if (isGameOver)
+        {
+            gameplayManager.gameOver();
+        }
     }
 
     [PunRPC]

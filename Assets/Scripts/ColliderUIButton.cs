@@ -14,6 +14,7 @@ public class ColliderUIButton : XRSimpleInteractable
 {
     private bool rightHandClicked = false;
     private bool leftHandClicked = false;
+    private GameObject gameplayManager;
 
     /// <summary>
     /// This variable holds the material of the button for when it is clicked.
@@ -34,7 +35,7 @@ public class ColliderUIButton : XRSimpleInteractable
         }
         else
         {
-             GetComponent<Image>().material = Resources.Load("Pressed Button Material.mat", typeof(Material)) as Material;
+             GetComponent<Image>().material = Resources.Load<Material>("Pressed Button Material");
         }
         
         if (other.gameObject.CompareTag("LeftHand") && !leftHandClicked)
@@ -79,6 +80,18 @@ public class ColliderUIButton : XRSimpleInteractable
     IEnumerator ClickAfterASecond()
     {
         yield return new WaitForSeconds(0.01f);
-        base.OnActivated(new ActivateEventArgs());
+        OnActivated(new ActivateEventArgs());
     }
+
+  protected override void OnActivated(ActivateEventArgs args)
+  {
+    base.OnActivated(args);
+    gameplayManager.GetComponent<GameOver>().OpenMainMenu();
+  }
+
+  protected override void OnEnable()
+  {
+    base.OnEnable();
+    gameplayManager = GameObject.Find("GameplayManager");
+  }
 }

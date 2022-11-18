@@ -8,6 +8,9 @@ using Photon.Realtime;
 // Record video
 // Weekly report
 
+/// <summary>
+/// This class handles that collision behaviors of collectables and deterrents.
+/// </summary>
 public class CollectableBehavior : MonoBehaviourPunCallbacks
 {
     //public GameObject GreenParticleGameObject;
@@ -17,13 +20,40 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
 
     private AudioManager _audioManager;
 	private GameplayManager _gameplayManager;
+
+    /// <summary>
+    /// Reference to the default material of the basket.
+    /// </summary>
     public Material defaultBasketMaterial;
+    /// <summary>
+    /// Reference to the default material of the rim of the basket.
+    /// </summary>
     public Material defaultRimMaterial;
+    /// <summary>
+    /// Reference to the success material of the basket.
+    /// </summary>
     public Material successBasketMaterial;
+    /// <summary>
+    /// Reference to the failure material of the basket.
+    /// </summary>
     public Material failureBasketMaterial;
+    /// <summary>
+    /// Reference to the success material of the basket rim.
+    /// </summary>
     public Material successRimMaterial;
+    /// <summary>
+    /// Reference to the failure material of the basket rim.
+    /// </summary>
     public Material failureRimMaterial;
+    /// <summary>
+    /// Default value as to how long after the basket's material is changed to failure/success before it's changed back.
+    /// </summary>
     public float timeBeforeResetMaterial = 0.3f;
+    /// <summary>
+    /// Variable that holds the index of the current player.
+    /// 0 for MasterClient.
+    /// 1 for remote client.
+    /// </summary>
     public int playerIndex = 0;
     private static float timePassed = 0;
 
@@ -80,21 +110,28 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
         if (!collided)
         {
             collided = true;
-            if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
+            if (other.gameObject.tag.Equals("Deterrent") && gameObject.tag.Equals("Collectable"))
+            {
+                // Do nothing, just destroy right after
+            }
+            else if (other.gameObject.tag.Equals("Collectable") && gameObject.tag.Equals("Deterrent"))
+            {
+                GameObject explo = PhotonNetwork.Instantiate("ExplosionEffect", gameObject.transform.position, Quaternion.Euler(-90, 0, 0));
+                explo.SetActive(true);
+                if (photonView.IsMine)
+                {
+                    _audioManager.PlayBombSound();
+                }
+            }
+            else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Collectable"))
             {
                 _basket.material = successBasketMaterial;
                 _rim.material = successRimMaterial;
-                if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                if (photonView.IsMine)
                 {
                     timePassed = 0;
                     _audioManager.PlayCollectSound();
-                    _gameplayManager.IncreaseScore(); // change this to increase score for player 0 or for master
-                }
-                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
-                {
-                    timePassed = 0;
-                    _audioManager.PlayCollectSound();
-                    _gameplayManager.IncreaseScore(); // change this to increase score for player 1 or for client
+                    _gameplayManager.IncreaseScore();
                 }
             }
             else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Deterrent"))
@@ -103,15 +140,10 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 explo.SetActive(true);
                 _basket.material = failureBasketMaterial;
                 _rim.material = failureRimMaterial;
-                if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                if (photonView.IsMine)
                 {
                     _audioManager.PlayBombSound();
-                    _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
-                }
-                else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
-                {
-                    _audioManager.PlayBombSound();
-                    _gameplayManager.DecreaseScore(); // change this to decrease score for player 1 or for client
+                    _gameplayManager.DecreaseScore();
                 }
             }
             else
@@ -120,26 +152,16 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 {
                     _basket.material = failureBasketMaterial;
                     _rim.material = failureRimMaterial;
-                    if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+                    if (photonView.IsMine)
                     {
                         timePassed = 0;
                         _audioManager.PlayMissedSound();
-                        _gameplayManager.DecreaseScore(); // change this to decrease score for player 0 or for master
-                    }
-                    else if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
-                    {
-                        timePassed = 0;
-                        _audioManager.PlayMissedSound();
-                        _gameplayManager.DecreaseScore(); // change this to decrease score for player 1 or for client
+                        _gameplayManager.DecreaseScore();
                     }
                 }
             }
             // Master / Client destroy their own object
-            if (playerIndex == 1 && !PhotonNetwork.IsMasterClient)
-            {
-                PhotonNetwork.Destroy(this.gameObject);
-            }
-            else if (playerIndex == 0 && PhotonNetwork.IsMasterClient)
+            if ((playerIndex == 1 && !PhotonNetwork.IsMasterClient) || (playerIndex == 0 && PhotonNetwork.IsMasterClient) || photonView.IsMine)
             {
                 PhotonNetwork.Destroy(this.gameObject);
             }
@@ -147,7 +169,7 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
     }
 
     /// <summary>
-    /// Override parent method. This method destroys the collectable that corresponds to the leaving player
+    /// Override parent method. This method destroys the collectable that corresponds to the leaving player.
     /// </summary>
     public override void OnPlayerLeftRoom(Player player)
     {

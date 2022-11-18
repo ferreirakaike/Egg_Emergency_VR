@@ -7,30 +7,59 @@ using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
 
-
+/// <summary>
+/// This class handles the behaviour of the game when game is over.
+/// </summary>
 public class GameOver : MonoBehaviour {
 	private MainMenuAudioManager audioManager;
 	
-	public GameObject uiCanvas;
-	public GameObject gameLabel;
-	public GameObject finalScoreLabel;
-	public TextMeshProUGUI scoreText;
-	public GameObject mainMenuButton;
+	private GameObject uiCanvas;
+	private GameObject gameLabel;
+	private GameObject finalScoreLabel;
+	private TextMeshProUGUI scoreText;
+	private GameObject mainMenuButton;
 	
+	/// <summary>
+	/// Boolean indicator as to when to move the gameover UI panel to in front of the player
+	/// </summary>
 	public static bool moveCanvasToStart = false;
 	private bool animateButtonsToStart = false;
 	private bool fadeButtonIn = false;
-	
+	private int localPlayerIndex = 0;
+	private int otherPlayerIndex = 1;
+	private Vector3 userPosition;
 	void Start() {
 		audioManager = GameObject.Find("UISoundManager").GetComponent<MainMenuAudioManager>();
-		uiCanvas.transform.position = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, 0.07f);
+		uiCanvas = PhotonNetwork.Instantiate("GameOverPanel", new Vector3(userPosition.x, userPosition.y, 0.07f), Quaternion.identity);
 		uiCanvas.transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);
+		gameLabel = uiCanvas.transform.Find("Game Title").gameObject;
+		finalScoreLabel = uiCanvas.transform.Find("Game Final Score").gameObject;
+		scoreText = finalScoreLabel.GetComponent<TextMeshProUGUI>();
+		mainMenuButton = uiCanvas.transform.Find("Main Menu Button").gameObject;
+		if (PhotonNetwork.IsMasterClient)
+		{
+			localPlayerIndex = 0;
+			otherPlayerIndex = 1;
+		}
+		else
+		{
+			localPlayerIndex = 1;
+			otherPlayerIndex = 0;
+		}
+		StartCoroutine(GetUserPosition());
+	}
+
+	IEnumerator GetUserPosition()
+	{
+		yield return new WaitForSeconds(5f);
+		userPosition = Camera.main.transform.position;
+		uiCanvas.transform.position = new Vector3(userPosition.x, userPosition.y, 0.07f);
 	}
 	
 	void Update() {
 		if (GameOver.moveCanvasToStart) {
 			uiCanvas.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-			float finalZPosition = -10.4f;
+			float finalZPosition = userPosition.z + 0.7f;
 			Vector3 newCanvasPosition = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, finalZPosition);
 			uiCanvas.transform.position = Vector3.MoveTowards(uiCanvas.transform.position, newCanvasPosition, 10.0f * Time.deltaTime);
 			if (uiCanvas.transform.position.z <= finalZPosition) {
@@ -43,7 +72,25 @@ public class GameOver : MonoBehaviour {
 			gameLabel.transform.localPosition = Vector3.MoveTowards(gameLabel.transform.localPosition, newGameLabelPosition, 10.0f * Time.deltaTime);
 			if (gameLabel.transform.localPosition.y >= finalYPosition) {
 				mainMenuButton.SetActive(true);
-				scoreText.text = $"Final Score: {GameplayManager.score}";
+				if (NetworkManager.isMultiplayer)
+				{
+					if (GameplayManager.scores[localPlayerIndex] > GameplayManager.scores[otherPlayerIndex])
+					{
+						scoreText.text = "You Win!!!";
+					}
+					else if (GameplayManager.scores[localPlayerIndex] < GameplayManager.scores[otherPlayerIndex])
+					{
+						scoreText.text = "You Lose!!!";
+					}
+					else
+					{
+						scoreText.text = "Game Tied";
+					}
+				}
+				else
+				{
+					scoreText.text = $"Final Score: {GameplayManager.scores[localPlayerIndex]}";
+				}
 				finalScoreLabel.SetActive(true);
 				
 				Color startColor = mainMenuButton.GetComponent<Image>().material.color;
