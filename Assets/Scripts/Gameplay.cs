@@ -107,7 +107,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
 
     public void CheckAndSendDeterrent()
     {
-       if (gameplayManager.deterrentsAvailable[localPlayerIndex] > 0)
+       if (NetworkManager.isMultiplayer && gameplayManager.deterrentsAvailable[localPlayerIndex] > 0)
        {
             SendDeterrent();
             gameplayManager.deterrentsAvailable[localPlayerIndex]--;

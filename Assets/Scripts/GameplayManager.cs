@@ -16,11 +16,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	public int health = 0;
 	public static bool gameIsOver = false;
 	
-	private GameObject heart1;
-	private GameObject heart2;
-	private GameObject heart3;
-	private GameObject heart4;
-	private GameObject heart5;
+	private GameObject[] heart1;
+	private GameObject[] heart2;
+	private GameObject[] heart3;
+	private GameObject[] heart4;
+	private GameObject[] heart5;
 	public GameObject minusSign;
 	
 	private GameObject scoreCanvas;
@@ -68,11 +68,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		graveUpright = tombstone.transform.Find("Game Gravestone Upright").gameObject;
 		graveDown = tombstone.transform.Find("Game Gravestone Down").gameObject;
 		Transform hearts = tombstone.transform.Find("Hearts");
-		heart1 = hearts.Find("Heart 1").gameObject;
-		heart2 = hearts.Find("Heart 2").gameObject;
-		heart3 = hearts.Find("Heart 3").gameObject;
-		heart4 = hearts.Find("Heart 4").gameObject;
-		heart5 = hearts.Find("Heart 5").gameObject;
+		heart1 = new GameObject[2];
+		heart2 = new GameObject[2];
+		heart3 = new GameObject[2];
+		heart4 = new GameObject[2];
+		heart5 = new GameObject[2];
+		heart1[localPlayerIndex] = hearts.Find("Heart 1").gameObject;
+		heart2[localPlayerIndex] = hearts.Find("Heart 2").gameObject;
+		heart3[localPlayerIndex] = hearts.Find("Heart 3").gameObject;
+		heart4[localPlayerIndex] = hearts.Find("Heart 4").gameObject;
+		heart5[localPlayerIndex] = hearts.Find("Heart 5").gameObject;
 		allHearts = hearts.gameObject;
 		scoreCanvas = tombstone.transform.Find("Canvas").gameObject;
 		scoreText[localPlayerIndex]  = scoreCanvas.transform.Find("Score Value Label").GetComponent<TextMeshProUGUI>();
@@ -88,29 +93,30 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
 		if (NetworkManager.isMultiplayer)
 		{
-			scoreText[otherPlayerIndex] = PhotonView.Find(networkVar.tombstoneIDs[otherPlayerIndex]).transform.Find("Canvas").Find("Score Value Label").GetComponent<TextMeshProUGUI>();
-			deterrentCount[otherPlayerIndex] = PhotonView.Find(networkVar.tombstoneIDs[otherPlayerIndex]).transform.Find("Deterrent_Bomb").GetChild(0).Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
+			GameObject otherTombstone = PhotonView.Find(networkVar.tombstoneIDs[otherPlayerIndex]).gameObject;
+			scoreText[otherPlayerIndex] = otherTombstone.transform.Find("Canvas").Find("Score Value Label").GetComponent<TextMeshProUGUI>();
+			deterrentCount[otherPlayerIndex] = otherTombstone.transform.Find("Deterrent_Bomb").GetChild(0).Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
 			scoreText[otherPlayerIndex].text = $"{scores[otherPlayerIndex]}";
 			deterrentCount[otherPlayerIndex].text = $"{deterrentsAvailable[otherPlayerIndex]}";
+			Transform otherHearts = otherTombstone.transform.Find("Hearts");
+			heart1[otherPlayerIndex] = otherHearts.Find("Heart 1").gameObject;
+			heart2[otherPlayerIndex] = otherHearts.Find("Heart 2").gameObject;
+			heart3[otherPlayerIndex] = otherHearts.Find("Heart 3").gameObject;
+			heart4[otherPlayerIndex] = otherHearts.Find("Heart 4").gameObject;
+			heart5[otherPlayerIndex] = otherHearts.Find("Heart 5").gameObject;
 		}
 		
 		switch(Gameplay.menuDifficulty) {
 			case Difficulty.Easy:
-				heart1.SetActive(true);
-				heart2.SetActive(true);
-				heart3.SetActive(true);
-				heart4.SetActive(true);
-				heart5.SetActive(true);
+				photonView.RPC("SyncHearts", RpcTarget.AllBuffered, 5, localPlayerIndex);
 				health = 5;
 				break;
 			case Difficulty.Medium:
-				heart2.SetActive(true);
-				heart3.SetActive(true);
-				heart4.SetActive(true);
+				photonView.RPC("SyncHearts", RpcTarget.AllBuffered, 3, localPlayerIndex);
 				health = 3;
 				break;
 			case Difficulty.Hard:
-				heart3.SetActive(true);
+				photonView.RPC("SyncHearts", RpcTarget.AllBuffered, 1, localPlayerIndex);
 				health = 1;
 				break;
 		}
@@ -151,7 +157,56 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	public void UpdateDeterrentCountText()
 	{
 		photonView.RPC("SyncScore", RpcTarget.AllBuffered, deterrentCount[localPlayerIndex], localPlayerIndex);
-		
+	}
+
+	[PunRPC]
+	private void SyncHearts(int heartCount, int playerIndex)
+	{
+		switch(heartCount)
+		{
+			case 0: 
+				heart1[playerIndex].SetActive(false);
+				heart2[playerIndex].SetActive(false);
+				heart3[playerIndex].SetActive(false);
+				heart4[playerIndex].SetActive(false);
+				heart5[playerIndex].SetActive(false);
+				break;
+			case 1:
+				heart1[playerIndex].SetActive(false);
+				heart2[playerIndex].SetActive(false);
+				heart3[playerIndex].SetActive(true);
+				heart4[playerIndex].SetActive(false);
+				heart5[playerIndex].SetActive(false);
+				break;
+			case 2:
+				heart1[playerIndex].SetActive(false);
+				heart2[playerIndex].SetActive(true);
+				heart3[playerIndex].SetActive(true);
+				heart4[playerIndex].SetActive(false);
+				heart5[playerIndex].SetActive(false);
+				break;
+			case 3:
+				heart1[playerIndex].SetActive(false);
+				heart2[playerIndex].SetActive(true);
+				heart3[playerIndex].SetActive(true);
+				heart4[playerIndex].SetActive(true);
+				heart5[playerIndex].SetActive(false);
+				break;
+			case 4:
+				heart1[playerIndex].SetActive(true);
+				heart2[playerIndex].SetActive(true);
+				heart3[playerIndex].SetActive(true);
+				heart4[playerIndex].SetActive(true);
+				heart5[playerIndex].SetActive(false);
+				break;
+			case 5:
+				heart1[playerIndex].SetActive(true);
+				heart2[playerIndex].SetActive(true);
+				heart3[playerIndex].SetActive(true);
+				heart4[playerIndex].SetActive(true);
+				heart5[playerIndex].SetActive(true);
+				break;
+		}
 	}
 
 	[PunRPC]
@@ -173,40 +228,21 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		if (GameplayManager.gameIsOver) {
 			return;
 		}
-		Instantiate(minusSign, new Vector3(0.03999999f, 0.45f, -8.3f), Quaternion.identity);
-		switch(Gameplay.menuDifficulty) {
-			case Difficulty.Easy:
-				if (health == 5) {
-					heart5.SetActive(false);
-				} else if (health == 4) {
-					heart4.SetActive(false);
-				} else if (health == 3) {
-					heart3.SetActive(false);
-				} else if (health == 2) {
-					heart2.SetActive(false);
-				} else if (health == 1) {
-					heart1.SetActive(false);
-					networkVar.UpdateIsGameOver(true);
-				}
-				break;
-			case Difficulty.Medium:
-				if (health == 3) {
-					heart4.SetActive(false);
-				} else if (health == 2) {
-					heart3.SetActive(false);
-				} else if (health == 1) {
-					heart2.SetActive(false);
-					networkVar.UpdateIsGameOver(true);
-				}
-				break;
-			case Difficulty.Hard:
-				if (health > 0) {
-					heart3.SetActive(false);
-					networkVar.UpdateIsGameOver(true);
-				}
-			break;
+		if (localPlayerIndex == 0)
+		{
+			Instantiate(minusSign, new Vector3(0.03999999f, 0.45f, -8.3f), Quaternion.identity);
 		}
+		else if (localPlayerIndex == 1)
+		{
+			Instantiate(minusSign, new Vector3(5f, 0.45f, -8.3f), Quaternion.identity);
+		}
+		
 		health--;
+		if (health == 0)
+		{
+			networkVar.UpdateIsGameOver(true);
+		}
+		photonView.RPC("SyncHearts", RpcTarget.AllBuffered, health, localPlayerIndex);
 		gameStreak = 0;
 	}
 	
