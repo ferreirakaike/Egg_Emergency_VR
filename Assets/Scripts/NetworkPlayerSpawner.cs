@@ -52,6 +52,10 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
       networkVar.UpdateShadowBasketIDs(spawnedShadowBasketPrefab.GetPhotonView().ViewID, 0);
       networkVar.UpdatePlayerIDs(spawnedPlayerPrefab.GetPhotonView().ViewID, 0);
       networkVar.UpdateTombstoneIDs(spawnedTombstonePrefab.GetPhotonView().ViewID, 0);
+      if (!NetworkManager.isMultiplayer)
+      {
+        spawnedTombstonePrefab.transform.Find("Deterrent_Bomb").gameObject.SetActive(false);
+      }
     }
     else
     {
@@ -85,11 +89,6 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
   public override void OnLeftRoom()
   {
     base.OnLeftRoom();
-    GameObject photonVoiceClient = GameObject.Find("PhotonVoice");
-    if (photonVoiceClient)
-    {
-      Destroy(photonVoiceClient);
-    }
     PhotonNetwork.Destroy(spawnedPlayerPrefab);
     PhotonNetwork.Destroy(spawnedBasketPrefab);
     PhotonNetwork.Destroy(spawnedShadowBasketPrefab);

@@ -11,8 +11,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	private MainMenuAudioManager audioManager;
 	private AudioManager nonMainMenuAudioManager;
 
-	private TextMeshProUGUI scoreText;
-	private TextMeshProUGUI deterrentCount;
+	private TextMeshProUGUI[] scoreText;
+	private TextMeshProUGUI[] deterrentCount;
 	public int health = 0;
 	public static bool gameIsOver = false;
 	
@@ -34,9 +34,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	private NetworkVariablesAndReferences networkVar;
 	public static int[] scores = {0, 0};
 	private int localPlayerIndex = -1;
+	private int otherPlayerIndex = -1;
 
 	private int gameStreak;
-	public int deterrentsAvailable;
+	public int[] deterrentsAvailable = {0, 0};
 	public int streakToDeterrent;
 	private bool firstTimeStreak = true;
 	/// <summary>
@@ -49,13 +50,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		audioManager = GameObject.Find("UISoundManager").GetComponent<MainMenuAudioManager>();
 		nonMainMenuAudioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
 		networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
+		scoreText = new TextMeshProUGUI[2];
+		deterrentCount = new TextMeshProUGUI[2];
+		deterrentsAvailable = new int[2];
 		if (PhotonNetwork.IsMasterClient)
 		{
 			localPlayerIndex = 0;
+			otherPlayerIndex = 1;
 		}
 		else
 		{
 			localPlayerIndex = 1;
+			otherPlayerIndex = 0;
 		}
 		basket = PhotonView.Find(networkVar.basketIDs[localPlayerIndex]).GetComponent<TwoHandGrabInteractable>();
 		tombstone = PhotonView.Find(networkVar.tombstoneIDs[localPlayerIndex]).gameObject;
@@ -69,16 +75,24 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		heart5 = hearts.Find("Heart 5").gameObject;
 		allHearts = hearts.gameObject;
 		scoreCanvas = tombstone.transform.Find("Canvas").gameObject;
-		scoreText = scoreCanvas.transform.Find("Score Value Label").GetComponent<TextMeshProUGUI>();
+		scoreText[localPlayerIndex]  = scoreCanvas.transform.Find("Score Value Label").GetComponent<TextMeshProUGUI>();
 		deterrentCanvas = tombstone.transform.Find("Deterrent_Bomb").GetChild(0).gameObject;
-		deterrentCount = deterrentCanvas.transform.Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
+		deterrentCount[localPlayerIndex] = deterrentCanvas.transform.Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
 		scores[localPlayerIndex] = 0;
 		gameIsOver = false;
-		scoreText.text = $"{scores[localPlayerIndex]}";
+		scoreText[localPlayerIndex].text = $"{scores[localPlayerIndex]}";
 		gameStreak = 0;
-		deterrentsAvailable = 0;
+		deterrentsAvailable[localPlayerIndex] = 0;
 		firstTimeStreak = true;
-		deterrentCount.text = $"{deterrentsAvailable}";
+		deterrentCount[localPlayerIndex].text = $"{deterrentsAvailable[localPlayerIndex]}";
+
+		if (NetworkManager.isMultiplayer)
+		{
+			scoreText[otherPlayerIndex] = PhotonView.Find(networkVar.tombstoneIDs[otherPlayerIndex]).transform.Find("Canvas").Find("Score Value Label").GetComponent<TextMeshProUGUI>();
+			deterrentCount[otherPlayerIndex] = PhotonView.Find(networkVar.tombstoneIDs[otherPlayerIndex]).transform.Find("Deterrent_Bomb").GetChild(0).Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
+			scoreText[otherPlayerIndex].text = $"{scores[otherPlayerIndex]}";
+			deterrentCount[otherPlayerIndex].text = $"{deterrentsAvailable[otherPlayerIndex]}";
+		}
 		
 		switch(Gameplay.menuDifficulty) {
 			case Difficulty.Easy:
@@ -115,10 +129,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		float percentage = basket.transform.localScale.x / basket.maxScale;
 		int scoreIncrease = (int)(1f + (5f * (1f - percentage)));
 		scores[localPlayerIndex] += scoreIncrease;
-		scoreText.text = $"{scores[localPlayerIndex]}";
 		photonView.RPC("SyncScore", RpcTarget.AllBuffered, scores[localPlayerIndex], localPlayerIndex);
 		gameStreak++;
-		if (/*NetworkManager.isMultiplayer &&*/ (gameStreak % streakToDeterrent == 0))
+		if (NetworkManager.isMultiplayer && (gameStreak % streakToDeterrent == 0))
 		{
 			IncreaseDeterrentsAvailable();
 		}
@@ -126,7 +139,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
 	private void IncreaseDeterrentsAvailable()
 	{
-		deterrentsAvailable++;
+		deterrentsAvailable[localPlayerIndex]++;
 		if (firstTimeStreak)
 		{
 			deterrentCanvas.transform.Find("Deterrent Notification").gameObject.SetActive(true);
@@ -137,13 +150,22 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
 	public void UpdateDeterrentCountText()
 	{
-		deterrentCount.text = $"{deterrentsAvailable}";
+		photonView.RPC("SyncScore", RpcTarget.AllBuffered, deterrentCount[localPlayerIndex], localPlayerIndex);
+		
+	}
+
+	[PunRPC]
+	private void SyncDeterrentCount(int newData, int playerIndex)
+	{
+		deterrentsAvailable[playerIndex] = newData;
+		deterrentCount[playerIndex].text = $"{deterrentsAvailable[playerIndex]}";
 	}
 
 	[PunRPC]
 	private void SyncScore(int newScore, int playerIndex)
 	{
 		scores[playerIndex] = newScore;
+		scoreText[playerIndex].text = $"{scores[playerIndex]}";
 	}
 
 	public void DecreaseScore()
@@ -164,7 +186,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 					heart2.SetActive(false);
 				} else if (health == 1) {
 					heart1.SetActive(false);
-					gameOver();
+					networkVar.UpdateIsGameOver(true);
 				}
 				break;
 			case Difficulty.Medium:
@@ -174,13 +196,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 					heart3.SetActive(false);
 				} else if (health == 1) {
 					heart2.SetActive(false);
-					gameOver();
+					networkVar.UpdateIsGameOver(true);
 				}
 				break;
 			case Difficulty.Hard:
 				if (health > 0) {
 					heart3.SetActive(false);
-					gameOver();
+					networkVar.UpdateIsGameOver(true);
 				}
 			break;
 		}
@@ -196,7 +218,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		allHearts.SetActive(false);
 		GameOver.moveCanvasToStart = true;
 		GameplayManager.gameIsOver = true;
-		networkVar.UpdateIsGameOver(true);
 		graveUpright.SetActive(false);
 		graveDown.SetActive(true);
 	}

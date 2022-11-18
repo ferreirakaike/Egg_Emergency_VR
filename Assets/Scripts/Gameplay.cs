@@ -27,6 +27,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
     public int streakToSend;
     private GameplayManager gameplayManager;
     private Material sendingDeterrentMaterial;
+    private int localPlayerIndex = 0;
 
     public override void OnEnable()
     {
@@ -60,7 +61,12 @@ public class Gameplay : MonoBehaviourPunCallbacks
         // determine send time and send settings on master only
         if(PhotonNetwork.IsMasterClient)
         {
+            localPlayerIndex = 0;
             StartCoroutine(collectableWave());
+        }
+        else
+        {
+            localPlayerIndex = 1;
         }
 
         if (streakToSend == 0)
@@ -101,10 +107,10 @@ public class Gameplay : MonoBehaviourPunCallbacks
 
     public void CheckAndSendDeterrent()
     {
-       if (gameplayManager.deterrentsAvailable > 0)
+       if (gameplayManager.deterrentsAvailable[localPlayerIndex] > 0)
        {
             SendDeterrent();
-            gameplayManager.deterrentsAvailable--;
+            gameplayManager.deterrentsAvailable[localPlayerIndex]--;
             Debug.Log("Sent Deterrent");
             gameplayManager.UpdateDeterrentCountText();
        }

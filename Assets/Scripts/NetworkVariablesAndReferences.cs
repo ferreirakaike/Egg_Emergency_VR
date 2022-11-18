@@ -53,6 +53,10 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         roomCapacity = PhotonNetwork.CurrentRoom.PlayerCount;
         gameplay = FindObjectOfType<Gameplay>();
         gameplayManager = FindObjectOfType<GameplayManager>();
+        if (gameplayManager == null)
+        {
+            gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
+        }
         isGameOver = false;
         // if it gets laggy, decrease these
         // default sendRate = 30 times/sec
@@ -187,6 +191,10 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     private void SyncIsGameOver(bool newData)
     {
         isGameOver = newData;
+        if (isGameOver)
+        {
+            gameplayManager.gameOver();
+        }
     }
 
     [PunRPC]

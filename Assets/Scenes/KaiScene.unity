@@ -175,7 +175,7 @@ MonoBehaviour:
   minusSign: {fileID: 4402036356187143595, guid: 0f0677144c9b94fc89a8f1a976e4e309,
     type: 3}
   deterrentsAvailable: 0
-  streakToDeterrent: 0
+  streakToDeterrent: 10
 --- !u!114 &4279199
 MonoBehaviour:
   m_ObjectHideFlags: 0
