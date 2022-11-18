@@ -161,7 +161,7 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 }
             }
             // Master / Client destroy their own object
-            if (photonView.IsMine)
+            if ((playerIndex == 1 && !PhotonNetwork.IsMasterClient) || (playerIndex == 0 && PhotonNetwork.IsMasterClient) || photonView.IsMine)
             {
                 PhotonNetwork.Destroy(this.gameObject);
             }

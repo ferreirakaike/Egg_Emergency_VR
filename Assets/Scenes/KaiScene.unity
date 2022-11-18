@@ -171,7 +171,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eb826462bf1446caaebb28394fb8636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
   minusSign: {fileID: 4402036356187143595, guid: 0f0677144c9b94fc89a8f1a976e4e309,
     type: 3}
   deterrentsAvailable: 
@@ -204,7 +203,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents: []
   sceneViewId: 3
@@ -746,7 +745,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 364dcfd96576686428c4a0f1f1eeb00b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnTime: 1
   path: {fileID: 2064054920}
   leftPath: {fileID: 1256304926}
   rightPath: {fileID: 526702559}
@@ -754,7 +752,6 @@ MonoBehaviour:
   leftPath2: {fileID: 365864761}
   rightPath2: {fileID: 1760280063}
   end: 2
-  streakToSend: 0
 --- !u!114 &474443735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -771,7 +768,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents: []
   sceneViewId: 2

@@ -17,17 +17,17 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
   private GameObject spawnedTombstonePrefab;
 
   /// <summary>
-  /// Array of locations where players can spawn
+  /// Array of locations where players can spawn.
   /// </summary>
   public Transform[] playerSpawnLocations;
 
   /// <summary>
-  /// Array of locations where baskets can spawn
+  /// Array of locations where baskets can spawn.
   /// </summary>
   public Transform[] basketSpawnLocations; 
 
   /// <summary>
-  /// Array of locations where gamescore/tombstone can spawn
+  /// Array of locations where gamescore/tombstone can spawn.
   /// </summary>
   public Transform[] tombstoneSpawnLocations;
   private NetworkVariablesAndReferences networkVar;

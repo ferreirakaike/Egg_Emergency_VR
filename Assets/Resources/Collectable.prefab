@@ -138,7 +138,6 @@ MonoBehaviour:
     type: 2}
   successRimMaterial: {fileID: 2100000, guid: 07b84c2d304b2f043b0e198793ac1523, type: 2}
   failureRimMaterial: {fileID: 2100000, guid: 1aa08753ebb0d94408a1eb671f312d46, type: 2}
-  explosion: {fileID: 0}
   timeBeforeResetMaterial: 0.3
   playerIndex: 0
 --- !u!114 &8629615059962763825
@@ -157,7 +156,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents:
   - {fileID: 1366207504886767946}

@@ -182,7 +182,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	/// </summary>
 	public void UpdateDeterrentCountText()
 	{
-		photonView.RPC("SyncScore", RpcTarget.AllBuffered, deterrentCount[localPlayerIndex], localPlayerIndex);
+		photonView.RPC("SyncDeterrentCount", RpcTarget.AllBuffered, deterrentsAvailable[localPlayerIndex], localPlayerIndex);
 	}
 
 	[PunRPC]
@@ -288,5 +288,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		GameplayManager.gameIsOver = true;
 		graveUpright.SetActive(false);
 		graveDown.SetActive(true);
+		deterrentCount[localPlayerIndex].transform.parent.parent.gameObject.SetActive(false);
 	}
 }
