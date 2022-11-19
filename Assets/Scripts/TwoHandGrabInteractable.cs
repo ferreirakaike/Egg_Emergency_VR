@@ -121,11 +121,11 @@ public class TwoHandGrabInteractable : XRGrabInteractable
                 networkVarSet = true;
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    PhotonView.Find(networkVar.shadowBasketIDs[0]).gameObject.SetActive(false);
+                    PhotonNetwork.Destroy(PhotonView.Find(networkVar.shadowBasketIDs[0]).gameObject);
                 }
                 else
                 {
-                    PhotonView.Find(networkVar.shadowBasketIDs[1]).gameObject.SetActive(false);
+                    PhotonNetwork.Destroy(PhotonView.Find(networkVar.shadowBasketIDs[1]).gameObject);
                 }
             }
         }

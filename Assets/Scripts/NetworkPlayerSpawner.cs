@@ -89,10 +89,22 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
   public override void OnLeftRoom()
   {
     base.OnLeftRoom();
-    PhotonNetwork.Destroy(spawnedPlayerPrefab);
-    PhotonNetwork.Destroy(spawnedBasketPrefab);
-    PhotonNetwork.Destroy(spawnedShadowBasketPrefab);
-    PhotonNetwork.Destroy(spawnedTombstonePrefab);
+    if (spawnedPlayerPrefab)
+    {
+      PhotonNetwork.Destroy(spawnedPlayerPrefab);
+    }
+    if (spawnedBasketPrefab)
+    {
+      PhotonNetwork.Destroy(spawnedBasketPrefab);
+    }
+    if (spawnedShadowBasketPrefab)
+    {
+      PhotonNetwork.Destroy(spawnedShadowBasketPrefab);
+    }
+    if (spawnedTombstonePrefab)
+    {
+      PhotonNetwork.Destroy(spawnedTombstonePrefab);
+    }
   }
 
   /// <summary>
