@@ -61,6 +61,7 @@ MonoBehaviour:
   - SyncDeterrentCount
   - SyncHearts
   - SetRedDeterrentSkin
+  - SyncIsMultiplayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
