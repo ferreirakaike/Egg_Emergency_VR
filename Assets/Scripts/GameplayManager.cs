@@ -32,11 +32,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	/// </summary>
 	public GameObject minusSign;
 	
-	private GameObject scoreCanvas;
-	private GameObject allHearts;
+	private GameObject[] scoreCanvas;
+	private GameObject[] allHearts;
 	private GameObject tombstone;
-	private GameObject graveUpright;
-	private GameObject graveDown;
+	private GameObject[] graveUpright;
+	private GameObject[] graveDown;
 	private GameObject deterrentCanvas;
 	
 	private TwoHandGrabInteractable basket;
@@ -73,6 +73,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		scoreText = new TextMeshProUGUI[2];
 		deterrentCount = new TextMeshProUGUI[2];
 		deterrentsAvailable = new int[2];
+		allHearts = new GameObject[2];
+		graveDown = new GameObject[2];
+		graveUpright = new GameObject[2];
+		scoreCanvas = new GameObject[2];
 		if (PhotonNetwork.IsMasterClient)
 		{
 			localPlayerIndex = 0;
@@ -85,8 +89,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		}
 		basket = PhotonView.Find(networkVar.basketIDs[localPlayerIndex]).GetComponent<TwoHandGrabInteractable>();
 		tombstone = PhotonView.Find(networkVar.tombstoneIDs[localPlayerIndex]).gameObject;
-		graveUpright = tombstone.transform.Find("Game Gravestone Upright").gameObject;
-		graveDown = tombstone.transform.Find("Game Gravestone Down").gameObject;
+		graveUpright[localPlayerIndex] = tombstone.transform.Find("Game Gravestone Upright").gameObject;
+		graveDown[localPlayerIndex] = tombstone.transform.Find("Game Gravestone Down").gameObject;
 		Transform hearts = tombstone.transform.Find("Hearts");
 		heart1 = new GameObject[2];
 		heart2 = new GameObject[2];
@@ -98,9 +102,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		heart3[localPlayerIndex] = hearts.Find("Heart 3").gameObject;
 		heart4[localPlayerIndex] = hearts.Find("Heart 4").gameObject;
 		heart5[localPlayerIndex] = hearts.Find("Heart 5").gameObject;
-		allHearts = hearts.gameObject;
-		scoreCanvas = tombstone.transform.Find("Canvas").gameObject;
-		scoreText[localPlayerIndex]  = scoreCanvas.transform.Find("Score Value Label").GetComponent<TextMeshProUGUI>();
+		allHearts[localPlayerIndex] = hearts.gameObject;
+		scoreCanvas[localPlayerIndex] = tombstone.transform.Find("Canvas").gameObject;
+		scoreText[localPlayerIndex]  = scoreCanvas[localPlayerIndex].transform.Find("Score Value Label").GetComponent<TextMeshProUGUI>();
 		deterrentCanvas = tombstone.transform.Find("Deterrent_Bomb").GetChild(0).gameObject;
 		deterrentCount[localPlayerIndex] = deterrentCanvas.transform.Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
 		scores[localPlayerIndex] = 0;
@@ -114,8 +118,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		if (NetworkManager.isMultiplayer)
 		{
 			GameObject otherTombstone = PhotonView.Find(networkVar.tombstoneIDs[otherPlayerIndex]).gameObject;
-			scoreText[otherPlayerIndex] = otherTombstone.transform.Find("Canvas").Find("Score Value Label").GetComponent<TextMeshProUGUI>();
+			graveUpright[otherPlayerIndex] = otherTombstone.transform.Find("Game Gravestone Upright").gameObject;
+			graveDown[otherPlayerIndex] = otherTombstone.transform.Find("Game Gravestone Down").gameObject;
 			deterrentCount[otherPlayerIndex] = otherTombstone.transform.Find("Deterrent_Bomb").GetChild(0).Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
+			scoreCanvas[otherPlayerIndex] =otherTombstone.transform.Find("Canvas").gameObject;
+			scoreText[otherPlayerIndex] = scoreCanvas[otherPlayerIndex].transform.Find("Score Value Label").GetComponent<TextMeshProUGUI>();
 			scoreText[otherPlayerIndex].text = $"{scores[otherPlayerIndex]}";
 			deterrentCount[otherPlayerIndex].text = $"{deterrentsAvailable[otherPlayerIndex]}";
 			Transform otherHearts = otherTombstone.transform.Find("Hearts");
@@ -124,6 +131,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 			heart3[otherPlayerIndex] = otherHearts.Find("Heart 3").gameObject;
 			heart4[otherPlayerIndex] = otherHearts.Find("Heart 4").gameObject;
 			heart5[otherPlayerIndex] = otherHearts.Find("Heart 5").gameObject;
+			allHearts[otherPlayerIndex] = otherHearts.gameObject;
 		}
 		
 		switch(Gameplay.menuDifficulty) {
@@ -282,12 +290,20 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	{
 		nonMainMenuAudioManager.StopBackgroundMusic();
 		audioManager.PlayGameOverSound();
-		scoreCanvas.SetActive(false);
-		allHearts.SetActive(false);
+		scoreCanvas[localPlayerIndex].SetActive(false);
+		allHearts[localPlayerIndex].SetActive(false);
 		GameOver.moveCanvasToStart = true;
 		GameplayManager.gameIsOver = true;
-		graveUpright.SetActive(false);
-		graveDown.SetActive(true);
+		graveUpright[localPlayerIndex].SetActive(false);
+		graveDown[localPlayerIndex].SetActive(true);
 		deterrentCount[localPlayerIndex].transform.parent.parent.gameObject.SetActive(false);
+		if (NetworkManager.isMultiplayer)
+		{
+			allHearts[otherPlayerIndex].SetActive(false);
+			scoreCanvas[otherPlayerIndex].SetActive(false);
+			graveUpright[otherPlayerIndex].SetActive(false);
+			graveDown[otherPlayerIndex].SetActive(true);
+			deterrentCount[otherPlayerIndex].transform.parent.parent.gameObject.SetActive(false);
+		}
 	}
 }

@@ -102,7 +102,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("setDifficulty", RpcTarget.All, MainMenu.difficulty);
+            photonView.RPC("setDifficulty", RpcTarget.AllBuffered, MainMenu.difficulty);
         }
     }
 
@@ -242,7 +242,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
     [PunRPC]
     private void SetRedDeterrentSkin(int viewID)
     {
-        PhotonView.Find(viewID).GetComponent<MeshRenderer>().material = sendingDeterrentMaterial;
+        PhotonView.Find(viewID).gameObject.GetComponent<MeshRenderer>().material = sendingDeterrentMaterial;
     }
 
 }
