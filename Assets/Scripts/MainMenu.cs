@@ -55,6 +55,16 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	public GameObject exitButton;
 
 	/// <summary>
+	/// Reference to the HELP button
+	/// </summary>
+	public GameObject helpButton;
+
+	/// <summary>
+	/// Reference to the HELP panel
+	/// </summary>
+	public GameObject helpPanel;
+
+	/// <summary>
 	/// Reference to the Join room button
 	/// </summary>
 	public GameObject joinButton;
@@ -112,6 +122,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				createButton.SetActive(true);
 				joinButton.SetActive(true);
 				exitButton.SetActive(true);
+				helpButton.SetActive(true);
 				
 				Color createColor = createButton.GetComponent<Image>().material.color;
 				createColor.a = 0.0f;
@@ -136,6 +147,15 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				fadeButtonIn = false;
 			}
 		}
+	}
+
+	/// <summary>
+	/// This method is used to display the help menu
+	/// </summary>
+	public void Help()
+	{
+		helpPanel.SetActive(!helpPanel.activeSelf);
+		audioManager.PlayButtonClickSound();
 	}
 	
 	/// <summary>

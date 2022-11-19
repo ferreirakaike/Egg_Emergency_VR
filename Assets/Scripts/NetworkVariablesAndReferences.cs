@@ -63,6 +63,10 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         // default serializationrate = 10 times/sec
         PhotonNetwork.SerializationRate = 40;
         PhotonNetwork.SendRate = 50;
+        if(PhotonNetwork.IsMasterClient && NetworkManager.isMultiplayer)
+        {
+            photonView.RPC("SyncIsMultiplayer", RpcTarget.AllBuffered, NetworkManager.isMultiplayer);
+        }
     }
 
     void Reset()
@@ -195,6 +199,12 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         {
             gameplayManager.gameOver();
         }
+    }
+
+    [PunRPC]
+    private void SyncIsMultiplayer(bool newData)
+    {
+        NetworkManager.isMultiplayer = newData;
     }
 
     [PunRPC]
