@@ -132,6 +132,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 			heart4[otherPlayerIndex] = otherHearts.Find("Heart 4").gameObject;
 			heart5[otherPlayerIndex] = otherHearts.Find("Heart 5").gameObject;
 			allHearts[otherPlayerIndex] = otherHearts.gameObject;
+			photonView.RPC("SyncScore", RpcTarget.All, scores[localPlayerIndex], localPlayerIndex);
 		}
 		
 		switch(Gameplay.menuDifficulty) {
