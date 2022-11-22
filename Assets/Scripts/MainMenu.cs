@@ -40,9 +40,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	public GameObject gameLabel;
 
 	/// <summary>
-	/// Reference to the Create Room button
+	/// Reference to the Single player button
 	/// </summary>
-	public GameObject createButton;
+	public GameObject singlePlayerButton;
 
 	/// <summary>
 	/// Reference to the Start game button
@@ -65,9 +65,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	public GameObject helpPanel;
 
 	/// <summary>
-	/// Reference to the Join room button
+	/// Reference to the Multiplayer button
 	/// </summary>
-	public GameObject joinButton;
+	public GameObject multiPlayerButton;
 
 	/// <summary>
 	/// Reference to the Notification text in the UI Menu
@@ -75,19 +75,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	public GameObject notificationText;
 
 	/// <summary>
-	/// Reference to the room number dropdown menu
-	/// </summary>
-	public GameObject dropdown;
-
-	/// <summary>
 	/// Reference to the difficulty dropdown menu
 	/// </summary>
 	public GameObject difficultyDropdown;
-
-	/// <summary>
-	/// Reference to the multiplater toggle
-	/// </summary>
-	public GameObject multiplayerToggle;
 
 	private GameObject overrideButton;
 	private NetworkManager networkManager;
@@ -103,6 +93,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 		overrideButton = transform.Find("OverrideDropdownButton").gameObject;
 		difficulty = Difficulty.Easy;
+		UnityEngine.Random.InitState((int)(DateTime.UtcNow - new DateTime(1970,1,1)).TotalSeconds);
 	}
 	
 	void Update() {
@@ -115,34 +106,34 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				animateButtonsToStart = true;
 			}
 		} else if (animateButtonsToStart) {
-			float finalYPosition = 18.3f;//1.550f + (18.3f - 4.1f);
+			float finalYPosition = 20.5f;//1.550f + (18.3f - 4.1f);
 			Vector3 newGameLabelPosition = new Vector3(gameLabel.transform.localPosition.x, finalYPosition, gameLabel.transform.localPosition.z);
 			gameLabel.transform.localPosition = Vector3.MoveTowards(gameLabel.transform.localPosition, newGameLabelPosition, 10.0f * Time.deltaTime);
 			if (gameLabel.transform.localPosition.y >= finalYPosition) {
-				createButton.SetActive(true);
-				joinButton.SetActive(true);
+				singlePlayerButton.SetActive(true);
+				multiPlayerButton.SetActive(true);
 				exitButton.SetActive(true);
 				helpButton.SetActive(true);
 				
-				Color createColor = createButton.GetComponent<Image>().material.color;
+				Color createColor = singlePlayerButton.GetComponent<Image>().material.color;
 				createColor.a = 0.0f;
-				createButton.GetComponent<Image>().material.color = createColor;
-				Color joinColor = joinButton.GetComponent<Image>().material.color;
+				singlePlayerButton.GetComponent<Image>().material.color = createColor;
+				Color joinColor = multiPlayerButton.GetComponent<Image>().material.color;
 				joinColor.a = 0.0f;
-				joinButton.GetComponent<Image>().material.color = joinColor;
+				multiPlayerButton.GetComponent<Image>().material.color = joinColor;
 				animateButtonsToStart = false;
 				fadeButtonIn = true;
 			}
 		} else if (fadeButtonIn) {
-			Color finalColor = createButton.GetComponent<Image>().material.color;
+			Color finalColor = singlePlayerButton.GetComponent<Image>().material.color;
 			finalColor.a += 5.0f * Time.deltaTime;
-			createButton.GetComponent<Image>().material.color = finalColor;
+			singlePlayerButton.GetComponent<Image>().material.color = finalColor;
 			if (finalColor.a >= 1.0f) {
 				fadeButtonIn = false;
 			}
-			finalColor = joinButton.GetComponent<Image>().material.color;
+			finalColor = multiPlayerButton.GetComponent<Image>().material.color;
 			finalColor.a += 5.0f * Time.deltaTime;
-			joinButton.GetComponent<Image>().material.color = finalColor;
+			multiPlayerButton.GetComponent<Image>().material.color = finalColor;
 			if (finalColor.a >= 1.0f) {
 				fadeButtonIn = false;
 			}
@@ -165,42 +156,26 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		audioManager.PlayButtonClickSound();
 		if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Start")
 		{
-			TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
-			int result;
 			if (PhotonNetwork.InRoom)
 			{
-				StartCoroutine(SetNotification("You are already in a room.\nPlease hit \"Back\" and try again!", 0));
-				notificationText.SetActive(true);
+				StartCoroutine(SetNotification("You are already in a room or did not exit the room correctly.\nPlease hit \"Back\" and try again!", 0));
 			}
-			else if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
+			if (!networkManager.InitializeRoom(UnityEngine.Random.Range(0,99999999)))
 			{
-				if (!networkManager.InitializeRoom(result))
-				{
-					Debug.Log("Failed to create room");
-					StartCoroutine(SetNotification("Failed to create room due network error!", 0));
-					notificationText.SetActive(true);
-				}
-				else
-				{
-					if (NetworkManager.isMultiplayer)
-					{
-						StartCoroutine(SetNotification("Waiting for second player to join ...", 0));
-						notificationText.SetActive(true);
-					}
-				}
-			}			
+				Debug.Log("Failed to create room");
+				StartCoroutine(SetNotification("Failed to create room due network error!", 1f));
+			}	
 		}
-		else if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Join")
+		else if (startButton.GetComponentInChildren<TextMeshProUGUI>().text == "Join Random")
 		{
-			TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
-			int result;
-			if (Int32.TryParse(tmp_dropdown.options[tmp_dropdown.value].text, out result))
+			if (PhotonNetwork.InRoom)
 			{
-				if (!networkManager.JoinRoom(result))
-				{
-					Debug.Log("Failed to join room");
-				}				
+				StartCoroutine(SetNotification("You are already in a room or did not exit the room correctly.\nPlease hit \"Back\" and try again!", 0));
 			}
+			else if (!networkManager.JoinRoom())
+			{
+				Debug.Log("Failed to join room");
+			}				
 		}
 	}
 
@@ -212,8 +187,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	public override void OnCreateRoomFailed (short returnCode, string message)
 	{
 		base.OnCreateRoomFailed(returnCode, message);
-		StartCoroutine(SetNotification("Failed to create room. Room already exist or network error.\nPlease try creating different a room or join a room", 0.5f));
-		notificationText.SetActive(true);
+		StartCoroutine(SetNotification("Failed to create room. Network error.\nPlease try again later", 1f));
 	}
 
 	/// <summary>
@@ -225,8 +199,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	{
 		base.OnJoinRoomFailed(returnCode, message);
 		StartCoroutine(SetNotification("", 0f));
-		StartCoroutine(SetNotification("Failed to join room. Room is either full or does not exist.\nPlease create a room or join a different room", 0.5f));
-		notificationText.SetActive(true);
+		StartCoroutine(SetNotification("Failed to join room. Network error.\nPlease try again later", 0.5f));
 	}
 
 	/// <summary>
@@ -241,6 +214,22 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		{
 			PhotonNetwork.LoadLevel("KaiScene");
 		}
+		else
+		{
+			StartCoroutine(SetNotification("You are the first player, your difficulty selection will be used!\nWaiting for other player to join...", 1f));
+		}
+	}
+
+	public override void OnJoinRandomFailed(short returnCode, string message)
+	{
+		base.OnJoinRandomFailed(returnCode, message);
+		StartCoroutine(SetNotification("", 0f));
+		StartCoroutine(SetNotification("Failed to join a room.\nCreating a room instead", 0.1f));
+		RoomOptions roomOptions = new RoomOptions();
+    roomOptions.MaxPlayers = (byte)2;   
+    roomOptions.IsVisible = true;
+    roomOptions.IsOpen = true;
+		PhotonNetwork.CreateRoom(UnityEngine.Random.Range(0,99999999).ToString(), roomOptions, TypedLobby.Default);
 	}
 
 	IEnumerator SetNotification(string str = null, float delay = 1f)
@@ -249,78 +238,39 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		{
 			yield return new WaitForSeconds(delay);
 			notificationText.GetComponent<TextMeshProUGUI>().text = str;
-		}
-  }
-
-	/// <summary>
-	/// This method is used to set the notice for when Multiplayer toggle is set
-	/// </summary>
-	/// <param name="setting"></param>
-	public void SetMultiplayerNotification(Toggle setting)
-  {
-    if(setting.isOn)
-		{
-			notificationText.GetComponent<TextMeshProUGUI>().text = "NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode";
 			notificationText.SetActive(true);
 		}
-		else
-		{
-			notificationText.GetComponent<TextMeshProUGUI>().text = "";
-			notificationText.SetActive(false);
-		}
   }
 
 	/// <summary>
-	/// This method displays the dropdown menus so that user can select a room number and set room difficulty before creating a room.
+	/// This methods display options user can click to start a single player game
 	/// </summary>
 	public void OnCreateRoomButtonClicked()
 	{
+		NetworkManager.isMultiplayer = false;
 		audioManager.PlayButtonClickSound();
 		startButton.SetActive(true);
-		createButton.SetActive(false);
-		joinButton.SetActive(false);
-		TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
-		tmp_dropdown.ClearOptions();
-		List<TMP_Dropdown.OptionData> dropdown_options = new List<TMP_Dropdown.OptionData>();
-		foreach (int room in networkManager.availableRoom)
-		{
-				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.ToString()});
-		}
-		
-		tmp_dropdown.AddOptions(dropdown_options);
-		dropdown.SetActive(true);
-		multiplayerToggle.SetActive(true);
+		singlePlayerButton.SetActive(false);
+		multiPlayerButton.SetActive(false);
 		difficultyDropdown.SetActive(true);
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
-		if(NetworkManager.isMultiplayer)
-		{
-			notificationText.GetComponent<TextMeshProUGUI>().text = "NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode";
-			notificationText.SetActive(true);
-		}
 	}
 
 	/// <summary>
-	/// This method displays a dropdown list of room numbers that user could potentially join
+	/// This method shows the difficulty dropdown so that the user can be randomly matched with another user
 	/// </summary>
 	public void OnJoinRoomButtonClicked()
 	{
+		NetworkManager.isMultiplayer = true;
 		audioManager.PlayButtonClickSound();
 		startButton.SetActive(true);
-		createButton.SetActive(false);
-		joinButton.SetActive(false);
-		TMP_Dropdown tmp_dropdown = dropdown.GetComponent<TMP_Dropdown>();
-		tmp_dropdown.ClearOptions();
-		List<TMP_Dropdown.OptionData> dropdown_options = new List<TMP_Dropdown.OptionData>();
-		foreach (int room in networkManager.availableRoom)
-		{
-				dropdown_options.Add(new TMP_Dropdown.OptionData() {text = room.ToString()});
-		}
-		
-		tmp_dropdown.AddOptions(dropdown_options);
-		dropdown.SetActive(true);
+		singlePlayerButton.SetActive(false);
+		multiPlayerButton.SetActive(false);
+		difficultyDropdown.SetActive(true);
+		StartCoroutine(SetNotification("NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode", 0.1f));
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
-		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Join";
+		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Join Random";
 	}
 	
 	/// <summary>
@@ -348,11 +298,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				PhotonNetwork.LeaveRoom();
 			}
 			audioManager.PlayButtonClickSound();
-			joinButton.SetActive(true);
-			createButton.SetActive(true);
-			dropdown.SetActive(false);
+			multiPlayerButton.SetActive(true);
+			singlePlayerButton.SetActive(true);
 			overrideButton.SetActive(false);
-			multiplayerToggle.SetActive(false);
 			difficultyDropdown.SetActive(false);
 			startButton.SetActive(false);
 			notificationText.SetActive(false);
