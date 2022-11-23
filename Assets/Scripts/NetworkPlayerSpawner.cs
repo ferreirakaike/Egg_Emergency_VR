@@ -111,11 +111,9 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
   /// Override parent method. This method forces the second player to leave the room if the room creator left.
   /// </summary>
   /// <param name="newMasterClient"></param>
-  public override void OnMasterClientSwitched(Player newMasterClient)
+  public override void OnPlayerLeftRoom(Player player)
   {
-    base.OnMasterClientSwitched(newMasterClient);
-    PhotonNetwork.LeaveRoom();
-    AutoScroll.textToScrollThrough = "\n\n\n\n\n\n\n\n\n\n\nOnver Left Room!\n\nPlease create\n\nor\n\nJoin a diffrernt room!\n\n\n\n\n\n\n\n\n\n\n\n\n";
-    SceneManager.LoadScene("OwnerLeftRoom");
+    base.OnPlayerLeftRoom(player);
+    networkVar.UpdateIsGameOver(true);
   }
 }

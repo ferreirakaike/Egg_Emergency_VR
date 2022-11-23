@@ -2559,6 +2559,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 2161991464260188180}
+  state: 0
 --- !u!1 &2161991464297105861
 GameObject:
   m_ObjectHideFlags: 0
@@ -2750,6 +2751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 2161991464406210301}
+  state: 0
 --- !u!1 &2161991464418990274
 GameObject:
   m_ObjectHideFlags: 0

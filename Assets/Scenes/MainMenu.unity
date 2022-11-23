@@ -9611,7 +9611,7 @@ MonoBehaviour:
     as many pumpkins as possible while avoiding bombs.\n  - Use your Controllers'
     Trigger Buttons to grab and scale the basket.\n  - The smaller the basket at
     the point of catching, the more points you will get.\n  -In multiplayer mode,
-    after every 10 catching streak, you will gain the ability to send 1 bomb toward
+    after every 5 catching streak, you will gain the ability to send 1 bomb toward
     your opponent.\n  - You can use either A or X button on your controller to send
     the bomb."
   m_isRightToLeft: 0
