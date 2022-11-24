@@ -67,14 +67,18 @@ public class GameOver : MonoBehaviour {
 				animateButtonsToStart = true;
 			}
 		} else if (animateButtonsToStart) {
-			float finalYPosition = -16.8f;//1.550f + (18.3f - 4.1f);
+			float finalYPosition = 20f;//1.550f + (18.3f - 4.1f);
 			Vector3 newGameLabelPosition = new Vector3(gameLabel.transform.localPosition.x, finalYPosition, gameLabel.transform.localPosition.z);
 			gameLabel.transform.localPosition = Vector3.MoveTowards(gameLabel.transform.localPosition, newGameLabelPosition, 10.0f * Time.deltaTime);
 			if (gameLabel.transform.localPosition.y >= finalYPosition) {
 				mainMenuButton.SetActive(true);
 				if (NetworkManager.isMultiplayer)
 				{
-					if (GameplayManager.scores[localPlayerIndex] > GameplayManager.scores[otherPlayerIndex])
+					if (PhotonNetwork.CurrentRoom.PlayerCount < 2)
+					{
+						scoreText.text = "Other Player Left\nYou Win!!!";
+					}
+					else if (GameplayManager.scores[localPlayerIndex] > GameplayManager.scores[otherPlayerIndex])
 					{
 						scoreText.text = "You Win!!!";
 					}

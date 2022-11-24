@@ -60,6 +60,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	/// </summary>
 	public int streakToDeterrent;
 	private bool firstTimeStreak = true;
+	private TextMeshProUGUI[] countDown;
 	/// <summary>
 	/// Override the on enable method of MonoBehaviourPunCallbacks.
 	/// Instantiates necessary variables.
@@ -77,6 +78,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		graveDown = new GameObject[2];
 		graveUpright = new GameObject[2];
 		scoreCanvas = new GameObject[2];
+		
 		if (PhotonNetwork.IsMasterClient)
 		{
 			localPlayerIndex = 0;
@@ -123,6 +125,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 			deterrentCount[otherPlayerIndex] = otherTombstone.transform.Find("Deterrent_Bomb").GetChild(0).Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
 			scoreCanvas[otherPlayerIndex] =otherTombstone.transform.Find("Canvas").gameObject;
 			scoreText[otherPlayerIndex] = scoreCanvas[otherPlayerIndex].transform.Find("Score Value Label").GetComponent<TextMeshProUGUI>();
+			countDown[otherPlayerIndex]  = scoreCanvas[otherPlayerIndex].transform.Find("Count Down Value Label").GetComponent<TextMeshProUGUI>();
 			scoreText[otherPlayerIndex].text = $"{scores[otherPlayerIndex]}";
 			deterrentCount[otherPlayerIndex].text = $"{deterrentsAvailable[otherPlayerIndex]}";
 			Transform otherHearts = otherTombstone.transform.Find("Hearts");
@@ -132,7 +135,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 			heart4[otherPlayerIndex] = otherHearts.Find("Heart 4").gameObject;
 			heart5[otherPlayerIndex] = otherHearts.Find("Heart 5").gameObject;
 			allHearts[otherPlayerIndex] = otherHearts.gameObject;
-			photonView.RPC("SyncScore", RpcTarget.All, scores[localPlayerIndex], localPlayerIndex);
+			photonView.RPC("SyncScore", RpcTarget.AllBuffered, scores[localPlayerIndex], localPlayerIndex);
 		}
 		
 		switch(Gameplay.menuDifficulty) {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 
 
 /// <summary>
@@ -46,11 +47,14 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     private bool gameStarted = false;
     private Gameplay gameplay;
     private GameplayManager gameplayManager;
+    private TextMeshProUGUI[] countDown;
+    private int localPlayerIndex = 0;
+    private int otherPlayerIndex = 1;
 
     // Start is called before the first frame update
     void Start()
     {
-        roomCapacity = PhotonNetwork.CurrentRoom.PlayerCount;
+        roomCapacity = PhotonNetwork.CurrentRoom.MaxPlayers;
         gameplay = FindObjectOfType<Gameplay>();
         gameplayManager = FindObjectOfType<GameplayManager>();
         if (gameplayManager == null)
@@ -67,6 +71,24 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         {
             photonView.RPC("SyncIsMultiplayer", RpcTarget.AllBuffered, NetworkManager.isMultiplayer);
         }
+        if (PhotonNetwork.IsMasterClient)
+		{
+			localPlayerIndex = 0;
+			otherPlayerIndex = 1;
+		}
+		else
+		{
+			localPlayerIndex = 1;
+			otherPlayerIndex = 0;
+		}
+        countDown = new TextMeshProUGUI[2];
+        GameObject tombstone = PhotonView.Find(tombstoneIDs[localPlayerIndex]).gameObject;
+        countDown[localPlayerIndex]  = tombstone.transform.Find("Canvas").Find("Count Down Value Label").GetComponent<TextMeshProUGUI>();
+        if (NetworkManager.isMultiplayer)
+		{
+			GameObject otherTombstone = PhotonView.Find(tombstoneIDs[otherPlayerIndex]).gameObject;
+			countDown[otherPlayerIndex]  = otherTombstone.transform.Find("Canvas").Find("Count Down Value Label").GetComponent<TextMeshProUGUI>();
+		}
     }
 
     void Reset()
@@ -85,10 +107,49 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
             if(roomCapacity > 0 && (roomCapacity == playerGrabbed))
             {
                 gameStarted = true;
-                photonView.RPC("StartGameplay", RpcTarget.AllBuffered);
-                Debug.Log("Starting game");
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    StartCoroutine(StartCountDown());
+                }
             }
         }
+    }
+
+    [PunRPC]
+	private void SyncCountDown(bool toggleDisable, int number, int playerIndex)
+	{
+		if (toggleDisable)
+		{
+			countDown[playerIndex].gameObject.SetActive(false);
+		}
+		if (number == 3)
+		{
+			countDown[playerIndex].gameObject.SetActive(true);
+		}
+		countDown[playerIndex].text = $"{number}";
+	}
+
+
+    IEnumerator StartCountDown()
+    {
+        int count = 3;
+        while (count >= 0)
+        {
+            photonView.RPC("SyncCountDown", RpcTarget.AllBuffered, false, count, 0);
+            if (roomCapacity == 2)
+            {
+                photonView.RPC("SyncCountDown", RpcTarget.AllBuffered, false, count, 1);
+            }
+            count--;
+            yield return new WaitForSeconds(1);
+        }
+        photonView.RPC("SyncCountDown", RpcTarget.AllBuffered, true, count, 0);
+        if (roomCapacity == 2)
+        {
+            photonView.RPC("SyncCountDown", RpcTarget.AllBuffered, true, count, 1);
+        }
+        photonView.RPC("StartGameplay", RpcTarget.AllBuffered);
+        Debug.Log("Starting game");
     }
 
     /// <summary>
