@@ -106,7 +106,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				animateButtonsToStart = true;
 			}
 		} else if (animateButtonsToStart) {
-			float finalYPosition = 20.5f;//1.550f + (18.3f - 4.1f);
+			float finalYPosition = 22f;//1.550f + (18.3f - 4.1f);
 			Vector3 newGameLabelPosition = new Vector3(gameLabel.transform.localPosition.x, finalYPosition, gameLabel.transform.localPosition.z);
 			gameLabel.transform.localPosition = Vector3.MoveTowards(gameLabel.transform.localPosition, newGameLabelPosition, 10.0f * Time.deltaTime);
 			if (gameLabel.transform.localPosition.y >= finalYPosition) {
@@ -268,7 +268,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		singlePlayerButton.SetActive(false);
 		multiPlayerButton.SetActive(false);
 		difficultyDropdown.SetActive(true);
-		StartCoroutine(SetNotification("NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode", 0.1f));
+		StartCoroutine(SetNotification("NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode\n       First player's difficulty setting will be used for the room", 0.1f));
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Join Random";
 	}

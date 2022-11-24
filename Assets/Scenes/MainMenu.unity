@@ -7065,7 +7065,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.4, y: 3.3}
+  m_AnchoredPosition: {x: 4.4, y: 1.7}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &587176439
@@ -10017,7 +10017,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "NOTICE: Game only starts when both players have grabbed their basket in
-    Multiplayer Mode\n           Trying to match you with another player. Hold tight..."
+    Multiplayer Mode\n       First player's difficulty setting will be used for the
+    room"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
