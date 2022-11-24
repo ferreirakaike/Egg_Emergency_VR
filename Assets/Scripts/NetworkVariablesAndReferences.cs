@@ -84,11 +84,6 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         countDown = new TextMeshProUGUI[2];
         GameObject tombstone = PhotonView.Find(tombstoneIDs[localPlayerIndex]).gameObject;
         countDown[localPlayerIndex]  = tombstone.transform.Find("Canvas").Find("Count Down Value Label").GetComponent<TextMeshProUGUI>();
-        if (NetworkManager.isMultiplayer)
-		{
-			GameObject otherTombstone = PhotonView.Find(tombstoneIDs[otherPlayerIndex]).gameObject;
-			countDown[otherPlayerIndex]  = otherTombstone.transform.Find("Canvas").Find("Count Down Value Label").GetComponent<TextMeshProUGUI>();
-		}
     }
 
     void Reset()
@@ -113,19 +108,17 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
                 }
             }
         }
+        if (tombstoneIDs[otherPlayerIndex] != -1 && !countDown[otherPlayerIndex])
+		{
+			GameObject otherTombstone = PhotonView.Find(tombstoneIDs[otherPlayerIndex]).gameObject;
+			countDown[otherPlayerIndex]  = otherTombstone.transform.Find("Canvas").Find("Count Down Value Label").GetComponent<TextMeshProUGUI>();
+		}
     }
 
     [PunRPC]
 	private void SyncCountDown(bool toggleDisable, int number, int playerIndex)
 	{
-		if (toggleDisable)
-		{
-			countDown[playerIndex].gameObject.SetActive(false);
-		}
-		if (number == 3)
-		{
-			countDown[playerIndex].gameObject.SetActive(true);
-		}
+        countDown[playerIndex].gameObject.SetActive(!toggleDisable);
 		countDown[playerIndex].text = $"{number}";
 	}
 
