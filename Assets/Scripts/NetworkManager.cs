@@ -77,9 +77,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
   /// This method allows user to join a random room in multiplayer mode
   /// </summary>
   /// <returns>Returns true if the room joining request is sucessfully put into the network queue. Returns false otherwise.</returns>
-  public bool JoinRoom()
+  public bool JoinRoom(int roomNumber)
   {
-    return PhotonNetwork.JoinRandomRoom();
+    RoomOptions roomOptions = new RoomOptions();
+    roomOptions.MaxPlayers = (byte)2;   
+    roomOptions.IsVisible = true;
+    roomOptions.IsOpen = true;
+    return PhotonNetwork.JoinRandomOrCreateRoom(null, (byte)2, MatchmakingMode.FillRoom, TypedLobby.Default, null, UnityEngine.Random.Range(0,99999999).ToString(), roomOptions);
   }
 
   /// <summary>

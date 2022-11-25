@@ -92,6 +92,8 @@ public class ColliderUIButton : XRSimpleInteractable
   protected override void OnEnable()
   {
     base.OnEnable();
+    rightHandClicked = false;
+    leftHandClicked = false;
     gameplayManager = GameObject.Find("GameplayManager");
   }
 

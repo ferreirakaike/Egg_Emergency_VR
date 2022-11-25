@@ -28,7 +28,12 @@ public class GameOver : MonoBehaviour {
 	private int localPlayerIndex = 0;
 	private int otherPlayerIndex = 1;
 	private Vector3 userPosition;
+	private bool updateCanvasPosition = true;
+	private bool canvasMovedBefore = false;
 	void Start() {
+		moveCanvasToStart = false;
+		animateButtonsToStart = false;
+		fadeButtonIn = false;
 		audioManager = GameObject.Find("UISoundManager").GetComponent<MainMenuAudioManager>();
 		uiCanvas = PhotonNetwork.Instantiate("GameOverPanel", new Vector3(userPosition.x, userPosition.y, 0.07f), Quaternion.identity);
 		uiCanvas.transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);
@@ -46,18 +51,18 @@ public class GameOver : MonoBehaviour {
 			localPlayerIndex = 1;
 			otherPlayerIndex = 0;
 		}
-		StartCoroutine(GetUserPosition());
-	}
-
-	IEnumerator GetUserPosition()
-	{
-		yield return new WaitForSeconds(5f);
-		userPosition = Camera.main.transform.position;
-		uiCanvas.transform.position = new Vector3(userPosition.x, userPosition.y, 0.07f);
+		updateCanvasPosition = true;
+		canvasMovedBefore = false;
 	}
 	
 	void Update() {
-		if (GameOver.moveCanvasToStart) {
+		if (updateCanvasPosition)
+		{
+			userPosition = Camera.main.transform.position;
+			uiCanvas.transform.position = new Vector3(userPosition.x, userPosition.y, 0.07f);
+		}
+		if (!canvasMovedBefore && GameOver.moveCanvasToStart) {
+			updateCanvasPosition = false;
 			uiCanvas.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 			float finalZPosition = userPosition.z + 0.7f;
 			Vector3 newCanvasPosition = new Vector3(uiCanvas.transform.position.x, uiCanvas.transform.position.y, finalZPosition);
@@ -65,6 +70,7 @@ public class GameOver : MonoBehaviour {
 			if (uiCanvas.transform.position.z <= finalZPosition) {
 				moveCanvasToStart = false;
 				animateButtonsToStart = true;
+				canvasMovedBefore = true;
 			}
 		} else if (animateButtonsToStart) {
 			float finalYPosition = 20f;//1.550f + (18.3f - 4.1f);

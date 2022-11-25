@@ -51,6 +51,18 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     private int localPlayerIndex = 0;
     private int otherPlayerIndex = 1;
 
+    void Awake()
+    {
+        // if it gets laggy, decrease these
+        // default sendRate = 30 times/sec
+        // default serializationrate = 10 times/sec
+        PhotonNetwork.SerializationRate = 10;
+        PhotonNetwork.SendRate = 45;
+        gameStarted = false;
+        isGameOver = false;
+        Debug.Log("Setting photon send rate");
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -62,11 +74,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
             gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
         }
         isGameOver = false;
-        // if it gets laggy, decrease these
-        // default sendRate = 30 times/sec
-        // default serializationrate = 10 times/sec
-        PhotonNetwork.SerializationRate = 40;
-        PhotonNetwork.SendRate = 50;
+        
         if(PhotonNetwork.IsMasterClient && NetworkManager.isMultiplayer)
         {
             photonView.RPC("SyncIsMultiplayer", RpcTarget.AllBuffered, NetworkManager.isMultiplayer);
@@ -108,7 +116,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
                 }
             }
         }
-        if (tombstoneIDs[otherPlayerIndex] != -1 && !countDown[otherPlayerIndex])
+        if (PhotonNetwork.CurrentRoom.PlayerCount > 1 && tombstoneIDs[otherPlayerIndex] != -1 && !countDown[otherPlayerIndex])
 		{
 			GameObject otherTombstone = PhotonView.Find(tombstoneIDs[otherPlayerIndex]).gameObject;
 			countDown[otherPlayerIndex]  = otherTombstone.transform.Find("Canvas").Find("Count Down Value Label").GetComponent<TextMeshProUGUI>();
@@ -128,20 +136,20 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         int count = 3;
         while (count >= 0)
         {
-            photonView.RPC("SyncCountDown", RpcTarget.AllBuffered, false, count, 0);
+            photonView.RPC("SyncCountDown", RpcTarget.All, false, count, 0);
             if (roomCapacity == 2)
             {
-                photonView.RPC("SyncCountDown", RpcTarget.AllBuffered, false, count, 1);
+                photonView.RPC("SyncCountDown", RpcTarget.All, false, count, 1);
             }
             count--;
             yield return new WaitForSeconds(1);
         }
-        photonView.RPC("SyncCountDown", RpcTarget.AllBuffered, true, count, 0);
+        photonView.RPC("SyncCountDown", RpcTarget.All, true, count, 0);
         if (roomCapacity == 2)
         {
-            photonView.RPC("SyncCountDown", RpcTarget.AllBuffered, true, count, 1);
+            photonView.RPC("SyncCountDown", RpcTarget.All, true, count, 1);
         }
-        photonView.RPC("StartGameplay", RpcTarget.AllBuffered);
+        photonView.RPC("StartGameplay", RpcTarget.All);
         Debug.Log("Starting game");
     }
 

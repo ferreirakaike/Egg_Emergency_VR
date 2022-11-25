@@ -124,7 +124,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(spawnTime);
             int deterrentRoll = Random.Range(0, 100);
             int chosenPath = Random.Range(0, 3);
-            photonView.RPC("spawnCollectable", RpcTarget.All, deterrentRoll, chosenPath, difficulty, -1);
+            photonView.RPC("spawnCollectable", RpcTarget.AllViaServer, deterrentRoll, chosenPath, difficulty, -1);
         }
     }
 

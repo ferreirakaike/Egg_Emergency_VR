@@ -60,6 +60,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 	/// </summary>
 	public int streakToDeterrent;
 	private bool firstTimeStreak = true;
+
+	void Awake()
+	{
+		gameIsOver = false;
+		firstTimeStreak = true;
+	}
+
 	/// <summary>
 	/// Override the on enable method of MonoBehaviourPunCallbacks.
 	/// Instantiates necessary variables.
@@ -109,11 +116,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		deterrentCanvas = tombstone.transform.Find("Deterrent_Bomb").GetChild(0).gameObject;
 		deterrentCount[localPlayerIndex] = deterrentCanvas.transform.Find("Deterrent Count").GetComponent<TextMeshProUGUI>();
 		scores[localPlayerIndex] = 0;
-		gameIsOver = false;
 		scoreText[localPlayerIndex].text = $"{scores[localPlayerIndex]}";
 		gameStreak = 0;
 		deterrentsAvailable[localPlayerIndex] = 0;
-		firstTimeStreak = true;
 		deterrentCount[localPlayerIndex].text = $"{deterrentsAvailable[localPlayerIndex]}";
 
 		if (NetworkManager.isMultiplayer)
@@ -133,20 +138,20 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 			heart4[otherPlayerIndex] = otherHearts.Find("Heart 4").gameObject;
 			heart5[otherPlayerIndex] = otherHearts.Find("Heart 5").gameObject;
 			allHearts[otherPlayerIndex] = otherHearts.gameObject;
-			photonView.RPC("SyncScore", RpcTarget.AllBuffered, scores[localPlayerIndex], localPlayerIndex);
+			photonView.RPC("SyncScore", RpcTarget.All, scores[localPlayerIndex], localPlayerIndex);
 		}
 		
 		switch(Gameplay.menuDifficulty) {
 			case Difficulty.Easy:
-				photonView.RPC("SyncHearts", RpcTarget.AllBuffered, 5, localPlayerIndex);
+				photonView.RPC("SyncHearts", RpcTarget.All, 5, localPlayerIndex);
 				health = 5;
 				break;
 			case Difficulty.Medium:
-				photonView.RPC("SyncHearts", RpcTarget.AllBuffered, 3, localPlayerIndex);
+				photonView.RPC("SyncHearts", RpcTarget.All, 3, localPlayerIndex);
 				health = 3;
 				break;
 			case Difficulty.Hard:
-				photonView.RPC("SyncHearts", RpcTarget.AllBuffered, 1, localPlayerIndex);
+				photonView.RPC("SyncHearts", RpcTarget.All, 1, localPlayerIndex);
 				health = 1;
 				break;
 		}
@@ -294,7 +299,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		audioManager.PlayGameOverSound();
 		scoreCanvas[localPlayerIndex].SetActive(false);
 		allHearts[localPlayerIndex].SetActive(false);
-		GameOver.moveCanvasToStart = true;
 		GameplayManager.gameIsOver = true;
 		graveUpright[localPlayerIndex].SetActive(false);
 		graveDown[localPlayerIndex].SetActive(true);
@@ -307,5 +311,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 			graveDown[otherPlayerIndex].SetActive(true);
 			deterrentCount[otherPlayerIndex].transform.parent.parent.gameObject.SetActive(false);
 		}
+
+		// give server a bit of time to make sure the final scores are synced before displaying gameover panel
+		StartCoroutine(MoveGameOverCanvasToStart());
+	}
+
+	IEnumerator MoveGameOverCanvasToStart()
+	{
+		yield return new WaitForSeconds(0.5f);
+		GameOver.moveCanvasToStart = true;
 	}
 }

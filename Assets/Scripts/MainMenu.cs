@@ -85,6 +85,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	private bool moveCanvasToStart = false;
 	private bool animateButtonsToStart = false;
 	private bool fadeButtonIn = false;
+	static bool lobbyConnectNotificationSent = false;
 	
 	void Start() {
 		audioManager = GameObject.Find("SoundManager").GetComponent<MainMenuAudioManager>();
@@ -93,7 +94,8 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 		overrideButton = transform.Find("OverrideDropdownButton").gameObject;
 		difficulty = Difficulty.Easy;
-		UnityEngine.Random.InitState((int)(DateTime.UtcNow - new DateTime(1970,1,1)).TotalSeconds);
+		UnityEngine.Random.InitState((int)(DateTime.UtcNow - new DateTime(1970,1,1)).TotalMilliseconds);
+		lobbyConnectNotificationSent = false;
 	}
 	
 	void Update() {
@@ -106,15 +108,18 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				animateButtonsToStart = true;
 			}
 		} else if (animateButtonsToStart) {
+			if (!lobbyConnectNotificationSent)
+			{
+				lobbyConnectNotificationSent = true;
+				if (!PhotonNetwork.InLobby)
+				{
+					StartCoroutine(SetNotification("Trying to connect to lobby...", 0f));
+				}
+			}
 			float finalYPosition = 22f;//1.550f + (18.3f - 4.1f);
 			Vector3 newGameLabelPosition = new Vector3(gameLabel.transform.localPosition.x, finalYPosition, gameLabel.transform.localPosition.z);
 			gameLabel.transform.localPosition = Vector3.MoveTowards(gameLabel.transform.localPosition, newGameLabelPosition, 10.0f * Time.deltaTime);
-			if (gameLabel.transform.localPosition.y >= finalYPosition) {
-				singlePlayerButton.SetActive(true);
-				multiPlayerButton.SetActive(true);
-				exitButton.SetActive(true);
-				helpButton.SetActive(true);
-				
+			if (gameLabel.transform.localPosition.y >= finalYPosition) {				
 				Color createColor = singlePlayerButton.GetComponent<Image>().material.color;
 				createColor.a = 0.0f;
 				singlePlayerButton.GetComponent<Image>().material.color = createColor;
@@ -172,7 +177,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 			{
 				StartCoroutine(SetNotification("You are already in a room or did not exit the room correctly.\nPlease hit \"Back\" and try again!", 0));
 			}
-			else if (!networkManager.JoinRoom())
+			else if (!networkManager.JoinRoom(UnityEngine.Random.Range(0,99999999)))
 			{
 				Debug.Log("Failed to join room");
 			}				
@@ -198,7 +203,6 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	public override void OnJoinRoomFailed (short returnCode, string message)
 	{
 		base.OnJoinRoomFailed(returnCode, message);
-		StartCoroutine(SetNotification("", 0f));
 		StartCoroutine(SetNotification("Failed to join room. Network error.\nPlease try again later", 0.5f));
 	}
 
@@ -216,21 +220,50 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
 		else
 		{
+			if (PhotonNetwork.IsMasterClient)
+			{
+				StartCoroutine(SetNotification("Failed to join a room.\nCreating a room instead", 0));
+				StartCoroutine(SetNotification("You are the first player, your difficulty selection will be used!\nWaiting for other player to join...", 1f));
+			}
+		}
+	}
+
+	/// <summary>
+	/// Override parent method. This method notifies the user that no room exists that user can join.
+	/// </summary>
+	/// <param name="returnCode"></param>
+	/// <param name="message"></param>
+	public override void OnJoinRandomFailed(short returnCode, string message)
+	{
+		base.OnJoinRandomFailed(returnCode, message);
+		StartCoroutine(SetNotification("Failed to join a room due to potentially network error.\nPlease try again in a few seconds!", 0));
+	}
+
+	/// <summary>
+	/// Override parent method. This method notifies the Multiplayer user that a room was created successfully.
+	/// </summary>
+	public override void OnCreatedRoom()
+	{
+		base.OnCreatedRoom();
+		Debug.Log("Created Room successfully");
+		if (NetworkManager.isMultiplayer)
+		{
 			StartCoroutine(SetNotification("You are the first player, your difficulty selection will be used!\nWaiting for other player to join...", 1f));
 		}
 	}
 
-	public override void OnJoinRandomFailed(short returnCode, string message)
-	{
-		base.OnJoinRandomFailed(returnCode, message);
-		StartCoroutine(SetNotification("", 0f));
-		StartCoroutine(SetNotification("Failed to join a room.\nCreating a room instead", 0.1f));
-		RoomOptions roomOptions = new RoomOptions();
-    roomOptions.MaxPlayers = (byte)2;   
-    roomOptions.IsVisible = true;
-    roomOptions.IsOpen = true;
-		PhotonNetwork.CreateRoom(UnityEngine.Random.Range(0,99999999).ToString(), roomOptions, TypedLobby.Default);
-	}
+	/// <summary>
+  /// Override parent method. This was mainly used for debugging
+  /// </summary>
+  public override void OnJoinedLobby()
+  {
+    base.OnJoinedLobby();
+    notificationText.SetActive(false);
+		singlePlayerButton.SetActive(true);
+		multiPlayerButton.SetActive(true);
+		exitButton.SetActive(true);
+		helpButton.SetActive(true);
+  }
 
 	IEnumerator SetNotification(string str = null, float delay = 1f)
 	{
@@ -296,10 +329,14 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 			if (PhotonNetwork.InRoom)
 			{
 				PhotonNetwork.LeaveRoom();
+				StartCoroutine(SetNotification("Trying to reconnect to lobby...", 0f));
+			}
+			else
+			{
+				singlePlayerButton.SetActive(true);
+				multiPlayerButton.SetActive(true);
 			}
 			audioManager.PlayButtonClickSound();
-			multiPlayerButton.SetActive(true);
-			singlePlayerButton.SetActive(true);
 			overrideButton.SetActive(false);
 			difficultyDropdown.SetActive(false);
 			startButton.SetActive(false);
