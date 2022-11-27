@@ -86,12 +86,22 @@ public class ColliderUIButton : XRSimpleInteractable
   protected override void OnActivated(ActivateEventArgs args)
   {
     base.OnActivated(args);
-    gameplayManager.GetComponent<GameOver>().OpenMainMenu();
+    GoToMainMenu();
   }
 
   protected override void OnEnable()
   {
     base.OnEnable();
+    rightHandClicked = false;
+    leftHandClicked = false;
     gameplayManager = GameObject.Find("GameplayManager");
+  }
+
+  /// <summary>
+  /// This method brings the user back to the main menu from game scene
+  /// </summary>
+  public void GoToMainMenu()
+  {
+    gameplayManager.GetComponent<GameOver>().OpenMainMenu();
   }
 }

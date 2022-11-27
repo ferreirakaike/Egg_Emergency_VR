@@ -76,6 +76,7 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
             _basket = PhotonView.Find(networkVar.basketIDs[playerIndex]).transform.GetChild(0).GetComponent<MeshRenderer>();
             _rim = _basket.transform.GetChild(0).GetComponent<MeshRenderer>();
         }
+        collided = false;
     }
 
     // Update is called once per frame
@@ -161,7 +162,7 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 }
             }
             // Master / Client destroy their own object
-            if ((playerIndex == 1 && !PhotonNetwork.IsMasterClient) || (playerIndex == 0 && PhotonNetwork.IsMasterClient) || photonView.IsMine)
+            if (photonView.AmOwner || photonView.IsMine)
             {
                 PhotonNetwork.Destroy(this.gameObject);
             }

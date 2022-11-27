@@ -66,32 +66,24 @@ public class NetworkManager : MonoBehaviourPunCallbacks
   public bool InitializeRoom(int roomNumber)
   {
     RoomOptions roomOptions = new RoomOptions();
-    if (isMultiplayer)
-    {
-      roomOptions.MaxPlayers = (byte)2;
-    }
-    else
-    {
-      roomOptions.MaxPlayers = (byte)1;
-    }
+    roomOptions.MaxPlayers = (byte)1;
     
-    roomOptions.IsVisible = true;
+    roomOptions.IsVisible = false;
     roomOptions.IsOpen = true;
-    if (!PhotonNetwork.CreateRoom(roomNumber.ToString(), roomOptions, TypedLobby.Default))
-    {
-      return false;
-    }
-    return true;
+    return PhotonNetwork.CreateRoom(roomNumber.ToString(), roomOptions, TypedLobby.Default);
   }
 
   /// <summary>
-  /// This method allows user to join room that was previously created.
+  /// This method allows user to join a random room in multiplayer mode
   /// </summary>
-  /// <param name="roomNumber">Room number that the user wants to join</param>
   /// <returns>Returns true if the room joining request is sucessfully put into the network queue. Returns false otherwise.</returns>
   public bool JoinRoom(int roomNumber)
   {
-    return PhotonNetwork.JoinRoom(roomNumber.ToString());
+    RoomOptions roomOptions = new RoomOptions();
+    roomOptions.MaxPlayers = (byte)2;   
+    roomOptions.IsVisible = true;
+    roomOptions.IsOpen = true;
+    return PhotonNetwork.JoinRandomOrCreateRoom(null, (byte)2, MatchmakingMode.FillRoom, TypedLobby.Default, null, UnityEngine.Random.Range(0,99999999).ToString(), roomOptions);
   }
 
   /// <summary>
@@ -111,14 +103,5 @@ public class NetworkManager : MonoBehaviourPunCallbacks
   {
     base.OnPlayerEnteredRoom(newPlayer);
     PhotonNetwork.LoadLevel("KaiScene");
-  }
-
-  /// <summary>
-  /// This method sets the game mode to either single player or multiplayer based on the passed in toggle state.
-  /// </summary>
-  /// <param name="setting">The toggle that holds the value of whether the game mode should be set to multiplayer or not</param>
-  public void SetMultiplayer(Toggle setting)
-  {
-    isMultiplayer = setting.isOn;
   }
 }

@@ -73,16 +73,16 @@ public class Gameplay : MonoBehaviourPunCallbacks
         switch(menuDifficulty) 
         {
             case Difficulty.Easy:
-                startingDifficulty = 1.75f;
-                spawnTime = 3.5f;
+                startingDifficulty = 1.8f;
+                spawnTime = 3.25f;
                 break;
             case Difficulty.Medium:
-                startingDifficulty = 2.75f;
-                spawnTime = 2.85f;
+                startingDifficulty = 2.99f;
+                spawnTime = 2.65f;
                 break;
             case Difficulty.Hard:
-                startingDifficulty = 4f;
-                spawnTime = 2f;
+                startingDifficulty = 4.25f;
+                spawnTime = 1.9f;
                 break;
         }
 
@@ -124,7 +124,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(spawnTime);
             int deterrentRoll = Random.Range(0, 100);
             int chosenPath = Random.Range(0, 3);
-            photonView.RPC("spawnCollectable", RpcTarget.All, deterrentRoll, chosenPath, difficulty, -1);
+            photonView.RPC("spawnCollectable", RpcTarget.AllViaServer, deterrentRoll, chosenPath, difficulty, -1);
         }
     }
 

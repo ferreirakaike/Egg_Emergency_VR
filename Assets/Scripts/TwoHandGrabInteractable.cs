@@ -163,7 +163,7 @@ public class TwoHandGrabInteractable : XRGrabInteractable
     if (timeToNextActivate <= 0)
     {
         gameplay.CheckAndSendDeterrent();
-        timeToNextActivate = 1;
+        timeToNextActivate = 0.5f;
     }
     
   }
