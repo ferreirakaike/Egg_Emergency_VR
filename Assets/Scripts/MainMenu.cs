@@ -85,7 +85,6 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	private bool moveCanvasToStart = false;
 	private bool animateButtonsToStart = false;
 	private bool fadeButtonIn = false;
-	static bool lobbyConnectNotificationSent = false;
 	
 	void Start() {
 		audioManager = GameObject.Find("SoundManager").GetComponent<MainMenuAudioManager>();
@@ -95,7 +94,10 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		overrideButton = transform.Find("OverrideDropdownButton").gameObject;
 		difficulty = Difficulty.Easy;
 		UnityEngine.Random.InitState((int)(DateTime.UtcNow - new DateTime(1970,1,1)).TotalMilliseconds);
-		lobbyConnectNotificationSent = false;
+		if (!PhotonNetwork.InLobby)
+		{
+			StartCoroutine(SetNotification("Trying to connect to lobby...", 0f));
+		}
 	}
 	
 	void Update() {
@@ -108,14 +110,6 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 				animateButtonsToStart = true;
 			}
 		} else if (animateButtonsToStart) {
-			if (!lobbyConnectNotificationSent)
-			{
-				lobbyConnectNotificationSent = true;
-				if (!PhotonNetwork.InLobby)
-				{
-					StartCoroutine(SetNotification("Trying to connect to lobby...", 0f));
-				}
-			}
 			float finalYPosition = 22f;//1.550f + (18.3f - 4.1f);
 			Vector3 newGameLabelPosition = new Vector3(gameLabel.transform.localPosition.x, finalYPosition, gameLabel.transform.localPosition.z);
 			gameLabel.transform.localPosition = Vector3.MoveTowards(gameLabel.transform.localPosition, newGameLabelPosition, 10.0f * Time.deltaTime);
@@ -253,14 +247,17 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	}
 
 	/// <summary>
-  /// Override parent method. This was mainly used for debugging
+  /// Override parent method. This method enables the buttons for the main menu screen.
   /// </summary>
   public override void OnJoinedLobby()
   {
     base.OnJoinedLobby();
     notificationText.SetActive(false);
 		singlePlayerButton.SetActive(true);
-		multiPlayerButton.SetActive(true);
+		if (PhotonNetwork.OfflineMode != true)
+		{
+			multiPlayerButton.SetActive(true);
+		}
 		exitButton.SetActive(true);
 		helpButton.SetActive(true);
   }
@@ -328,8 +325,8 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		{
 			if (PhotonNetwork.InRoom)
 			{
-				PhotonNetwork.LeaveRoom();
 				StartCoroutine(SetNotification("Trying to reconnect to lobby...", 0f));
+				PhotonNetwork.LeaveRoom();
 			}
 			else
 			{
@@ -344,5 +341,18 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 			exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit";
 		}
 		
+	}
+
+	/// <summary>
+	/// Override parent method. If for whatever reason the application failed to connect to photon server, make it so that only single player mode is available.
+	/// </summary>
+	/// <param name="cause">Enum of the cause of disconnection</param>
+	public override void OnDisconnected(DisconnectCause cause)
+	{
+		base.OnDisconnected(cause);
+		StartCoroutine(SetNotification("Failed to lobby. Only Single Player mode is available!\nReason: " + cause.ToString(), 0.1f));
+		PhotonNetwork.OfflineMode = true;
+		singlePlayerButton.SetActive(true);
+		multiPlayerButton.SetActive(false);
 	}
 }
