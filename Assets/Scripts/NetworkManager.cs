@@ -25,8 +25,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
   /// <typeparam name="int">Room number</typeparam>
   /// <returns></returns>
   public List<int> availableRoom = new List<int>(){1,2,3,4,5,6,7,8,9,10};
-  // Start is called before the first frame update
-  void Start()
+  void Awake()
   {
     isMultiplayer = false;
     ConnectToServer();
