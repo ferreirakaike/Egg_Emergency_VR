@@ -79,6 +79,16 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	/// </summary>
 	public GameObject difficultyDropdown;
 
+	/// <summary>
+	/// Reference to the leaderboard toggle button
+	/// </summary>
+	public GameObject leaderboardButton;
+
+	/// <summary>
+	/// Reference to the leaderboard canvas
+	/// </summary>
+	public GameObject leaderboardCanvas;
+
 	private GameObject overrideButton;
 	private NetworkManager networkManager;
 	
@@ -260,6 +270,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		}
 		exitButton.SetActive(true);
 		helpButton.SetActive(true);
+		leaderboardButton.GetComponentInChildren<TextMeshProUGUI>().text = "Hide Leaderboard";
+		leaderboardButton.SetActive(true);
+		leaderboardCanvas.SetActive(true);
   }
 
 	IEnumerator SetNotification(string str = null, float delay = 1f)
@@ -301,6 +314,24 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		StartCoroutine(SetNotification("NOTICE: Game only starts when both players have grabbed their basket in Multiplayer Mode\n       First player's difficulty setting will be used for the room", 0.1f));
 		exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
 		startButton.GetComponentInChildren<TextMeshProUGUI>().text = "Join Random";
+	}
+	
+	/// <summary>
+	/// This method toggles the leaderboard ui canvas
+	/// </summary>
+	public void OnLeaderboardButtonClicked()
+	{
+		TextMeshProUGUI buttonText = leaderboardButton.GetComponentInChildren<TextMeshProUGUI>();
+		if (buttonText.text == "Show Leaderboard")
+		{
+			leaderboardCanvas.SetActive(true);
+			buttonText.text = "Hide Leaderboard";
+		}
+		else if (buttonText.text == "Hide Leaderboard")
+		{
+			leaderboardCanvas.SetActive(false);
+			buttonText.text = "Show Leaderboard";
+		}
 	}
 	
 	/// <summary>
@@ -354,5 +385,9 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 		PhotonNetwork.OfflineMode = true;
 		singlePlayerButton.SetActive(true);
 		multiPlayerButton.SetActive(false);
+		overrideButton.SetActive(false);
+		difficultyDropdown.SetActive(false);
+		startButton.SetActive(false);
+		notificationText.SetActive(false);
 	}
 }

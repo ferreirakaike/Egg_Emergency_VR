@@ -100,6 +100,7 @@ public class GameOver : MonoBehaviour {
 				else
 				{
 					scoreText.text = $"Final Score: {GameplayManager.scores[localPlayerIndex]}";
+					LeaderboardHandler.UpdateLeaderboardScores(GameplayManager.scores[localPlayerIndex]);
 				}
 				finalScoreLabel.SetActive(true);
 				
