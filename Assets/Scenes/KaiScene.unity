@@ -752,6 +752,7 @@ MonoBehaviour:
   leftPath2: {fileID: 365864761}
   rightPath2: {fileID: 1760280063}
   end: 2
+  heartSpawnChance: 5
 --- !u!114 &474443735
 MonoBehaviour:
   m_ObjectHideFlags: 0
