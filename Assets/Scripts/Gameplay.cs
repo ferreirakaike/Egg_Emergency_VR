@@ -58,7 +58,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
     /// <summary>
     /// User-defined probability of spawning a heart
     /// </summary>
-    public float heartSpawnChance = 5f;
+    public float heartSpawnChance = 1f;
 
     /// <summary>
     /// Override parent method. This method sets difficulties and set private variables to default values.
@@ -80,15 +80,15 @@ public class Gameplay : MonoBehaviourPunCallbacks
         {
             case Difficulty.Easy:
                 startingDifficulty = 1.8f;
-                spawnTime = 3.35f;
+                spawnTime = 3.45f;
                 break;
             case Difficulty.Medium:
                 startingDifficulty = 2.99f;
-                spawnTime = 2.65f;
+                spawnTime = 2.75f;
                 break;
             case Difficulty.Hard:
                 startingDifficulty = 4.25f;
-                spawnTime = 1.9f;
+                spawnTime = 1.85f;
                 break;
         }
 
@@ -123,7 +123,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
             if (difficulty > 8.0f) {
                 difficulty = 8.0f;
             }
-            spawnTime = spawnTime - (deltaTime / 300) ;
+            spawnTime = spawnTime - (deltaTime / 350) ;
             if (spawnTime < 0.25f) {
                 spawnTime = 0.25f;
             }
@@ -146,7 +146,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
         {
             if (Random.Range(0f,100f) <= heartSpawnChance)
             {
-                yield return new WaitForSeconds(Random.Range(0f,20f));
+                yield return new WaitForSeconds(Random.Range(0f,30f));
                 int chosenPath = Random.Range(0, 3);
                 photonView.RPC("spawnHeart", RpcTarget.AllViaServer, chosenPath);
             }
@@ -213,11 +213,11 @@ public class Gameplay : MonoBehaviourPunCallbacks
 		if (target_player == -1 || (target_player == 0 && PhotonNetwork.IsMasterClient) || (target_player == 1 && !PhotonNetwork.IsMasterClient))
         {
             if (deterrentRoll < (int)deterrentChance) {
-                a = PhotonNetwork.Instantiate("Deterrent_Bomb", transform.position, new Quaternion(-65,0,0,0)) as GameObject;
+                a = PhotonNetwork.Instantiate("Deterrent_Bomb", transform.position, new Quaternion(-90,0,0,0)) as GameObject;
                 a.tag = "Deterrent";
             }
             else {
-                a = PhotonNetwork.Instantiate("Collectable", transform.position, new Quaternion(25,180,0,0)) as GameObject;
+                a = PhotonNetwork.Instantiate("Collectable", transform.position, new Quaternion(-90,0,0,0)) as GameObject;
                 a.tag = "Collectable";
             }
             // Since object is spawned using PhotonNetwork.Instantiate, let photon handle viewID assignment
