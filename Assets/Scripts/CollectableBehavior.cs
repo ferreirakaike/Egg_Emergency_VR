@@ -110,6 +110,11 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
     {
         if (!collided)
         {
+            // do nothing if heart is collided with bomb or pumpkin
+            if (other.gameObject.tag.Equals("Heart") || (gameObject.tag.Equals("Heart") && (other.gameObject.tag.Equals("Deterrent") || other.gameObject.tag.Equals("Collectable"))))
+            {
+                return;
+            }
             collided = true;
             if (other.gameObject.tag.Equals("Deterrent") && gameObject.tag.Equals("Collectable"))
             {
@@ -147,7 +152,19 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                     _gameplayManager.DecreaseScore();
                 }
             }
-            else
+            else if (other.gameObject.tag.Equals("InnerBasket") && gameObject.tag.Equals("Heart"))
+            {
+                _basket.material = successBasketMaterial;
+                _rim.material = successRimMaterial;
+                if (photonView.IsMine)
+                {
+                    timePassed = 0;
+                    // Change to play heart caught sound
+                    _audioManager.PlayCollectSound();
+                    _gameplayManager.IncreaseHeart();
+                }
+            }
+            else // missed
             {
                 if (gameObject.tag.Equals("Collectable"))
                 {

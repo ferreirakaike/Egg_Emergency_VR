@@ -289,6 +289,22 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 		photonView.RPC("SyncHearts", RpcTarget.All, health, localPlayerIndex);
 		gameStreak = 0;
 	}
+
+	/// <summary>
+	/// Method that is used to increase the number of hearts when the player catch a heart
+	/// </summary>
+	public void IncreaseHeart()
+	{
+		if (GameplayManager.gameIsOver) {
+			return;
+		}
+		if (health == 5)
+		{
+			return;
+		}
+		health++;
+		photonView.RPC("SyncHearts", RpcTarget.All, health, localPlayerIndex);
+	}
 	
 	/// <summary>
 	/// Method that is called to end the game.

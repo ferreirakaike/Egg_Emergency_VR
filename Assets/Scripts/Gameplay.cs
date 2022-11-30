@@ -53,6 +53,12 @@ public class Gameplay : MonoBehaviourPunCallbacks
     private GameplayManager gameplayManager;
     private Material sendingDeterrentMaterial;
     private int localPlayerIndex = 0;
+    private bool heartSpawnerCRRunning = false;
+
+    /// <summary>
+    /// User-defined probability of spawning a heart
+    /// </summary>
+    public float heartSpawnChance = 5f;
 
     /// <summary>
     /// Override parent method. This method sets difficulties and set private variables to default values.
@@ -74,7 +80,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
         {
             case Difficulty.Easy:
                 startingDifficulty = 1.8f;
-                spawnTime = 3.25f;
+                spawnTime = 3.35f;
                 break;
             case Difficulty.Medium:
                 startingDifficulty = 2.99f;
@@ -96,6 +102,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
         {
             localPlayerIndex = 1;
         }
+        heartSpawnerCRRunning = false;
     }
 
     private void Awake()
@@ -107,7 +114,8 @@ public class Gameplay : MonoBehaviourPunCallbacks
     }
 
     IEnumerator collectableWave() {
-        while(!networkVar.isGameOver) {
+        while(!networkVar.isGameOver)
+        {
             currentTime = Time.time;
             float deltaTime = currentTime - previousTime;
             previousTime = currentTime;
@@ -115,7 +123,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
             if (difficulty > 8.0f) {
                 difficulty = 8.0f;
             }
-            spawnTime = spawnTime - (deltaTime / 200) ;
+            spawnTime = spawnTime - (deltaTime / 300) ;
             if (spawnTime < 0.25f) {
                 spawnTime = 0.25f;
             }
@@ -125,7 +133,29 @@ public class Gameplay : MonoBehaviourPunCallbacks
             int deterrentRoll = Random.Range(0, 100);
             int chosenPath = Random.Range(0, 3);
             photonView.RPC("spawnCollectable", RpcTarget.AllViaServer, deterrentRoll, chosenPath, difficulty, -1);
+            if (!heartSpawnerCRRunning)
+            {
+                heartSpawnerCRRunning = true;
+                StartCoroutine(randomHeartSpawner());
+            }
         }
+    }
+
+    IEnumerator randomHeartSpawner() {
+        while(!networkVar.isGameOver)
+        {
+            if (Random.Range(0f,100f) <= heartSpawnChance)
+            {
+                yield return new WaitForSeconds(Random.Range(0f,20f));
+                int chosenPath = Random.Range(0, 3);
+                photonView.RPC("spawnHeart", RpcTarget.AllViaServer, chosenPath);
+            }
+            else
+            {
+                yield return new WaitForSeconds(1f);
+            }
+        }
+        heartSpawnerCRRunning = false;
     }
 
     /// <summary>
@@ -169,7 +199,8 @@ public class Gameplay : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void spawnCollectable(int deterrentRoll, int chosenPath, float synced_difficulty, int target_player = -1) {
+    private void spawnCollectable(int deterrentRoll, int chosenPath, float synced_difficulty, int target_player = -1)
+    {
 		if (GameplayManager.gameIsOver) {
 			return;
 		}
@@ -182,11 +213,11 @@ public class Gameplay : MonoBehaviourPunCallbacks
 		if (target_player == -1 || (target_player == 0 && PhotonNetwork.IsMasterClient) || (target_player == 1 && !PhotonNetwork.IsMasterClient))
         {
             if (deterrentRoll < (int)deterrentChance) {
-                a = PhotonNetwork.Instantiate("Deterrent_Bomb", transform.position, new Quaternion(-90,0,0,0)) as GameObject;
+                a = PhotonNetwork.Instantiate("Deterrent_Bomb", transform.position, new Quaternion(-65,0,0,0)) as GameObject;
                 a.tag = "Deterrent";
             }
             else {
-                a = PhotonNetwork.Instantiate("Collectable", transform.position, new Quaternion(-90,0,0,0)) as GameObject;
+                a = PhotonNetwork.Instantiate("Collectable", transform.position, new Quaternion(25,180,0,0)) as GameObject;
                 a.tag = "Collectable";
             }
             // Since object is spawned using PhotonNetwork.Instantiate, let photon handle viewID assignment
@@ -237,6 +268,57 @@ public class Gameplay : MonoBehaviourPunCallbacks
             }
             a.SetActive(true);
         }
+    }
+
+    [PunRPC]
+    private void spawnHeart(int chosenPath)
+    {
+        if (GameplayManager.gameIsOver || difficulty == 0) 
+        {
+			return;
+		}
+        a = PhotonNetwork.Instantiate("Heart", transform.position, new Quaternion(0,90,0,0)) as GameObject;
+        a.tag = "Heart";
+
+        var script = a.GetComponent<PathFollower>();
+        script.speed = difficulty;
+        var script2 = a.GetComponent<CollectableBehavior>();
+        
+        script.endOfPathInstruction = end;
+        
+        // master uses path left, path, right.
+        // client uses path left2, path2, right2
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // set this to 0 or 1for multiplayer
+            script2.playerIndex = 0;
+            if (chosenPath == 0) {
+                script.pathCreator = leftPath;
+            }
+            else if (chosenPath == 1) {
+                script.pathCreator = path;
+            }
+            else if (chosenPath == 2) {
+                script.pathCreator = rightPath;
+            }
+        }
+        else
+        {
+            // set this to 0 or 1for multiplayer
+            script2.playerIndex = 1;
+            if (chosenPath == 0) {
+                script.pathCreator = leftPath2;
+            }
+            else if (chosenPath == 1) {
+                script.pathCreator = path2;
+            }
+            else if (chosenPath == 2) {
+                script.pathCreator = rightPath2;
+            }
+        }
+        a.SetActive(true);
+        Debug.Log("Heart Spawned");
+        Debug.Log("Difficulty: " + difficulty);
     }
 
     [PunRPC]

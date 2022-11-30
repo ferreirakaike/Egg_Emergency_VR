@@ -11,6 +11,7 @@ TagManager:
   - Collectable
   - LeftHand
   - RightHand
+  - Heart
   layers:
   - Default
   - TransparentFX
