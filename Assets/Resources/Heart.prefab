@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 402b99454dc859a41aa00f37c43707b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateSpeed: 20
+  rotateSpeed: 70
 --- !u!114 &3824191656872457627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,4 +251,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathCreator: {fileID: 0}
   endOfPathInstruction: 2
-  speed: 20
+  speed: 5

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.XR.Interaction.Toolkit;
 
 // Change scorekeeping multiplier
 // Record video
@@ -60,7 +61,7 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
     // keep track of whether the object has collided with the basket
     // this is to prevent collision with outter colliders after colliding with inner colliders
     private bool collided = false;
-
+    private static XRDirectInteractor[] handInteractors;
 
     // Start is called before the first frame update
     void Start()
@@ -68,6 +69,10 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
         networkVar = GameObject.Find("Network Interaction Statuses").GetComponent<NetworkVariablesAndReferences>();
         _audioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
 		_gameplayManager = GameObject.Find("GameplayManager").GetComponent<GameplayManager>();
+        if (handInteractors == null || handInteractors.Length < 2)
+        {
+            handInteractors = FindObjectsOfType<XRDirectInteractor>();
+        }
 
         // view id might now be available at this time
         // set by gameplay with some logic
@@ -149,6 +154,10 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 if (photonView.IsMine)
                 {
                     _audioManager.PlayBombSound();
+                    foreach (XRDirectInteractor interactor in handInteractors)
+                    {
+                        interactor.xrController.SendHapticImpulse(0.5f, 5f);
+                    }
                     _gameplayManager.DecreaseScore();
                 }
             }

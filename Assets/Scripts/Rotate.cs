@@ -10,7 +10,7 @@ public class Rotate : MonoBehaviour
     /// <summary>
     /// User-defined rotation speed
     /// </summary>
-    public float rotateSpeed = 10f;
+    public float rotateSpeed = 70f;
     // Update is called once per frame
     void Update()
     {
