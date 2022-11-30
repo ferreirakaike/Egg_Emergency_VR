@@ -156,7 +156,7 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                     _audioManager.PlayBombSound();
                     foreach (XRDirectInteractor interactor in handInteractors)
                     {
-                        interactor.xrController.SendHapticImpulse(0.5f, 5f);
+                        interactor.xrController.SendHapticImpulse(0.7f, 1.3f);
                     }
                     _gameplayManager.DecreaseScore();
                 }
