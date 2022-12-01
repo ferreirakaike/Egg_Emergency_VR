@@ -131,7 +131,8 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
 	{
         countDown[playerIndex].gameObject.SetActive(!toggleDisable);
 		countDown[playerIndex].text = $"{number}";
-	}
+        _audioManager.PlayCountdownSound();
+    }
 
 
     IEnumerator StartCountDown()
@@ -145,7 +146,6 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
                 photonView.RPC("SyncCountDown", RpcTarget.All, false, count, 1);
             }
             count--;
-            _audioManager.PlayCountdownSound();
             yield return new WaitForSeconds(1);
         }
         photonView.RPC("SyncCountDown", RpcTarget.All, true, count, 0);
