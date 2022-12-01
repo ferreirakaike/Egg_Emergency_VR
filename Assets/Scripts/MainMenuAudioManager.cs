@@ -7,7 +7,14 @@ using UnityEngine;
 /// </summary>
 public class MainMenuAudioManager : MonoBehaviour
 {
+    /// <summary>
+    /// AudioSource that contains the sound when the button is clicked
+    /// </summary>
     public AudioSource ButtonClickSound;
+
+    /// <summary>
+    /// AudioSource that contains the sound when that plays when the game is over
+    /// </summary>
 	public AudioSource GameOverSound;
 	
     /// <summary>

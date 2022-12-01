@@ -51,6 +51,8 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
     private int localPlayerIndex = 0;
     private int otherPlayerIndex = 1;
 
+    private AudioManager _audioManager;
+
     void Awake()
     {
         // if it gets laggy, decrease these
@@ -92,6 +94,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
         countDown = new TextMeshProUGUI[2];
         GameObject tombstone = PhotonView.Find(tombstoneIDs[localPlayerIndex]).gameObject;
         countDown[localPlayerIndex]  = tombstone.transform.Find("Canvas").Find("Count Down Value Label").GetComponent<TextMeshProUGUI>();
+        _audioManager = GameObject.Find("SoundManager").GetComponent<AudioManager>();
     }
 
     void Reset()
@@ -142,6 +145,7 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
                 photonView.RPC("SyncCountDown", RpcTarget.All, false, count, 1);
             }
             count--;
+            _audioManager.PlayCountdownSound();
             yield return new WaitForSeconds(1);
         }
         photonView.RPC("SyncCountDown", RpcTarget.All, true, count, 0);

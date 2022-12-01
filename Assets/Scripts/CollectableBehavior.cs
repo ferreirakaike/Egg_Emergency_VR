@@ -169,7 +169,7 @@ public class CollectableBehavior : MonoBehaviourPunCallbacks
                 {
                     timePassed = 0;
                     // Change to play heart caught sound
-                    _audioManager.PlayCollectSound();
+                    _audioManager.PlayHeartSound();
                     _gameplayManager.IncreaseHeart();
                 }
             }
