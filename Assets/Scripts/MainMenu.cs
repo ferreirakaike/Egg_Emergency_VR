@@ -332,6 +332,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 			leaderboardCanvas.SetActive(false);
 			buttonText.text = "Show Leaderboard";
 		}
+		audioManager.PlayButtonClickSound();
 	}
 	
 	/// <summary>
@@ -369,6 +370,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 			difficultyDropdown.SetActive(false);
 			startButton.SetActive(false);
 			notificationText.SetActive(false);
+			helpPanel.SetActive(false);
 			exitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit";
 		}
 		

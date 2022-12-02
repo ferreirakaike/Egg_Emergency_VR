@@ -58,7 +58,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
     /// <summary>
     /// User-defined probability of spawning a heart
     /// </summary>
-    public float heartSpawnChance = 1f;
+    public float heartSpawnChance = 0.8f;
 
     /// <summary>
     /// Override parent method. This method sets difficulties and set private variables to default values.
@@ -79,16 +79,16 @@ public class Gameplay : MonoBehaviourPunCallbacks
         switch(menuDifficulty) 
         {
             case Difficulty.Easy:
-                startingDifficulty = 1.8f;
-                spawnTime = 3.45f;
+                startingDifficulty = 2.1f;
+                spawnTime = 3.40f;
                 break;
             case Difficulty.Medium:
-                startingDifficulty = 2.99f;
-                spawnTime = 2.75f;
+                startingDifficulty = 3.2f;
+                spawnTime = 2.7f;
                 break;
             case Difficulty.Hard:
-                startingDifficulty = 4.25f;
-                spawnTime = 1.85f;
+                startingDifficulty = 4.3f;
+                spawnTime = 1.70f;
                 break;
         }
 
@@ -119,13 +119,13 @@ public class Gameplay : MonoBehaviourPunCallbacks
             currentTime = Time.time;
             float deltaTime = currentTime - previousTime;
             previousTime = currentTime;
-            difficulty = startingDifficulty + (deltaTime / 150);
-            if (difficulty > 8.0f) {
-                difficulty = 8.0f;
+            difficulty = startingDifficulty + (deltaTime / 60);
+            if (difficulty > 7.0f) {
+                difficulty = 7.0f;
             }
-            spawnTime = spawnTime - (deltaTime / 350) ;
-            if (spawnTime < 0.25f) {
-                spawnTime = 0.25f;
+            spawnTime = spawnTime - (deltaTime / 250) ;
+            if (spawnTime < 0.35f) {
+                spawnTime = 0.35f;
             }
             print("Difficulty: " + difficulty);
             print("Spawn Time: " + spawnTime);
@@ -146,7 +146,7 @@ public class Gameplay : MonoBehaviourPunCallbacks
         {
             if (Random.Range(0f,100f) <= heartSpawnChance)
             {
-                yield return new WaitForSeconds(Random.Range(0f,30f));
+                yield return new WaitForSeconds(Random.Range(0f,35f));
                 int chosenPath = Random.Range(0, 3);
                 photonView.RPC("spawnHeart", RpcTarget.AllViaServer, chosenPath);
             }

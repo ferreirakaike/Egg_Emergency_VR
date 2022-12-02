@@ -131,7 +131,10 @@ public class NetworkVariablesAndReferences : MonoBehaviourPunCallbacks, IPunObse
 	{
         countDown[playerIndex].gameObject.SetActive(!toggleDisable);
 		countDown[playerIndex].text = $"{number}";
-        _audioManager.PlayCountdownSound();
+        if (!toggleDisable)
+        {
+            _audioManager.PlayCountdownSound();
+        }
     }
 
 

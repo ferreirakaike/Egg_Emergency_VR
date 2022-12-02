@@ -114,6 +114,8 @@ MonoBehaviour:
   - {fileID: -2427515724481235383}
   - {fileID: -6844832448945484986}
   - {fileID: 8396838712213305799}
+  - {fileID: -4654551808407964182}
+  - {fileID: -3231311421651389485}
   - {fileID: 8290895864875229950}
   m_renderMode: 1
   m_depthSubmissionMode: 0
@@ -187,6 +189,26 @@ MonoBehaviour:
   company: Unity
   priority: 0
   required: 0
+--- !u!114 &-4654551808407964182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baa5b568c4324bd4faad2da2e7ee7e84, type: 3}
+  m_Name: PICOFeature Android
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: PICO Support
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.piconeo3
+  openxrExtensionStrings: 
+  company: Unity
+  priority: 0
+  required: 0
 --- !u!114 &-4296513578296920580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,6 +231,26 @@ MonoBehaviour:
   required: 0
   cacheSize: 1048576
   perThreadCacheSize: 51200
+--- !u!114 &-3231311421651389485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 651ead225c5006a47a4c1b260324bcad, type: 3}
+  m_Name: PICOTouchControllerProfile Android
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: PICO Touch Controller Profile
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.input.PICOtouch
+  openxrExtensionStrings: 
+  company: Unity
+  priority: 0
+  required: 0
 --- !u!114 &-2842141127709045218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,6 +351,7 @@ MonoBehaviour:
   - {fileID: -8850746117811868533}
   - {fileID: -1688703472732926763}
   - {fileID: 2307644137178575338}
+  - {fileID: 7986268169311489811}
   - {fileID: -4296513578296920580}
   - {fileID: 6688526537433045853}
   m_renderMode: 1
@@ -496,6 +539,7 @@ MonoBehaviour:
   - {fileID: -2842141127709045218}
   - {fileID: 7696051521664267204}
   - {fileID: 925183415372987746}
+  - {fileID: 6425599508721546982}
   - {fileID: 1143665235290455566}
   - {fileID: 5724714081267100387}
   m_renderMode: 1
@@ -516,6 +560,26 @@ MonoBehaviour:
   nameUi: Valve Index Controller Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.valveindex
+  openxrExtensionStrings: 
+  company: Unity
+  priority: 0
+  required: 0
+--- !u!114 &6425599508721546982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 651ead225c5006a47a4c1b260324bcad, type: 3}
+  m_Name: PICOTouchControllerProfile Standalone
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: PICO Touch Controller Profile
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.input.PICOtouch
   openxrExtensionStrings: 
   company: Unity
   priority: 0
@@ -561,6 +625,26 @@ MonoBehaviour:
   priority: 0
   required: 0
   ignoreValidationErrors: 0
+--- !u!114 &7986268169311489811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 651ead225c5006a47a4c1b260324bcad, type: 3}
+  m_Name: PICOTouchControllerProfile WSA
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: PICO Touch Controller Profile
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.input.PICOtouch
+  openxrExtensionStrings: 
+  company: Unity
+  priority: 0
+  required: 0
 --- !u!114 &8290895864875229950
 MonoBehaviour:
   m_ObjectHideFlags: 0
