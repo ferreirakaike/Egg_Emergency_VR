@@ -191,8 +191,8 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	/// <summary>
 	/// Override parent method. Notify player if the room creation failed
 	/// </summary>
-	/// <param name="returnCode"></param>
-	/// <param name="message"></param>
+	/// <param name="returnCode">Photon room create failure return code</param>
+	/// <param name="message">Photon error message</param>
 	public override void OnCreateRoomFailed (short returnCode, string message)
 	{
 		base.OnCreateRoomFailed(returnCode, message);
@@ -202,8 +202,8 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	/// <summary>
 	/// Override parent method. Notify player if the room joining failed
 	/// </summary>
-	/// <param name="returnCode"></param>
-	/// <param name="message"></param>
+	/// <param name="returnCode">Photn join room failure return code</param>
+	/// <param name="message">Photon error message</param>
 	public override void OnJoinRoomFailed (short returnCode, string message)
 	{
 		base.OnJoinRoomFailed(returnCode, message);
@@ -235,8 +235,8 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 	/// <summary>
 	/// Override parent method. This method notifies the user that no room exists that user can join.
 	/// </summary>
-	/// <param name="returnCode"></param>
-	/// <param name="message"></param>
+	/// <param name="returnCode">Photon join random failure return code</param>
+	/// <param name="message">Photon error message</param>
 	public override void OnJoinRandomFailed(short returnCode, string message)
 	{
 		base.OnJoinRandomFailed(returnCode, message);

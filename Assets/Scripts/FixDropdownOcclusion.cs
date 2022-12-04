@@ -23,7 +23,7 @@ public class FixDropdownOcclusion : TMP_Dropdown
     /// <summary>
     /// Override parent method. This method moves the Override Button to the location of the dropdown and set the overrideSorting of the Canvas component of the child of the dropdown to false to fix occulusion
     /// </summary>
-    /// <param name="eventData"></param>
+    /// <param name="eventData">TMP Pro PointerEventData. This parameter holds reference to selected interactor</param>
     public override void OnPointerClick(PointerEventData eventData)
     {
         // base.OnPointerClick(eventData);

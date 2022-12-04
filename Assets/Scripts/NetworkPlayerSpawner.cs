@@ -110,7 +110,7 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
   /// <summary>
   /// Override parent method. This method forces the second player to leave the room if the room creator left.
   /// </summary>
-  /// <param name="newMasterClient"></param>
+  /// <param name="player">This parameter holds a reference to the player who just left the room</param>
   public override void OnPlayerLeftRoom(Player player)
   {
     base.OnPlayerLeftRoom(player);
