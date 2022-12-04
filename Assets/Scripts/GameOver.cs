@@ -11,25 +11,65 @@ using Photon.Pun;
 /// This class handles the behaviour of the game when game is over.
 /// </summary>
 public class GameOver : MonoBehaviour {
+	/// <summary>
+	/// Manages the audio for the game over behaviors
+	/// </summary>
 	private MainMenuAudioManager audioManager;
 	
+	/// <summary>
+	/// The canvas that contains the game over panel
+	/// </summary>
 	private GameObject uiCanvas;
+	/// <summary>
+	/// The label indicating if the player lost of won their game
+	/// </summary>
 	private GameObject gameLabel;
+	/// <summary>
+	/// The label containing the user's final score
+	/// </summary>
 	private GameObject finalScoreLabel;
+	/// <summary>
+	/// The TextMeshPro object containing the text of the user's final score
+	/// </summary>
 	private TextMeshProUGUI scoreText;
+	/// <summary>
+	/// The button that will take the user back to the main menu
+	/// </summary>
 	private GameObject mainMenuButton;
 	
 	/// <summary>
 	/// Boolean indicator as to when to move the gameover UI panel to in front of the player
 	/// </summary>
 	public static bool moveCanvasToStart = false;
+	/// <summary>
+	/// Boolean indicator as to when to animate the buttons on the game over panel
+	/// </summary>
 	private bool animateButtonsToStart = false;
+	/// <summary>
+	/// Boolean indicator as to when to fade in the button on the game over panel
+	/// </summary>
 	private bool fadeButtonIn = false;
+	/// <summary>
+	/// The index of the local player
+	/// </summary>
 	private int localPlayerIndex = 0;
+	/// <summary>
+	/// The index of the other player in multiplayer
+	/// </summary>
 	private int otherPlayerIndex = 1;
+	/// <summary>
+	/// The position of the current user
+	/// </summary>
 	private Vector3 userPosition;
+	/// <summary>
+	/// Boolean indicator to begin animating in the canvas
+	/// </summary>
 	private bool updateCanvasPosition = true;
+	/// <summary>
+	/// Boolean indicator indicating whether the canvas has been moved
+	/// </summary>
 	private bool canvasMovedBefore = false;
+	
 	void Start() {
 		moveCanvasToStart = false;
 		animateButtonsToStart = false;
@@ -120,6 +160,9 @@ public class GameOver : MonoBehaviour {
 		}
 	}
 	
+	/// <summary>
+	/// Leaves the multiplayer room and opens the Main Menu scene
+	/// </summary>
 	public void OpenMainMenu() {
 		audioManager.PlayButtonClickSound();
 		PhotonNetwork.LeaveRoom();
